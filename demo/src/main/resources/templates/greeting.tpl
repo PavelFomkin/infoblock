@@ -1,513 +1,1412 @@
 <!DOCTYPE HTML>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <html xmlns:th="http://www.thymeleaf.org">
-<th:block xmlns:th="http://www.thymeleaf.org">
-  <h1 class="content__title">
-      Записаться на обучение
-  </h1>
-  <div class="row">
-      <div class="main__aside-neighbour">
-          <form method="POST" class="form form_descripted" onchange="validate()" onsubmit="submit()">
-              <div class="main__content">
-                  <h2 class="content__subtitle">
-                      Программа обучения
-                  </h2>
-                  <div class="content_small content_muted mb-3">
-                      <div class="content__paragraph">
-                          Для подбора программы обучения, выберите одну из трех приведенных категорий:
-                      </div>
-                      <ul class="list">
-                          <li class="list__item">
-                              Если вы&nbsp;недавно окончили или в&nbsp;ближайшее время окончите обучение
-                              в&nbsp;образовательной организации, выберите категорию <strong> &laquo;Выпускник
-                                  образовательной организации&raquo;</strong>;
-                          </li>
-                          <li class="list__item">
-                              Если вы&nbsp;&mdash; специалист, находящийся в&nbsp;поиске работы, выберите категорию
-                              <strong>&laquo;Ищу работу&raquo;</strong>;
-                          </li>
-                          <li class="list__item">
-                              Если в&nbsp;связи с&nbsp;эпидемиологической обстановкой вы&nbsp;находитесь в&nbsp;числе
-                              граждан с&nbsp;повышенным риском потери работы, выберите категорию <strong>&laquo;Нахожусь
-                                  под риском увольнения&raquo;</strong>.
-                          </li>
-                      </ul>
-                  </div>
-                  <div id="category" class="form__section" onchange="handleCategoryChange()">
-                      <fieldset class="form__fieldset">
-                          <legend class="form__title">Категория</legend>
-                          <label class="radio">
-                              <input type="radio" name="category">
-                              <span class="radio__label">Нахожусь под риском увольнения</span>
-                          </label>
-                          <label class="radio">
-                              <input type="radio" name="category">
-                              <span class="radio__label">Выпускник образовательной организации</span>
-                          </label>
-                          <label class="radio">
-                              <input type="radio" name="category">
-                              <span class="radio__label">Ищу работу</span>
-                          </label>
-                      </fieldset>
-                  </div>
-                  <div id="locality" style="display:none" class="form__section" onchange="handleLocalityChange()">
-                      <div class="form__description">Для подбора доступной для прохождения программы обучения, выберите из списка регион
-                      </div>
-                      <label class="select">
-                        <select id="locality_select" class="select__control" data-live-search="true">
-                        </select>
-                        <span class="select__title">Регион обучения</span>
-                      </label>
-                  </div>
-                  <div id="education-competence" style="display:none" class="form__section" onchange="handleEducationCompetenceChange()">
-                      <div class="form__description">Программы обучения доступные в вашем регионе
-                      </div>
-                      <label class="select">
-                        <select id="education-competence_select" class="select__control" data-live-search="true">
-                        </select>
-                        <span class="select__title">Программа обучения</span>
-                      </label>
-                  </div>
-                  <div id="education-competence_note" style="display:none" class="card card_note">
-                      <div class="content__paragraph">
-                          <strong><span id="education-competence_note_title"></span></strong>
-                          <br>
-                          <span id="education-competence_note_description"></span>
-                      </div>
-                  </div>
-              </div>
-              <div id="educational-organization" style="display:none" class="main__content" onchange="handleEducationalOrganizationChange()">
-                  <h2 class="content__subtitle">
-                      Форма и место обучения
-                  </h2>
-                  <div class="form__section">
-                      <label class="checkbox">
-                          <input id="is_distance_learning" type="checkbox" name="">
-                          <span class="checkbox__label">Дистанционное обучение</span>
-                        </label>
-                  </div>
-                  <div class="form__section">
-                      <label class="select">
-                          <select id="educational-organization_select" class="select__control" data-live-search="true">
-                          </select>
-                          <span class="select__title">Место обучения</span>
-                        </label>
-                  </div>
-              </div>
-              <div id="personal-info" style="display:none" class="main__content">
-                  <h2 class="content__subtitle">
-                      Персональные данные
-                  </h2>
-                  <dl class="definitions mb-3">
-                      <div class="definitions__item mb-1">
-                          <dt class="definitions__key">ФИО:</dt>
-                          <dd class="definitions__value">
-                          <p th:text="${fio}">Фамилия Имя Отчество</p></dd>
-                      </div>
-                      <div class="definitions__item">
-                          <dt class="definitions__key">СНИЛС:</dt>
-                          <dd class="definitions__value">
-                          <p th:text="${snils}">0001234000009</p></dd>
-                      </div>
-                  </dl>
-                  <div class="form__section">
-                      <div class="form__description">
-                          Выберите из списка регион вашего проживания
-                      </div>
-                      <label class="select select_required">
-                          <select id="personal-info_locality_select" class="select__control" data-live-search="true" onchange="handleLifeLocalityChange()">
-                          </select>
-                          <span class="select__title">Регион проживания</span>
-                        </label>
-                  </div>
-                  <div class="form__section">
-                      <label class="select select_required">
-                          <select id="personal-info_city_select" class="select__control" data-live-search="true">
-                          </select>
-                          <span class="select__title">Город проживания</span>
-                        </label>
-                  </div>
-                  <div class="form__section">
-                      <div class="row">
-                          <div class="col-lg-6">
-                              <label class="input input_date">
-                                  <input id="personal-info_birthday"class="input__control" type="text" placeholder="08.08.2020"/>
-                                  <span class="input__title">Дата рождения:</span>
-                              </label>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="form__section">
-                      <fieldset class="form__fieldset">
-                          <legend class="form__title">Пол</legend>
-                          <div class="row">
-                              <div class="col-auto">
-                                  <label class="radio">
-                                      <input type="radio" name="gender">
-                                      <span class="radio__label">Мужской</span>
-                                  </label>
-                              </div>
-                              <div class="col-auto">
-                                  <label class="radio">
-                                      <input type="radio" checked name="gender">
-                                      <span class="radio__label">Женский</span>
-                                  </label>
-                              </div>
-                          </div>
-                      </fieldset>
-                  </div>
-                  <div class="form__section">
-                      <div class="row">
-                          <div class="col-lg-6">
-                              <label class="input">
-                                  <input id="personal-info_phone_number" class="input__control" type="text" required placeholder="+7(__) ___-__-__" data-inputmask="'mask': '+\\7(99[9]) 999-99-99', 'numericInput': true" inputmode="text">
-                                  <span class="input__title">Телефон</span>
-                              </label>
-                          </div>
-                      </div>
-                  </div>
-                  <div class="form__section">
-                      <div class="form__description">
-                          Укажите адрес вашей электронной почты для получения уведомлений об изменении статуса заявки на обучение
-                      </div>
-                      <label class="input input_error">
-                          <input id="personal-info_email" class="input__control" required type="email"  placeholder="Введите email"/>
-                          <span class="input__title">Email</span>
-                          <span class="input__error">Введите корректное значение</span>
-                      </label>
-                  </div>
-                  <div class="form__section">
-                      <div class="form__description">
-                          Укажите адрес электронной почты повторно
-                      </div>
-                      <label class="input">
-                          <input id="personal-info_email_duplicate" class="input__control" required type="email"  placeholder="Введите email"/>
-                          <span class="input__title">Подтверждение email</span>
-                      </label>
-                  </div>
-              </div>
-              <button id="send-request" type="submit" class="button" style="display:none">Отправить заявку</button>
-          </form>
-      </div>
-      <div class="main__aside main__aside_relative mb-3">
-          <div class="main__aside-container">
-              <div class="card">
-                  <div class="step-check step-check_fill">
-                      <div id="category_step" class="step-check__item step-check__item_active">
-                          <div class="step-check__label">
-                              <svg class="step-check__check">
-                                  <use xlink:href="/assets/redesign-theme/uikit/icon/icons.svg#simple-check"></use>
-                              </svg>
-                          </div>
-                          <div class="step-check__main">
-                              <div class="step-check__title">
-                                  Выбор категории
-                              </div>
-                          </div>
-                      </div>
-                      <div id="locality_step" class="step-check__item step-check__item_disabled">
-                          <div class="step-check__label">
-                              <svg class="step-check__check">
-                                  <use xlink:href="/assets/redesign-theme/uikit/icon/icons.svg#simple-check"></use>
-                              </svg>
-                          </div>
-                          <div class="step-check__main">
-                              <div class="step-check__title">
-                                  Регион обучения
-                              </div>
-                          </div>
-                      </div>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 
-                      <div id="education-competence_step" class="step-check__item step-check__item_disabled">
-                          <div class="step-check__label">
-                              <svg class="step-check__check">
-                                  <use xlink:href="/assets/redesign-theme/uikit/icon/icons.svg#simple-check"></use>
-                              </svg>
-                          </div>
-                          <div class="step-check__main">
-                              <div class="step-check__title">
-                                  Программа обучения
-                              </div>
-                          </div>
-                      </div>
+    <title>Записаться на обучение</title>
+    <meta property="og:url" content="http://adm.rtportal.show.pbs.bftcom.com/page/view/7e9d5d90-9a8d-11ea-89a0-a53722d87132/1c24fed0-24b1-11eb-a09f-85b4053611d6/0eba98d0-24c1-11eb-a09f-85b4053611d6">
 
-                      <div id="educational-organization_step" class="step-check__item step-check__item_disabled">
-                          <div class="step-check__label">
-                              <svg class="step-check__check">
-                                  <use xlink:href="/assets/redesign-theme/uikit/icon/icons.svg#simple-check"></use>
-                              </svg>
-                          </div>
-                          <div class="step-check__main">
-                              <div class="step-check__title">
-                                  Форма и место обучения
-                              </div>
-                          </div>
-                      </div>
+    <meta property="og:title" content="Записаться на обучение">
 
-                      <div id="personal-info_step" class="step-check__item step-check__item_disabled">
-                          <div class="step-check__label">
-                              <svg class="step-check__check">
-                                  <use xlink:href="/assets/redesign-theme/uikit/icon/icons.svg#simple-check"></use>
-                              </svg>
-                          </div>
-                          <div class="step-check__main">
-                              <div class="step-check__title">
-                                  Персональные данные
-                              </div>
-                          </div>
-                      </div>
 
-                      <div id="send-request_step" class="step-check__item step-check__item_disabled">
-                          <div class="step-check__label">
-                              <svg class="step-check__check">
-                                  <use xlink:href="/assets/redesign-theme/uikit/icon/icons.svg#simple-check"></use>
-                              </svg>
-                          </div>
-                          <div class="step-check__main">
-                              <div class="step-check__title">
-                                  Отправить заявку
-                              </div>
-                          </div>
-                      </div>
-                  </div>
-              </div>
-          </div>
+    <meta property="og:type" content="website">
+
+
+    <link rel="icon" href="/resource-provider/redesign.trudvsem.ru/assets/redesign-theme/uikit/favicon.ico?r=1605908471131" type="image/x-icon">
+    <!-- Libraries -->
+    <script type="text/javascript" async="" src="https://mc.yandex.ru/metrika/watch.js"></script><script src="/resource-provider/redesign.trudvsem.ru/assets/redesign-theme/scripts/jquery.js?r=1605908471131"></script>
+    <script src="/resource-provider/redesign.trudvsem.ru/assets/redesign-theme/scripts/utils.js?r=1605908471131"></script>
+    <script src="/resource-provider/redesign.trudvsem.ru/assets/redesign-theme/scripts/dayjs.js?r=1605908471131"></script>
+    <script src="/resource-provider/redesign.trudvsem.ru/assets/redesign-theme/scripts/underscore.js?r=1605908471131"></script>
+    <!-- UI kit -->
+    <script src="/resource-provider/redesign.trudvsem.ru/assets/redesign-theme/scripts/uikit.js?r=1605908471131"></script>
+    <script src="/resource-provider/redesign.trudvsem.ru/assets/redesign-theme/scripts/fallbacks.js?r=1605908471131" nomodule="true"></script>
+    <script src="/resource-provider/redesign.trudvsem.ru/assets/redesign-theme/scripts/common.js?r=1605908471131"></script>
+    <!-- UI kit styles -->
+    <link href="common.css?r=1605908471131" rel="stylesheet">
+    <!-- Auth data -->
+    <script>
+        var isAuthorized = true;
+        var userRoles = ["11111111-1111-1111-1111-111111111111","346fe200-c560-11e8-a7bd-d55ebb8318ec"];
+        var currentUser = {"created":null,"modified":null,"deleted":false,"id":"11111111-1111-1111-1111-111111111111","visible":true,"authorizationAtempts":4576,"lastAuthorizationAttemptDate":"21.11.2020 01:03:42","login":"admin@bftcom.com","loginKind":"EMAIL","state":"REGISTERED","stateComment":null,"blockingState":"UNBLOCKED","blockingStateComment":"registration","blockingTo":null,"allowedHosts":["11111111-1111-1111-1111-111111111111"],"roles":{"11111111-1111-1111-1111-111111111111":["11111111-1111-1111-1111-111111111111","346fe200-c560-11e8-a7bd-d55ebb8318ec"]},"iconUrl":null,"firstName":"Системы","middleName":"","lastName":"Администратор","phone":"","email":"admin@bftcom.com","esiaId":null,"snils":null,"regionCode":null,"languageCode":null,"details":null,"birthDate":null,"gender":null,"clientType":null,"externalId":null,"externalData":null,"key":"11111111-1111-1111-1111-111111111111","fio":"Администратор Системы"};
+        var currentUserFull = {"id":"11111111-1111-1111-1111-111111111111","login":"admin@bftcom.com","loginKind":"EMAIL","firstName":"Системы","middleName":"","lastName":"Администратор","fio":"Администратор Системы","phone":"","email":"admin@bftcom.com","roles":{"346fe200-c560-11e8-a7bd-d55ebb8318ec":"Content manager","11111111-1111-1111-1111-111111111111":"Администратор"}};
+    </script>
+
+    <style type="text/css">.wt-sky-dialog{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-smoothing:antialiased;min-width:168px;max-width:234px;border-radius:3px;background-color:#fff;box-shadow:0 6px 12px 0 rgba(0,0,0,.3);position:absolute;top:0;left:0;font-family:Open Sans,sans-serif;padding:10px 0;line-height:1.2;z-index:9999999999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;box-sizing:border-box;text-align:left}.wt-sky-dialog__transcr{font-size:13px;margin:0 12px 10px}.wt-sky-dialog__transcr-text{display:inline-block;color:#999;vertical-align:top}.wt-sky-dialog__transcr-text:after,.wt-sky-dialog__transcr-text:before{content:"/"}.wt-sky-dialog__transcr-pronounce{display:inline-block;margin-left:5px;cursor:pointer;width:19px;height:16px;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxOSAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+MUJEREIyQUItRDY0NS00NDNDLTk1MjYtMEYzMEE3RDNBNkNDPC90aXRsZT48cGF0aCBkPSJNMTIuOTkgMy43NTlhLjc4MS43ODEgMCAwIDAtLjYwNC4yMzNsLS4xMDQuMTA4YS44MDMuODAzIDAgMCAwLS4wNTYgMS4wNjkgNC42MDEgNC42MDEgMCAwIDEgMS4wMzEgMi45MjcgNC42MzUgNC42MzUgMCAwIDEtLjkwOCAyLjc2NS44MDIuODAyIDAgMCAwIC4wNzYgMS4wNDFsLjEwNS4xMDdjLjE1LjE1LjM1My4yMzQuNTYyLjIzNGwuMDU4LS4wMDJhLjgxLjgxIDAgMCAwIC41OC0uMzE5IDYuMzY1IDYuMzY1IDAgMCAwIDEuMjY2LTMuODI3IDYuMzM2IDYuMzM2IDAgMCAwLTEuNDMyLTQuMDQ0Ljc5Mi43OTIgMCAwIDAtLjU3NC0uMjkyem0zLjQzOC0yLjQ3NWExMC4zMDQgMTAuMzA0IDAgMCAxIC4xNjggMTMuNDI2Ljc5Ni43OTYgMCAwIDEtLjU3NC4yODJsLS4wMzIuMDAxYS43OTcuNzk3IDAgMCAxLS41NjItLjIzM2wtLjEwNC0uMTA0YS44LjggMCAwIDEtLjA0NS0xLjA3OSA4LjU2MyA4LjU2MyAwIDAgMCAxLjk4Ni01LjQ4MiA4LjUzNCA4LjUzNCAwIDAgMC0yLjEyOC01LjY0NS44MDIuODAyIDAgMCAxIC4wMzEtMS4wOTRsLjEwNC0uMTA1YS43OTUuNzk1IDAgMCAxIDEuMTU2LjAzM3pNOCAzLjE2M3Y5LjY3NGwtMi42ODUtMi4zNDRBMiAyIDAgMCAwIDQgMTBIMlY2aDJjLjQ4NCAwIC45NTEtLjE3NSAxLjMxNS0uNDkzTDggMy4xNjN6TTguOTY4IDBjLS4yMzYgMC0uNDY5LjA4MS0uNjU4LjIzOEw0IDRIMWMtLjU2OSAwLTEgLjQzLTEgMXY2YzAgLjU3LjQzMSAxIDEgMWgzbDQuMzEgMy43NjJhMS4wMjUgMS4wMjUgMCAwIDAgMS4wOTcuMTM5Yy4zNjMtLjE2OS41OTMtLjUzMy41OTMtLjkzM1YxLjAzM0ExLjAzMSAxLjAzMSAwIDAgMCA4Ljk2OCAweiIgZmlsbD0iIzVkOWNlYyIgZmlsbC1ydWxlPSJldmVub2RkIiAvPjwvc3ZnPg==);background-repeat:no-repeat;background-position:50%;background-size:19px 16px}.wt-sky-dialog__transcr-pronounce:hover{opacity:.8}.wt-sky-dialog__translations{margin-bottom:15px}.wt-sky-dialog__translations-list{list-style:none;padding:0;margin:0 0 15px;color:#333}.wt-sky-dialog__translation-item{padding:0 12px;margin:0;display:block;max-width:100%;box-sizing:border-box;font-family:Open Sans,sans-serif;font-size:13px;line-height:24px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;cursor:pointer}.wt-sky-dialog__translation-item--active{background-color:rgba(93,156,236,.15);padding-right:35px;font-weight:600;position:relative}.wt-sky-dialog__translation-item--added{background-color:#f5f5f5;padding-right:35px;font-weight:600;position:relative}.wt-sky-dialog__translation-add-to-dict{position:absolute;top:5px;right:12px;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAC4AAAAgCAMAAABabbp1AAAA21BMVEVHcExdnOxqqv9ene1zov9enexenO1fn/9dnu5inP9enexenOxdnOxhne5dnOxenu1enOxdnOxenOyqqv9enOxenO5gnu9dnOxdnOxto+xdnOxhnexdofFenOx///9dnOxdnexdnO1kou9fn/Jenexdne1dnOxdnO1enexdnexmqu5dnexdnOxdnu1dnOxdnO1dnO1dnOxdnexdnOxgnvFfn+9dnO1enO9gnuxenexdnOxdnOxdnOxenOxenexinPFgnu1fnO5eoOxdnOxfn/RdnO5dnexenexdnOxf+EPKAAAASHRSTlMA9wySC2GPCE8Nxn/qL/5ktf2HA+E+Mvr2DuIqJrgC/IjjIShRg9HIla8Pi/tK88m60KebJSCqQUWa0ra9s14nHVsb+RhdcHEFzeyuAAABAklEQVQ4y9XUxW7EMBgE4AnDMjMzlpl53v+JekgrJ1bcrLSX7Zys+T9ZliUbiIS15myx2niQ4m1Wi1mzRqlmkLX/tRTl8tNf/wziOcntfBRUo/lWtEpO9mwd0O1euIvhjdZ4MiVJDlx3QJKcTsathoIDANp97XdHrd+OzsQyVA07ge4M5a1iOboGSRpdqLniaAfKKeU/8YO6yL24EuzFw1UxV3Fk4FRyRfVbrectR3DHyteTnnY6ZQbcTKV3+gnKLkm65T9+gvfnzNWL7WuU8nZkPF5XL14RG/PjuCBs4d7ykJDz02yAs5dPSRYAkDkhydvqThiA/kDeJR5DpHRzVoo237sIk0U0PHvQAAAAAElFTkSuQmCC);background-repeat:no-repeat;background-position:50%;background-size:23px 16px;width:23px;height:16px}.wt-sky-dialog__img{width:144px;height:108px;background-size:144px;border-radius:2px;margin:12px 12px 0}.wt-sky-dialog__translation-item--added .wt-sky-dialog__translation-add-to-dict{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjMuMDEzIDBBMTkuMjQgMTkuMjQgMCAwIDAgMTIgMy43NSAxOS4yMzYgMTkuMjM2IDAgMCAwIC45ODcgMEgwdjE5LjU3MmguOTg3YzMuMTA0LjAxNSA2LjE0My44ODggOC43ODIgMi41MjEuNDc2LjM1Mi45MjcuNzM2IDEuMzUgMS4xNDhsLjgzMS43NTloLjFsLjgzNS0uNzVjLjQyNC0uNDEzLjg3NS0uNzk3IDEuMzUtMS4xNDlhMTYuODUzIDE2Ljg1MyAwIDAgMSA4Ljc4NC0yLjUySDI0VjBoLS45ODd6TTEwLjUgMTkuNUExNC41NjUgMTQuNTY1IDAgMCAwIDMgMTYuOFYzYzQuMTc1LjMxNSA2LjAyMSAxLjU0NSA3LjUgM3YxMy41ek0yMSAxNi44Yy0yLjcwMi4xODUtNS4zIDEuMTItNy41IDIuN1Y2YzEuNDc3LTEuNDU1IDMuMzI1LTIuNjg1IDcuNS0zdjEzLjh6IiBmaWxsPSIjY2NjIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIC8+PC9zdmc+);background-size:16px 16px;width:16px;height:16px}.wt-sky-dialog__translation-item--added .wt-sky-dialog__translation-add-to-dict:hover{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOSAxTDEgOW04IDBMMSAxIiBzdHJva2U9IiNGNjYiIHN0cm9rZS13aWR0aD0iMiIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+);background-size:8px 8px;background-position:50%}</style><style type="text/css">.wt-sky-long-dialog{padding:10px 12px 15px;max-width:360px;max-height:270px;border-radius:3px;font-family:Open Sans,sans-serif;color:#333;background-color:#fff;box-shadow:0 6px 12px 0 rgba(0,0,0,.3);position:absolute;top:0;left:0;z-index:9999999999;-webkit-user-select:all;-moz-user-select:all;-ms-user-select:all;user-select:all;box-sizing:border-box;overflow-y:auto;font-size:18px;text-align:left}.wt-sky-long-dialog--small-font{font-size:13px}</style><style type="text/css">.wt-sky-modal-open{overflow:hidden}.wt-sky-modal-wrap{z-index:9999999999;position:fixed;left:0;top:0;width:100%;height:100%;overflow:auto;background-color:hsla(0,0%,100%,.8)}.wt-sky-modal{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-smoothing:antialiased;width:350px;position:fixed;left:50%;top:50%;-webkit-transform:translate(-50%,-50%);transform:translate(-50%,-50%);border-radius:6px;background-color:#5d9cec;box-shadow:0 0 20px 0 rgba(0,0,0,.2);box-sizing:border-box;padding:10px 15px 15px;font-family:Open Sans,sans-serif;font-size:16px;font-weight:600;line-height:1.38;color:#fff;text-shadow:1px 1px 0 rgba(0,0,0,.1)}.wt-sky-modal__close{position:absolute;right:10px;top:10px;width:10px;height:10px;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNLjc1Ljc1bDguNSA4LjVtLTguNSAwbDguNS04LjUiIHN0cm9rZT0iI0ZGRiIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==);background-repeat:no-repeat;background-position:0 0;background-size:10px 10px;opacity:.6;cursor:pointer}.wt-sky-modal__head{font-size:22px;font-weight:600;line-height:1.36;color:#fff;text-shadow:1px 1px 0 rgba(0,0,0,.1);margin-bottom:5px}.wt-sky-modal__register-call{background-image:url(data:image/png;base64,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);background-repeat:no-repeat;background-position:0 0;background-size:236px 72px;width:236px;height:72px;margin-top:28px;margin-bottom:33px}.wt-sky-modal__register-buttons{margin-top:18px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-align:center;-ms-flex-align:center;align-items:center}.wt-sky-modal__button-login{display:inline-block;box-sizing:border-box;font-size:16px;font-weight:600;text-align:center;color:#333;width:126px;height:36px;border-radius:66px;background-image:linear-gradient(180deg,#fff,#f5f5f5);box-shadow:inset 0 -1px 0 0 rgba(0,0,0,.07);cursor:pointer;margin-right:18px;padding-top:6px;text-shadow:none}.wt-sky-modal__button-register{display:inline-block;width:65px;cursor:pointer;font-size:15px;font-weight:600;text-decoration:underline}</style><style type="text/css">.wt-sky-dictionary-page{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-smoothing:antialiased;margin:0;padding:0;font-family:Open Sans,sans-serif;font-size:16px;color:#333;background-color:#fafafa}.wt-sky-dictionary-page h1,.wt-sky-dictionary-page h2{font-weight:300;margin:0;padding:0}.wt-sky-dictionary-page h1{font-size:36px}.wt-sky-dictionary-page h2{font-size:30px}.wt-sky-dictionary-page form{margin:0}.wt-sky-dictionary-page .header{height:45px;background-color:#4a89dc}.wt-sky-dictionary-page .logo{width:228px;height:45px;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcgAAAA6CAMAAAADUjl+AAAC/VBMVEVHcEz///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9QdgzTAAAA/nRSTlMAAzflMHb9mTQc7hEUvA4MAnDingHgJPv8LtgJhPAIQPUeLciYlNMS/gZMDwQb9mf5LKT6+FTG9AvyHwUY0F3BWx0NIBn3XJKMCui+ejYHf95u7EawzNwylsudrykQgxXz7+uVqGrVFm1Bx9aLJuqho+TjJxc9jellkEgi31qlxWxEGjsTQihRj3IzS9HK4fE1JXSptXtJKrjEm8PCrbPa23WscWg6kVI4qs/tv7o/Y2C2sZMjol590ucrgEqmTlauionZMWKfTYd3Rde5ZFhpOY7mglen1LvNlz5Dmi9PyXO0nFlQfkdhfF+Ib6trec6Bsrc8wCFmeIXdVYagvT6T9vYAAA2HSURBVHja7Z13XBXHFscPiPdehQh4QS4dDVW60hQUC0VAFAuIBRU79t57792o0VgTjd2oSUxRE018lhc1mt5778nLy2u/z/tjZ3Zn9+4FUQgR7/lr98y5s3P2u1POmeED0f0gzoHDbmUba7XcDxgjs4KNtV6q/S26eUsS7VFTHL2zjcWxjhMDavO3elsgM5KSkjrf8SMagEn/jjXjY1mw8frQ2j7o3BbI9gCa3T1I4FyN9Mfg4Om1f/b4c0H2ron5Mdt4H3D8k0EerAEPs4yDyQ6yikH61EDcEVw81A6SSaf8/PxT9yjIQGMs2UFWiXj06xffs8ZADjM62kFWnWyqMZC3jGl2kFUndWsMZLYxwA6yNoC8P3KQNQTSuc/R5dFRtq3dXPq8c6NRpB1k5fwMiF880U230GVCfA61j4+PH+XLNNHx8fET+A0FXPvPiTfyem2KF37T+PuTb4Z2v/RUD1sgT430AQDEbXylgd5DG7k/ESRZ545t7SwULAkJCQnJ7jsrRdA9u7tDSEhISIizHaSRnACMP25d1O0qgAX0dyknI72qhwEgfE8JEVHU1PEsqjDMXsd+M3RfAg81NjhbgxxBEUubK9FIbmurh/Z53QBBWviFyUUdmM6zj6zy43Zt7SAlkAjvpi0ZFQQBJPYpIIGBRBS/U3zh0st9KlnQNQy0ArlqYRJU0jtC9czUaQZopEUbLUj48CHha9hBakEiSVvSCyqQp0WQV4lu1AcAS+gb0qvfWUJEe8MBIO6tC+EAgMw0LcgfQ7WctvgKj8zYCh05maoBiRclxUR/O0jRz5SzswHApC4ISwBw5rMG1OToomAAXaVuejTQD0B9KgsCDK+uDSBqV9abddJNACwdekQQuU4qBIAOWpA6YlYeGd1Q3+SJKA3I5ouJiGgM7CDVfnocAfC2uqALgG1uSpKtvpyoKQUOdSoAfG4wTUQegFw3JwswgqdRXJ8AkOxSMUg05TbtWtky+UQDEm8SES0It4PU+tkNgL+vqqAVgP3s2kEESXWAm+uBdCXQjhwHYFISsFXRpSQD+EEHZMzJ1ptPtQkZze/H8Wmyu9IF178blvH8Vx/Kio+IiI73/riIKxKJHA6y6+Q5vXu7VApkO5NKvIU1u6/p5Vc7rqjHzZa7EpHH4taT15epoiHRrESuaEaq6jEZX6yfdv1X5XdtlUcu9yWioSbT+w6sLMpkMqUQpZhMPRQOnUwmk6/UXHnlWM9kMgXY9NPNE0CWqF8OIDfVFkj/UtwUM18DARQB40TdGABPWoMcwWKVxm9xDVvNdOP3h17j4eTlOH62YKIwTgBAwxwazC6HRFc6jgzU9PjR8/hoM4xFPgMDmFncZXK6AACwrJd/rzZbolRkODjLQY6M+LpuLP/KpgmPDNpLNBfAFDYguQBwJHIEELOXVxECwElqh9fDkqpkPJDnYdvPzgAOi/piZU2hAxLwmiRar5CmLlV6eh6APCuQSTnyR72RqR6UqK1kt3OEr+H9cUz5Htc0Y4ofUgaw+dKb7hok/+BaHpY1K+sxs/GfZXLdHlddsyWqqrLZdPNTnKwakGUNEjslkNhjBVLOfzWFAhLNpZ49FvBvXI6fjQ1A+Axh6CgFMKEckBfVmQPp01PpoqXWakA+rhi05xHlfLFDJrcUK3meab340BL2DOtEn7OSzlR5kBPMgwB0N5vNZrN5zAD+LUW1AhL8mkS075IMPEI0wZwEZLZA/4HHvjSuATBS16yHuTcAx+hob/dVAALljtD/vesrdu8Jlwe7T82rgJlms9nsA4Bo0cVxQCsVyBnmBwEvSZU2moGcYE6SLogSATxVrp9bAPgp6jYAtlE5INeqanGAta4TgBgtyEdEi2BlwiM6yW66qNs3Wz3+Ep1V96VWqXeUoqvH3wwRnecg/wnEvERERGstEpB/AMDKdUREiy8ACY31zZoAaExENMMAPM0/wO1Sx1jUUOlEl4ENxEZjIiJ3LUiizRykhxT3ORFrhxMRpQ3QvEJrPxMBjFcm/TwAX5cDcpWmmhYAhmt0/QE00ID8VTRoyZRLiYhmStehmmShCxvYBsmasSJHr5forkH6MZDtYwC+CW0EPmZmFpZIetYA9NI3k0FSITCZjRsr+SfWKAj4TbrsK1VBTRnIwdYgG3GQy4ABq1kreXN3AM+4lO9nxGgAD3HtjHBgTU45IJdpqhkHoK9G1xCAswbkQpVFfUn5MxGFQckZqaRQ0u+SFc43BZB9qepAvgIE8RVjIjCTmcmB7hmgQN9MBtnWAvyNiM4BXkqy2R1APT5L7tOAXG0DpFMc0HqmGmQsgBUV+TlZmXiJ+gIIpnJAJupAO6bReVqDLFVbsHMDW4moDyPzqLaBF1mmTtE0VTiGRlQhyKXALncmLwKGAMksS5huLKm6Zgxkyv4HAM8GRHQJ+FCIdsIlvES9gD9EkB8AFqkr99OAzLkKnKFDAsiRH/3XYBXt6/i5GUAc67Zu49WZHmuQN3RAzqsYZE+1xes8la4sJBdoG7iMFeSoAxspIjBRFYI8olnKNpLM5OWZI4BRumZNAGTGxFgAHFlIRPQL8LDwtAI2c1IeMFUEOYpNpZFZPhqQRmBmJPkLIAEAOyIq9nMOABbBTIc8dtsA2VgHZKOKQW5UW4RI2iIieoi1dLO2gcdZgbILQtncrbg+VQlyCLD6AUHCJLOW4pQ+SdesiYK1qAsRUSjwnPC0bYDUiq7AYyJIjzkA0DVX+q0AcglgeYysQfZsULGfLwMIlS6/AzCsXJCuOiAjKwYZqrb4he2JsAQEdMZsGsnCRSUIfkzZIZnjVoUgXwC665jJY8Q70lSnY9YEwLmjR8tmfdJcWrodEFdnRKPZYnw+gBIRJC0ewDMcKpDRh6S4SgTZ+fcQi5Bise1nSgsA+URELnFApnOlQTaoGGSQ2uJfbAdE+OZ+0jZwi6Svo4Q1I4RxbW4VgnwOmKJj9iW/OQYk65spq9Y2gGECUUfVqZYMqSsTTeWBjgySSs6vqh8z4udEcY6Mc/sfsNVBA9KJ6DleUfl+vgc2ArgDmE3VAVKK/WUkFkk5hohSY6TrF7QNrKMsiJSFmLJb2bbqQO4HX5OozNL5zQPAW/pmCki3ZGCqNFF8Khe/DRjasSF2mQakmFLhIFt8BPi3JGuQOeOB0w4V+pkPFnOcBrCoekDuFg14bus6SSESACQsVlfyGrP5iiu8m6uWGhurDmSAD5Dbj+d58+W5qUzSXGHN1zFTQDpkArFEUR8CAzKYzaJw4FUioh7h6J92GyDXBAHXSAcktbHOmOj5GSrlf9YCKPKoHpC5whZLlA9TPkskxUgAsE315LApTM0zqg4sZEk2s4JZVQFyiDz5Fn1BREQ9ema25CD95xERPV8KFEXomykgX2H1jgoCppwlInLbnQCEdiKiqINAXboNkGyQkkBOEpvrMRzwf8ijIj+/lQaSYAAdqXpAwl0pf5SpbnoQEU1kGwr4XqzjSWhWSeuZwi+MHQ8YvfBuQd4CULCdx9Io7PV5syEG4AAzawGvvD8uHTYA+EAJuVVmTQA0u3Zt1t4XDMB2B/m7PNir84YCADHvE0XWfRBAUnp6enp6eiiALctSbIIsaidnTEpPOwrNzQ8HsHpZBX4uTADQNqoUsMyvLpBeL8vxNSe3Se4Y0lbQZHm7Le0E/xnPOZ1iU6lniryNNfZuQZ4FPwDhMVU5PNLzcb7YWcPnYz7rWZkttAg5CjbqdvOUVb81IqLfrffL29gC6ZXPtEcA4F2xucWQk/fl+DkIQOw7AHZQdYEE+roSEZUUyztzLEJsx0dRXJ3nS0RU0rqr6kQAEXnkMcUKIrfh7Hr6XYL0bVafn2Sh6A1dAaB5q2Nustm67gYAzdPXCTs7ajMaKUURyUN2JMoBkeu0cQBg8In1sEoRSxJsC6Q8Hl6ZY9CATD0QdBsg5wHofkkZQ6oFJAyhn1wcoRzTkFvdzUvWWYaceaRA+UUdvjadyhTfERF5M3tP18qDLEcyus3yTlXznn+l9fKIcsxsSVhglslX6SSqHbfzquNKVXXUg3/wM4H+F4BnoqxBJvjeCch1OiDVcliJ6WNtmPTnWxzz2ZC2RloQfgPxpGZVgbTVce9SBgGqU7yPVidIelp6M99ojDwsAE4Mm3ulUiB3AdjuPjdRAOlpBalAPKhR16LH8VAZL+enetifIOewTmt43A5S42c9Kfu1Tmu1WnpjzSoFks1nwwWQXbprIK3MUP1kUa41x0I52XmOaYbzTjydKd6IsIPU+LkRYi5DlqV3AnKuNchvo/zEo+SGXtr8bFpxghpj146dtDGll7d2+6S88x5/FZDtXFw6ifcBLi6u1QhyP6D5cqQV2OQCr0qDjOq4M0ED0p3INJufSso80UOnQdEddskUw3+87Gq9e3VeUU0sZdsgm//yIKtbauD87tB/1w0+MPDpz1JsGbQ83jlkw+xpm17rV9MODi0sLBxlB2l30O6n3cFKSoAx2w6yNkia8ZYdZG0QR+MwO8jaILHGQDvIWiBDi4Od7SBrgQw2ZtmX5bVAphv3RdpB1gaOwd72QPnenx8HG4PLyA7y3s4DTHSMLTZm1/7+SFT7/01EcFYk2UHe45Ldd1ggjzv+D3HxmIkRm9JBAAAAAElFTkSuQmCC);background-repeat:no-repeat;background-position:0;background-size:228px 29px;background-color:transparent}.wt-sky-dictionary-page .container{position:relative;max-width:990px;margin:0 auto;padding:0 10px}.wt-sky-dictionary-page .page{font-weight:300;padding-bottom:48px}.wt-sky-dictionary-page .page__button{height:26px;width:30px;border-radius:4px;background-image:linear-gradient(180deg,#fff,#f5f5f5);border:1px solid #ddd;color:#333;font-size:14px;display:inline-block;padding:4px 10px;line-height:1;box-sizing:border-box;cursor:pointer;margin:0 5px;position:relative;top:2px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.wt-sky-dictionary-page .page__button:first-child{margin-left:0}.wt-sky-dictionary-page .page__button:last-child{margin-right:0}.wt-sky-dictionary-page .page__button:active{box-shadow:inset 0 0 3px 0 rgba(0,0,0,.3)}.wt-sky-dictionary-page .page__button--primary{background-image:linear-gradient(180deg,#5d9cec,#4a89dc);color:#fff;font-weight:600}.wt-sky-dictionary-page .page__button--primary,.wt-sky-dictionary-page .page__button--secondary{background-size:100%;background-repeat:no-repeat;background-position:50%;width:auto;box-shadow:inset 0 -1px 0 0 rgba(0,0,0,.07)}.wt-sky-dictionary-page .page__button--secondary{background-image:linear-gradient(180deg,#fff,#f5f5f5)}@media print{.wt-sky-dictionary-page{-webkit-print-color-adjust:exact}.wt-sky-dictionary-page .header{display:none}.wt-sky-dictionary-page .container{max-width:100%;margin:0;padding:0}}@media print{.wt-sky-dictionary-page .page__header{margin-top:0;line-height:1}.wt-sky-dictionary-page .page__header-button{display:none}.wt-sky-dictionary-page .page__title-link{padding-left:0;background:#fff!important}.wt-sky-dictionary-page .word-list__word{width:50%}.wt-sky-dictionary-page .word-list__word-text-list{display:none}.wt-sky-dictionary-page .word-list__word-text-inner{left:0}}</style><style type="text/css">.wt-sky-hint{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-smoothing:antialiased;padding:5px;position:absolute;z-index:9999999990;cursor:default;-webkit-animation:.15s fadeIn;animation:.15s fadeIn}.wt-sky-hint__arrow{content:"";width:0;height:0;margin:auto;display:block;position:absolute;top:0;left:0;right:0;bottom:0;border:5px solid transparent}.wt-sky-hint__content{border-radius:3px;background-color:rgba(51,51,51,.85);padding:1px 7px 2px;font-family:Open Sans,sans-serif;font-size:13px;text-align:center;color:#fff}.wt-sky-hint--top .wt-sky-hint__arrow{top:auto;border-bottom:none;border-top-color:rgba(51,51,51,.85)}.wt-sky-hint--left .wt-sky-hint__arrow{left:auto;border-right:none;border-left-color:rgba(51,51,51,.85)}.wt-sky-hint--right .wt-sky-hint__arrow{right:auto;border-left:none;border-right-color:rgba(51,51,51,.85)}.wt-sky-hint--bottom .wt-sky-hint__arrow{bottom:auto;border-top:none;border-bottom-color:rgba(51,51,51,.85)}@-webkit-keyframes fadeIn{0%{opacity:0}to{opacity:1}}@keyframes fadeIn{0%{opacity:0}to{opacity:1}}</style><style type="text/css">.wt-sky-dictionary-page .page__header{position:relative;margin-top:40px;font-size:30px;line-height:1.33}.wt-sky-dictionary-page .page__header--loading{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIiBjbGFzcz0idWlsLWRlZmF1bHQiPjxwYXRoIGZpbGw9Im5vbmUiIGNsYXNzPSJiayIgZD0iTTAgMGgxMDB2MTAwSDB6Ii8+PHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iMTAiIHJ5PSIxMCIgZmlsbD0iIzRhODlkYyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtMzApIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiBmcm9tPSIxIiB0bz0iMCIgZHVyPSIxLjJzIiBiZWdpbj0iMHMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0PjxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjEwIiByeT0iMTAiIGZpbGw9IiM0YTg5ZGMiIHRyYW5zZm9ybT0icm90YXRlKDMwIDEwNS45OCA2NSkiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIGZyb209IjEiIHRvPSIwIiBkdXI9IjEuMnMiIGJlZ2luPSIwLjA5OTk5OTk5OTk5OTk5OTk5cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz48L3JlY3Q+PHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iMTAiIHJ5PSIxMCIgZmlsbD0iIzRhODlkYyIgdHJhbnNmb3JtPSJyb3RhdGUoNjAgNzUuOTggNjUpIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiBmcm9tPSIxIiB0bz0iMCIgZHVyPSIxLjJzIiBiZWdpbj0iMC4xOTk5OTk5OTk5OTk5OTk5OHMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0PjxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjEwIiByeT0iMTAiIGZpbGw9IiM0YTg5ZGMiIHRyYW5zZm9ybT0icm90YXRlKDkwIDY1IDY1KSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgZnJvbT0iMSIgdG89IjAiIGR1cj0iMS4ycyIgYmVnaW49IjAuM3MiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0PjxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjEwIiByeT0iMTAiIGZpbGw9IiM0YTg5ZGMiIHRyYW5zZm9ybT0icm90YXRlKDEyMCA1OC42NiA2NSkiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIGZyb209IjEiIHRvPSIwIiBkdXI9IjEuMnMiIGJlZ2luPSIwLjM5OTk5OTk5OTk5OTk5OTk3cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz48L3JlY3Q+PHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iMTAiIHJ5PSIxMCIgZmlsbD0iIzRhODlkYyIgdHJhbnNmb3JtPSJyb3RhdGUoMTUwIDU0LjAyIDY1KSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgZnJvbT0iMSIgdG89IjAiIGR1cj0iMS4ycyIgYmVnaW49IjAuNXMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0PjxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjEwIiByeT0iMTAiIGZpbGw9IiM0YTg5ZGMiIHRyYW5zZm9ybT0icm90YXRlKDE4MCA1MCA2NSkiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIGZyb209IjEiIHRvPSIwIiBkdXI9IjEuMnMiIGJlZ2luPSIwLjZzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIvPjwvcmVjdD48cmVjdCB4PSI0Ni41IiB5PSI0MCIgd2lkdGg9IjciIGhlaWdodD0iMjAiIHJ4PSIxMCIgcnk9IjEwIiBmaWxsPSIjNGE4OWRjIiB0cmFuc2Zvcm09InJvdGF0ZSgtMTUwIDQ1Ljk4IDY1KSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgZnJvbT0iMSIgdG89IjAiIGR1cj0iMS4ycyIgYmVnaW49IjAuNzAwMDAwMDAwMDAwMDAwMXMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0PjxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjEwIiByeT0iMTAiIGZpbGw9IiM0YTg5ZGMiIHRyYW5zZm9ybT0icm90YXRlKC0xMjAgNDEuMzQgNjUpIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiBmcm9tPSIxIiB0bz0iMCIgZHVyPSIxLjJzIiBiZWdpbj0iMC43OTk5OTk5OTk5OTk5OTk5cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz48L3JlY3Q+PHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iMTAiIHJ5PSIxMCIgZmlsbD0iIzRhODlkYyIgdHJhbnNmb3JtPSJyb3RhdGUoLTkwIDM1IDY1KSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgZnJvbT0iMSIgdG89IjAiIGR1cj0iMS4ycyIgYmVnaW49IjAuODk5OTk5OTk5OTk5OTk5OXMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0PjxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjEwIiByeT0iMTAiIGZpbGw9IiM0YTg5ZGMiIHRyYW5zZm9ybT0icm90YXRlKC02MCAyNC4wMiA2NSkiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIGZyb209IjEiIHRvPSIwIiBkdXI9IjEuMnMiIGJlZ2luPSIxcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz48L3JlY3Q+PHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iMTAiIHJ5PSIxMCIgZmlsbD0iIzRhODlkYyIgdHJhbnNmb3JtPSJyb3RhdGUoLTMwIC01Ljk4IDY1KSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgZnJvbT0iMSIgdG89IjAiIGR1cj0iMS4ycyIgYmVnaW49IjEuMDk5OTk5OTk5OTk5OTk5OXMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0Pjwvc3ZnPg==);background-size:20px 20px;background-color:transparent;background-repeat:no-repeat;background-position:181px 11px}.wt-sky-dictionary-page .page__header-title{font-family:Fira Sans,sans-serif}.wt-sky-dictionary-page .page__header-button--add{background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSI2NSIgdmlld0JveD0iMCAwIDE2IDY1Ij48c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTYiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgLTIgMTYgMTIiPjxyZWN0IHg9IjEwIiB5PSIxMTkiIHdpZHRoPSIxNiIgaGVpZ2h0PSIyIiByeD0iMSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTEwIC0xMTkpIiBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz48c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTYiIGhlaWdodD0iMjYiIHZpZXdCb3g9IjAgLTEwIDE2IDI2IiB5PSIxMiI+PGcgZmlsbD0iI2ZmZiIgZmlsbC1ydWxlPSJldmVub2RkIj48cmVjdCB5PSI3IiB3aWR0aD0iMTYiIGhlaWdodD0iMiIgcng9IjEiLz48cmVjdCB4PSI3IiB3aWR0aD0iMiIgaGVpZ2h0PSIxNiIgcng9IjEiLz48L2c+PC9zdmc+PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB5PSI1NCIgeD0iMyI+PHBhdGggZD0iTTQgNEguOTk1Qy40NTUgNCAwIDQuNDQ4IDAgNWMwIC41NTYuNDQ2IDEgLjk5NSAxSDR2My4wMDVjMCAuNTQuNDQ4Ljk5NSAxIC45OTUuNTU2IDAgMS0uNDQ2IDEtLjk5NVY2aDMuMDA1Yy41NCAwIC45OTUtLjQ0OC45OTUtMSAwLS41NTYtLjQ0Ni0xLS45OTUtMUg2Vi45OTVDNiAuNDU1IDUuNTUyIDAgNSAwYy0uNTU2IDAtMSAuNDQ2LTEgLjk5NVY0eiIgZmlsbD0iI0ZGRiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+PC9zdmc+),linear-gradient(180deg,#5d9cec,#4a89dc);background-size:16px auto,100%;background-repeat:no-repeat;background-position:3px -47px,50%;width:auto;padding-left:21px;color:#fff;top:-6px;font-weight:600;box-shadow:inset 0 -1px 0 0 rgba(0,0,0,.07)}.wt-sky-dictionary-page .page__header-button--print{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTQiIHZpZXdCb3g9IjAgMCAxNiAxNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+MjAyQUI3NzMtOEM0Ny00NTdGLTgzNUQtRkI5MDk5NUZDMzAyPC90aXRsZT48cGF0aCBkPSJNNCAwaDh2Mkg0em0xMSAzSDFjLS41NSAwLTEgLjQ1LTEgMXY1YzAgLjU1LjQ1IDEgMSAxaDN2NGg4di00aDNjLjU1IDAgMS0uNDUgMS0xVjRjMC0uNTUtLjQ1LTEtMS0xek0yIDZhMSAxIDAgMSAxIDAtMiAxIDEgMCAwIDEgMCAyem05IDdINVY4aDZ2NXoiIGZpbGw9IiMzMzMiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==),linear-gradient(180deg,#fff,#f5f5f5);background-size:16px 14px,100%;background-repeat:no-repeat;background-position:50%;margin-left:5px}.wt-sky-dictionary-page .page__header-button--download{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTQiIHZpZXdCb3g9IjAgMCAxMiAxNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTEuNjQzIDUuMzU3QzExLjg0IDUuMTYgMTEuNzg1IDUgMTEuNTEgNUg4LjQ5QS40OS40OSAwIDAgMSA4IDQuNTAyVi40OThBLjQ5MS40OTEgMCAwIDAgNy41MSAwSDQuNDlBLjQ5LjQ5IDAgMCAwIDQgLjQ5OHY0LjAwNEEuNDkxLjQ5MSAwIDAgMSAzLjUxIDVILjQ5Yy0uMjcgMC0uMzMuMTYtLjEzMy4zNTdsNS4yODYgNS4yODZhLjUwNi41MDYgMCAwIDAgLjcxNCAwbDUuMjg2LTUuMjg2ek0uNSAxMmMtLjI3NiAwLS41LjIxNC0uNS41MDV2Ljk5YzAgLjI3OS4yMjkuNTA1LjUuNTA1aDExYy4yNzYgMCAuNS0uMjE0LjUtLjUwNXYtLjk5YS41MDYuNTA2IDAgMCAwLS41LS41MDVILjV6IiBmaWxsPSIjMzMzIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=),linear-gradient(180deg,#fff,#f5f5f5);background-size:12px 14px,100%;background-repeat:no-repeat;background-position:50%;margin-left:5px}.wt-sky-dictionary-page .page__header-right{float:right;position:relative;font-size:14px;line-height:3;text-align:right}.wt-sky-dictionary-page .page__header-group{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;margin-top:25px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;font-size:14px}.wt-sky-dictionary-page .page__heder-group-item{background-image:linear-gradient(180deg,#fff,#f5f5f5);text-align:center;padding:2px 5px 3px;border-top:1px solid #ddd;border-bottom:1px solid #ddd;border-right:1px solid #ddd;cursor:pointer;width:120px;box-sizing:border-box}.wt-sky-dictionary-page .page__heder-group-item:first-child{border-left:1px solid #ddd;border-top-left-radius:4px;border-bottom-left-radius:4px}.wt-sky-dictionary-page .page__heder-group-item:last-child{border-top-right-radius:4px;border-bottom-right-radius:4px}.wt-sky-dictionary-page .page__heder-group-item--active{font-weight:600;text-align:center;text-shadow:1px 1px 0 rgba(0,0,0,.1);color:#fff;background-color:#999;background-image:none;cursor:default}.wt-sky-dictionary-page .page__heder-group-item--disabled{color:#999;background-color:#f5f5f5;background-image:none;cursor:not-allowed}.wt-sky-dictionary-page .page__header-option{cursor:pointer}.wt-sky-dictionary-page .page__header-option:before{content:"";display:inline-block;position:relative;top:4px;margin-right:7px;width:18px;height:18px;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RjU0MjI0NzctNDE0Qy00MDk1LTk5NDgtRDE5QkQ3NDE4QTREPC90aXRsZT48cGF0aCBkPSJNMTYgMnYxNEgyVjJoMTR6bTAtMkgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnoiIGZpbGw9IiM5OTk5OTkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgLz48L3N2Zz4=);background-repeat:no-repeat;background-position:50%;background-size:18px}.wt-sky-dictionary-page .page__header-option--checked:before{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MTUtMS40MTVMNyAxMS4xN2w3LjU4NS03LjU4NUwxNiA1bC05IDl6IiBmaWxsPSIjNWQ5Y2VjIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIC8+PC9zdmc+)}.wt-sky-dictionary-page .page__header-button.page__header-button--add{margin-left:25px}</style><style type="text/css">.wt-sky-dictionary-page .tooltip-change-title{padding:12px}.wt-sky-dictionary-page .tooltip-change-title__form{display:-webkit-box;display:-ms-flexbox;display:flex}.wt-sky-dictionary-page .tooltip-change-title__input-title{border-radius:2px;background-color:#fff;border:1px solid #ddd;font-family:Open Sans,sans-serif;font-size:15px;padding:3px 0 5px 9px;margin-right:5px;width:300px}.wt-sky-dictionary-page .tooltip-change-title__submit{width:30px;height:30px;border-radius:4px;box-shadow:inset 0 -1px 0 0 rgba(0,0,0,.07);background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTUiIHZpZXdCb3g9IjAgMCAxNiAxNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNNS4xNTYgMTVMMCA4Ljc4OGwxLjA1Ny0xLjEzOSAzLjY2OCAyLjU1NlM5LjM5NiA0LjIyNyAxNC44OTggMGMuNTY2LjU3LjY3LjcxOCAxLjEwMiAxLjE2NEM5Ljk2NiA3LjA2NCA1LjE1NiAxNSA1LjE1NiAxNSIgZmlsbD0iI0ZGRiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+),linear-gradient(180deg,#5d9cec,#4a89dc);background-size:16px 15px,100%;background-repeat:no-repeat;background-position:50%,50%;border:0;cursor:pointer}</style><style type="text/css">.wt-sky-dictionary-page .tooltip-modal{position:absolute;background-color:#fff;box-shadow:0 6px 12px 0 rgba(0,0,0,.15);border:1px solid hsla(0,0%,60%,.2);border-radius:6px;z-index:1}.wt-sky-dictionary-page .tooltip-modal:after,.wt-sky-dictionary-page .tooltip-modal:before{bottom:100%;left:20px;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none}.wt-sky-dictionary-page .tooltip-modal:after{border-bottom-color:#fff;border-width:6px;margin-left:-6px}.wt-sky-dictionary-page .tooltip-modal:before{border-bottom-color:hsla(0,0%,60%,.2);border-width:7px;margin-left:-7px}</style><style type="text/css">.wt-sky-dictionary-page .word-sets{margin-top:35px}.wt-sky-dictionary-page .word-sets--all,.wt-sky-dictionary-page .word-sets--url{margin-top:0}.wt-sky-dictionary-page .word-sets--empty{padding:15px;font-size:20px;text-align:center;border-radius:4px;background-color:#fff;box-shadow:0 1px 2px 0 rgba(0,0,0,.1)}.wt-sky-dictionary-page .word-sets__group{margin-bottom:45px}.wt-sky-dictionary-page .word-sets__group-title{margin-top:0;font-family:Fira Sans,sans-serif;font-size:22px;line-height:32px}.wt-sky-dictionary-page .word-sets__group-total{color:#999;margin-bottom:15px}</style><style type="text/css">.wt-sky-dictionary-page .word-set{border-radius:4px;background-color:#fff;box-shadow:0 1px 2px 0 rgba(0,0,0,.1);padding-bottom:15px;margin-bottom:15px}.wt-sky-dictionary-page .word-set__header{padding:15px 15px 0;height:36px;box-sizing:border-box;margin-bottom:15px}.wt-sky-dictionary-page .word-set__header-toolbar{background-color:#5d9cec;box-shadow:0 1px 2px 0 rgba(0,0,0,.1);padding:9px 20px;height:36px;border-radius:4px 4px 0 0;box-sizing:border-box;overflow:hidden;color:#fff;font-size:14px;font-weight:600;margin-bottom:15px;-webkit-animation:showToolbar .1s linear forwards;animation:showToolbar .1s linear forwards}.wt-sky-dictionary-page .word-set__header-toolbar--sticky{position:-webkit-sticky;position:sticky;top:0;z-index:1}.wt-sky-dictionary-page .word-set__header-toolbar-button{margin-right:20px;background-repeat:no-repeat;background-position:0;background-size:18px auto;display:inline-block;padding-left:26px;cursor:pointer}.wt-sky-dictionary-page .word-set__header-toolbar-button--select{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MTUtMS40MTVMNyAxMS4xN2w3LjU4NS03LjU4NUwxNiA1bC05IDl6IiBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIC8+PC9zdmc+)}.wt-sky-dictionary-page .word-set__header-toolbar-button--unselect{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RjU0MjI0NzctNDE0Qy00MDk1LTk5NDgtRDE5QkQ3NDE4QTREPC90aXRsZT48cGF0aCBkPSJNMTYgMnYxNEgyVjJoMTR6bTAtMkgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnoiIGZpbGw9IiNmZmYiIGZpbGwtcnVsZT0iZXZlbm9kZCIgLz48L3N2Zz4=)}.wt-sky-dictionary-page .word-set__header-toolbar-button--move{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgxLjk5Qy44OCAwIC4wMS45LjAxIDJMMCAxNmMwIDEuMS44OCAyIDEuOTkgMkgxNmMxLjEgMCAyLS45IDItMlYyYzAtMS4xLS45LTItMi0yem0wIDEyaC00YzAgMS42Ni0xLjM1IDMtMyAzcy0zLTEuMzQtMy0zSDEuOTlWMkgxNnYxMHptLTMtNGgtMnYzSDdWOEg1bDQtNCA0IDR6IiBmaWxsPSIjRkZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=)}.wt-sky-dictionary-page .word-set__header-toolbar-button--delete{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNCAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMyAxSDEuMDA3Qy40NSAxIDAgMS40NDggMCAyYzAgLjU1Ni40NSAxIDEuMDA3IDFoMTEuOTg2QzEzLjU1IDMgMTQgMi41NTIgMTQgMmMwLS41NTYtLjQ1LTEtMS4wMDctMUgxMWMwLS41NTYtLjQ0Ni0xLS45OTctMUgzLjk5N0MzLjQ1MyAwIDMgLjQ0OCAzIDF6TTEuMDg0IDUuMDAyQS45MTIuOTEyIDAgMCAxIDIuMDAyIDRoOS45OTZjLjU1MyAwIC45NjQuNDU2LjkxOCAxLjAwMmwtLjgzMiA5Ljk5NmMtLjA0Ny41NTMtLjU0IDEuMDAyLTEuMDggMS4wMDJIMi45OTZjLS41NSAwLTEuMDMzLS40NTYtMS4wNzktMS4wMDJsLS44MzItOS45OTZ6IiBmaWxsPSIjZmZmIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIC8+PC9zdmc+);background-size:14px auto;padding-left:22px}.wt-sky-dictionary-page .word-set__title{color:#777;text-decoration:none;font-size:13px;margin-bottom:12px;margin-right:15px;padding-left:25px;display:inline-block;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjMuMDEzIDBBMTkuMjQgMTkuMjQgMCAwIDAgMTIgMy43NSAxOS4yMzYgMTkuMjM2IDAgMCAwIC45ODcgMEgwdjE5LjU3MmguOTg3YzMuMTA0LjAxNSA2LjE0My44ODggOC43ODIgMi41MjEuNDc2LjM1Mi45MjcuNzM2IDEuMzUgMS4xNDhsLjgzMS43NTloLjFsLjgzNS0uNzVjLjQyNC0uNDEzLjg3NS0uNzk3IDEuMzUtMS4xNDlhMTYuODUzIDE2Ljg1MyAwIDAgMSA4Ljc4NC0yLjUySDI0VjBoLS45ODd6TTEwLjUgMTkuNUExNC41NjUgMTQuNTY1IDAgMCAwIDMgMTYuOFYzYzQuMTc1LjMxNSA2LjAyMSAxLjU0NSA3LjUgM3YxMy41ek0yMSAxNi44Yy0yLjcwMi4xODUtNS4zIDEuMTItNy41IDIuN1Y2YzEuNDc3LTEuNDU1IDMuMzI1LTIuNjg1IDcuNS0zdjEzLjh6IiBmaWxsPSIjY2NjIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIC8+PC9zdmc+);background-repeat:no-repeat;background-position:0;background-size:16px 16px;max-width:860px;overflow-x:hidden;white-space:nowrap;text-overflow:ellipsis}.wt-sky-dictionary-page .word-set__title--link{color:#5d9cec}.wt-sky-dictionary-page .word-set__title--link:hover{text-decoration:underline}.wt-sky-dictionary-page .word-set__title-icon{width:16px;height:16px;cursor:pointer;background-repeat:no-repeat;background-position:50%;opacity:.3;display:inline-block;visibility:hidden;margin-right:12px;position:relative;top:-13px}.wt-sky-dictionary-page .word-set__title-icon:hover{opacity:.4}.wt-sky-dictionary-page .word-set__title-icon--edit{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCAxMi42NjZWMTZoMy4zMzRsOS44MzctOS44MzdMOS44MzcgMi44MyAwIDEyLjY2NnptMTUuNzQtOS4wNzJhLjg5Ljg5IDAgMCAwIDAtMS4yNThMMTMuNjY0LjI2YS44OS44OSAwIDAgMC0xLjI1OCAwTDEwLjc4IDEuODg3bDMuMzM0IDMuMzM0IDEuNjI3LTEuNjI3eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+);background-size:16px 16px}.wt-sky-dictionary-page .word-set__title-icon--delete{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNCAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMyAxSDEuMDA3YTEgMSAwIDAgMCAwIDJoMTEuOTg2YTEgMSAwIDAgMCAwLTJIMTFjMC0uNTU2LS40NDYtMS0uOTk3LTFIMy45OTdDMy40NTMgMCAzIC40NDggMyAxek0xLjA4NCA1LjAwMkEuOTEyLjkxMiAwIDAgMSAyLjAwMiA0aDkuOTk2Yy41NTMgMCAuOTY0LjQ1Ni45MTggMS4wMDJsLS44MzIgOS45OTZjLS4wNDcuNTUzLS41NCAxLjAwMi0xLjA4IDEuMDAySDIuOTk2Yy0uNTUgMC0xLjAzMy0uNDU2LTEuMDc5LTEuMDAybC0uODMyLTkuOTk2eiIgZmlsbC1ydWxlPSJldmVub2RkIi8+PC9zdmc+);background-size:14px 16px;width:14px}.wt-sky-dictionary-page .word-set__title-icon--active{opacity:1;visibility:visible}.wt-sky-dictionary-page .word-set__title-icon--active:hover{opacity:1}.wt-sky-dictionary-page .word-set--active .word-set__title-icon,.wt-sky-dictionary-page .word-set:hover .word-set__title-icon{visibility:visible}.wt-sky-dictionary-page .word-set__title-icon--edit.word-set__title-icon--active{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMCAxMi42NjZWMTZoMy4zMzRsOS44MzctOS44MzdMOS44MzcgMi44MyAwIDEyLjY2NnptMTUuNzQtOS4wNzJhLjg5Ljg5IDAgMCAwIDAtMS4yNThMMTMuNjY0LjI2YS44OS44OSAwIDAgMC0xLjI1OCAwTDEwLjc4IDEuODg3bDMuMzM0IDMuMzM0IDEuNjI3LTEuNjI3eiIgZmlsbD0iIzVkOWNlYyIgZmlsbC1ydWxlPSJldmVub2RkIiAvPjwvc3ZnPg==)}.wt-sky-dictionary-page .word-set__title-icon--delete.word-set__title-icon--active{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTQiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNCAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMyAxSDEuMDA3Qy40NSAxIDAgMS40NDggMCAyYzAgLjU1Ni40NSAxIDEuMDA3IDFoMTEuOTg2QzEzLjU1IDMgMTQgMi41NTIgMTQgMmMwLS41NTYtLjQ1LTEtMS4wMDctMUgxMWMwLS41NTYtLjQ0Ni0xLS45OTctMUgzLjk5N0MzLjQ1MyAwIDMgLjQ0OCAzIDF6TTEuMDg0IDUuMDAyQS45MTIuOTEyIDAgMCAxIDIuMDAyIDRoOS45OTZjLjU1MyAwIC45NjQuNDU2LjkxOCAxLjAwMmwtLjgzMiA5Ljk5NmMtLjA0Ny41NTMtLjU0IDEuMDAyLTEuMDggMS4wMDJIMi45OTZjLS41NSAwLTEuMDMzLS40NTYtMS4wNzktMS4wMDJsLS44MzItOS45OTZ6IiBmaWxsPSIjNWQ5Y2VjIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIC8+PC9zdmc+)}@-webkit-keyframes showToolbar{0%{opacity:0}to{opacity:1}}@keyframes showToolbar{0%{opacity:0}to{opacity:1}}</style><style type="text/css">.wt-sky-dictionary-page .word-list{display:-webkit-box;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;clear:both;margin-bottom:10px;padding-left:15px;padding-right:15px}.wt-sky-dictionary-page .word-list-empty{text-align:center;font-size:15px;color:#999;width:100%;margin-bottom:15px}.wt-sky-dictionary-page .word-list__word{position:relative;width:33.33%;min-width:300px;padding:0;border-radius:3px}.wt-sky-dictionary-page .word-list__word-text-list{position:absolute;content:"";width:6px;height:6px;display:block;left:12px;top:13px;background-color:#ccc;border-radius:3px}.wt-sky-dictionary-page .word-list__word-text-list--selected{background-color:transparent;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MTUtMS40MTVMNyAxMS4xN2w3LjU4NS03LjU4NUwxNiA1bC05IDl6IiBmaWxsPSIjNUQ5Q0VDIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=);background-position:50%;background-size:17px;background-repeat:no-repeat;width:19px;height:19px;left:5px;top:7px;opacity:1}.wt-sky-dictionary-page .word-list__word-text-list--selected:hover{opacity:1}.wt-sky-dictionary-page .word-list__word:hover{background-color:#eff6ff}.wt-sky-dictionary-page .word-list__word:hover .word-list__word-text-list{position:absolute;content:"";cursor:pointer;display:block;width:19px;height:19px;left:5px;top:7px;border-radius:0;background-color:transparent;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RjU0MjI0NzctNDE0Qy00MDk1LTk5NDgtRDE5QkQ3NDE4QTREPC90aXRsZT48cGF0aCBkPSJNMTYgMnYxNEgyVjJoMTR6bTAtMkgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnoiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);background-position:50%;background-size:17px;background-repeat:no-repeat;opacity:.3}.wt-sky-dictionary-page .word-list__word:hover .word-list__word-text-list:hover{opacity:.4}.wt-sky-dictionary-page .word-list__word-text{position:relative;height:38px;width:50%;display:inline-block;box-sizing:border-box;padding-left:12px;line-height:21px;vertical-align:top}.wt-sky-dictionary-page .word-list__word-text-line{position:absolute;right:6px;top:16px;left:24px;background-color:#ededed;height:1px}.wt-sky-dictionary-page .word-list__word-text-inner{position:absolute;left:24px;top:4px;background-color:#fff;padding:0 5px}.wt-sky-dictionary-page .word-list__word:hover .word-list__word-text-inner{background-color:#eff6ff}.wt-sky-dictionary-page .word-list__word-text-sound{display:none;margin-left:6px;cursor:pointer;width:19px;height:16px;vertical-align:middle;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxOSAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+MUJEREIyQUItRDY0NS00NDNDLTk1MjYtMEYzMEE3RDNBNkNDPC90aXRsZT48cGF0aCBkPSJNMTIuOTkgMy43NTlhLjc4MS43ODEgMCAwIDAtLjYwNC4yMzNsLS4xMDQuMTA4YS44MDMuODAzIDAgMCAwLS4wNTYgMS4wNjkgNC42MDEgNC42MDEgMCAwIDEgMS4wMzEgMi45MjcgNC42MzUgNC42MzUgMCAwIDEtLjkwOCAyLjc2NS44MDIuODAyIDAgMCAwIC4wNzYgMS4wNDFsLjEwNS4xMDdjLjE1LjE1LjM1My4yMzQuNTYyLjIzNGwuMDU4LS4wMDJhLjgxLjgxIDAgMCAwIC41OC0uMzE5IDYuMzY1IDYuMzY1IDAgMCAwIDEuMjY2LTMuODI3IDYuMzM2IDYuMzM2IDAgMCAwLTEuNDMyLTQuMDQ0Ljc5Mi43OTIgMCAwIDAtLjU3NC0uMjkyem0zLjQzOC0yLjQ3NWExMC4zMDQgMTAuMzA0IDAgMCAxIC4xNjggMTMuNDI2Ljc5Ni43OTYgMCAwIDEtLjU3NC4yODJsLS4wMzIuMDAxYS43OTcuNzk3IDAgMCAxLS41NjItLjIzM2wtLjEwNC0uMTA0YS44LjggMCAwIDEtLjA0NS0xLjA3OSA4LjU2MyA4LjU2MyAwIDAgMCAxLjk4Ni01LjQ4MiA4LjUzNCA4LjUzNCAwIDAgMC0yLjEyOC01LjY0NS44MDIuODAyIDAgMCAxIC4wMzEtMS4wOTRsLjEwNC0uMTA1YS43OTUuNzk1IDAgMCAxIDEuMTU2LjAzM3pNOCAzLjE2M3Y5LjY3NGwtMi42ODUtMi4zNDRBMiAyIDAgMCAwIDQgMTBIMlY2aDJjLjQ4NCAwIC45NTEtLjE3NSAxLjMxNS0uNDkzTDggMy4xNjN6TTguOTY4IDBjLS4yMzYgMC0uNDY5LjA4MS0uNjU4LjIzOEw0IDRIMWMtLjU2OSAwLTEgLjQzLTEgMXY2YzAgLjU3LjQzMSAxIDEgMWgzbDQuMzEgMy43NjJhMS4wMjUgMS4wMjUgMCAwIDAgMS4wOTcuMTM5Yy4zNjMtLjE2OS41OTMtLjUzMy41OTMtLjkzM1YxLjAzM0ExLjAzMSAxLjAzMSAwIDAgMCA4Ljk2OCAweiIgZmlsbD0iI2NiY2JjYiIgZmlsbC1ydWxlPSJldmVub2RkIiAvPjwvc3ZnPg==);background-size:19px 16px;background-repeat:no-repeat;background-position:0;background-color:#eff6ff;position:absolute;top:3px;right:-17px}.wt-sky-dictionary-page .word-list__word-text-sound:hover{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxOSAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+MUJEREIyQUItRDY0NS00NDNDLTk1MjYtMEYzMEE3RDNBNkNDPC90aXRsZT48cGF0aCBkPSJNMTIuOTkgMy43NTlhLjc4MS43ODEgMCAwIDAtLjYwNC4yMzNsLS4xMDQuMTA4YS44MDMuODAzIDAgMCAwLS4wNTYgMS4wNjkgNC42MDEgNC42MDEgMCAwIDEgMS4wMzEgMi45MjcgNC42MzUgNC42MzUgMCAwIDEtLjkwOCAyLjc2NS44MDIuODAyIDAgMCAwIC4wNzYgMS4wNDFsLjEwNS4xMDdjLjE1LjE1LjM1My4yMzQuNTYyLjIzNGwuMDU4LS4wMDJhLjgxLjgxIDAgMCAwIC41OC0uMzE5IDYuMzY1IDYuMzY1IDAgMCAwIDEuMjY2LTMuODI3IDYuMzM2IDYuMzM2IDAgMCAwLTEuNDMyLTQuMDQ0Ljc5Mi43OTIgMCAwIDAtLjU3NC0uMjkyem0zLjQzOC0yLjQ3NWExMC4zMDQgMTAuMzA0IDAgMCAxIC4xNjggMTMuNDI2Ljc5Ni43OTYgMCAwIDEtLjU3NC4yODJsLS4wMzIuMDAxYS43OTcuNzk3IDAgMCAxLS41NjItLjIzM2wtLjEwNC0uMTA0YS44LjggMCAwIDEtLjA0NS0xLjA3OSA4LjU2MyA4LjU2MyAwIDAgMCAxLjk4Ni01LjQ4MiA4LjUzNCA4LjUzNCAwIDAgMC0yLjEyOC01LjY0NS44MDIuODAyIDAgMCAxIC4wMzEtMS4wOTRsLjEwNC0uMTA1YS43OTUuNzk1IDAgMCAxIDEuMTU2LjAzM3pNOCAzLjE2M3Y5LjY3NGwtMi42ODUtMi4zNDRBMiAyIDAgMCAwIDQgMTBIMlY2aDJjLjQ4NCAwIC45NTEtLjE3NSAxLjMxNS0uNDkzTDggMy4xNjN6TTguOTY4IDBjLS4yMzYgMC0uNDY5LjA4MS0uNjU4LjIzOEw0IDRIMWMtLjU2OSAwLTEgLjQzLTEgMXY2YzAgLjU3LjQzMSAxIDEgMWgzbDQuMzEgMy43NjJhMS4wMjUgMS4wMjUgMCAwIDAgMS4wOTcuMTM5Yy4zNjMtLjE2OS41OTMtLjUzMy41OTMtLjkzM1YxLjAzM0ExLjAzMSAxLjAzMSAwIDAgMCA4Ljk2OCAweiIgZmlsbD0iI2IyYjJiMiIgZmlsbC1ydWxlPSJldmVub2RkIiAvPjwvc3ZnPg==)}.wt-sky-dictionary-page .word-list__word:hover .word-list__word-text-sound{display:inline-block}.wt-sky-dictionary-page .word-list__word-translation{position:relative;top:4px;width:50%;line-height:21px;display:inline-block;color:#999;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;box-sizing:border-box;padding-bottom:8px}.wt-sky-dictionary-page .word-list__word .word-list__word-text-list.word-list__word-text-list--selected{background-color:transparent;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAxOCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgMEgyYTIgMiAwIDAgMC0yIDJ2MTRhMiAyIDAgMCAwIDIgMmgxNGEyIDIgMCAwIDAgMi0yVjJhMiAyIDAgMCAwLTItMnpNNyAxNEwyIDlsMS40MTUtMS40MTVMNyAxMS4xN2w3LjU4NS03LjU4NUwxNiA1bC05IDl6IiBmaWxsPSIjNUQ5Q0VDIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=);background-position:50%;background-size:17px;background-repeat:no-repeat;width:19px;height:19px;left:5px;top:7px;opacity:1}.wt-sky-dictionary-page .word-list__word .word-list__word-text-list.word-list__word-text-list--selected:hover{opacity:1}</style><style type="text/css">.wt-sky-dictionary-page .tooltip-delete{padding:12px}</style><style type="text/css">.wt-sky-dictionary-page .tooltip-move-words{max-width:450px;max-height:300px;overflow-y:auto;margin:0;padding:5px 0;list-style:none}.wt-sky-dictionary-page .tooltip-move-words::-webkit-scrollbar{width:4px}.wt-sky-dictionary-page .tooltip-move-words::-webkit-scrollbar-track{border-radius:6px;background:#f5f5f5}.wt-sky-dictionary-page .tooltip-move-words::-webkit-scrollbar-thumb{border-radius:6px;background-color:#999}.wt-sky-dictionary-page .tooltip-move-words__item{height:24px;font-size:15px;line-height:1.4;cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;padding-left:12px;padding-right:12px}.wt-sky-dictionary-page .tooltip-move-words__item:hover{background-color:#5d9cec;color:#fff}.wt-sky-dictionary-page .tooltip-move-words__delimiter{height:1px;background-color:#e5e5e5;margin:5px 0}</style><style type="text/css">.wt-sky-rl-toolbar-popover{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-smoothing:antialiased;position:fixed;box-sizing:border-box;right:55px;top:78px;width:300px;min-height:90px;padding:10px 12px 14px;font-family:Open Sans,sans-serif;font-size:16px;line-height:1.4;color:#fff;border-radius:6px;background-color:rgba(73,137,220,.95);box-shadow:0 0 20px 0 rgba(0,0,0,.2);border:1px solid transparent;z-index:9999999991;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;text-align:left;transition:top .15s linear}.wt-sky-rl-toolbar-popover:after{right:-15px;top:20px;content:" ";height:0;width:0;position:absolute;pointer-events:none;border:solid transparent;border-left-color:rgba(73,137,220,.95);border-width:7px;margin-top:-7px}.wt-sky-rl-toolbar-popover__close{width:10px;height:10px;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNLjc1Ljc1bDguNSA4LjVtLTguNSAwbDguNS04LjUiIHN0cm9rZT0iI0ZGRiIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==);background-repeat:no-repeat;background-position:0 0;background-size:10px 10px;display:inline-block;position:absolute;top:9px;right:9px;cursor:pointer;z-index:1;opacity:.8}.wt-sky-rl-toolbar-popover__close:hover{opacity:1}.wt-sky-rl-toolbar-popover__header{font-weight:600;height:22px;margin-bottom:10px}</style><style type="text/css">.wt-sky-rl-tags-input{font-family:Open Sans,sans-serif;border-radius:2px;background-color:#fff;box-shadow:inset 0 1px 0 0 rgba(0,0,0,.07);cursor:text}.wt-sky-rl-tags-input:before{width:16px;height:16px;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RjlDNkM1NzktMjcxRi00QzRCLUFEMTktMTgwMzUzNkI3RjMyPC90aXRsZT48cGF0aCBkPSJNMTUuNTM1IDguMjA2TDcuNzk0LjQ2NUM3LjUzNS4xNTUgNy4xMjMgMCA2LjcxIDBIMS41NDhBMS41MiAxLjUyIDAgMCAwIDAgMS41NDhWNi43MWMwIC40MTMuMTU1LjgyNS40NjUgMS4wODRsNy43NDEgNy43NDFjLjMxLjMxLjcyMy40NjUgMS4wODQuNDY1YTEuNTcgMS41NyAwIDAgMCAxLjA4NC0uNDY1bDUuMTYxLTUuMTZjLjYyLS41NjkuNjItMS42IDAtMi4xNjl6TTMuNSA1QzIuNjc1IDUgMiA0LjMyNSAyIDMuNVMyLjY3NSAyIDMuNSAyIDUgMi42NzUgNSAzLjUgNC4zMjUgNSAzLjUgNXoiIGZpbGw9IiM3MEE2RTkiLz48L3N2Zz4=);background-repeat:no-repeat;background-position:50%;background-size:16px 16px;display:inline-block;position:relative;top:5px;margin-right:3px;margin-left:7px;content:""}.wt-sky-rl-tags-input__tags{display:inline}.wt-sky-rl-tags-input__tag{border-radius:2px;background-color:#e3f0ff;border:1px solid #c2ddff;height:22px;font-size:15px;line-height:15px;color:#333;margin-left:4px;margin-bottom:4px;padding:1px 18px 2px 6px;display:inline-block;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;transition:all .1s ease;box-sizing:border-box;position:relative}.wt-sky-rl-tags-input__tag-delete{width:6px;height:6px;opacity:.8;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNiIgaGVpZ2h0PSI2IiB2aWV3Qm94PSIwIDAgNiA2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxwYXRoIGQ9Ik01LjI1Ljc1bC00LjUgNC41bTQuNSAwTC43NS43NSIgc3Ryb2tlPSIjNUQ5Q0VDIiBzdHJva2Utd2lkdGg9IjEuNSIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBvcGFjaXR5PSIuOCIvPjwvc3ZnPg==);background-repeat:no-repeat;background-position:50%;display:inline-block;position:absolute;right:6px;top:7px;cursor:pointer}.wt-sky-rl-tags-input__tag-delete:hover{opacity:1}.wt-sky-rl-tags-input__input{display:inline-block;margin-left:4px;margin-bottom:4px}.wt-sky-rl-tags-input input{-webkit-appearance:none!important;-moz-appearance:none!important;appearance:none!important;display:inline-block!important;padding:3px;margin:0!important;background:none!important;border:none!important;box-shadow:none!important;font:inherit!important;font-size:15px!important;outline:none!important;box-sizing:content-box!important;max-width:230px;color:#333}.wt-sky-rl-tags-suggestions{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-smoothing:antialiased;border-radius:2px;background-color:#fff;box-shadow:0 2px 4px 0 rgba(0,0,0,.1),0 0 0 1px rgba(0,0,0,.1);font-family:Open Sans,sans-serif;font-size:15px;line-height:1.33;color:#333;margin:0;padding:5px 0;position:absolute;width:273px;z-index:1}.wt-sky-rl-tags-suggestions--wide{width:400px}.wt-sky-rl-tags-suggestions__item{list-style:none;padding:2px 10px 2px 30px;cursor:pointer}.wt-sky-rl-tags-suggestions__item--active,.wt-sky-rl-tags-suggestions__item:hover{background-color:#5d9cec;color:#fff}</style><style type="text/css">.wt-sky-reader-global{overflow:hidden;font-size:10px;margin:0}.wt-sky-reader-global.wt-sky-font-size__6{font-size:6px}.wt-sky-reader-global.wt-sky-font-size__7{font-size:7px}.wt-sky-reader-global.wt-sky-font-size__8{font-size:8px}.wt-sky-reader-global.wt-sky-font-size__9{font-size:9px}.wt-sky-reader-global.wt-sky-font-size__10{font-size:10px}.wt-sky-reader-global.wt-sky-font-size__11{font-size:11px}.wt-sky-reader-global.wt-sky-font-size__12{font-size:12px}.wt-sky-reader-global.wt-sky-font-size__13{font-size:13px}.wt-sky-reader-global.wt-sky-font-size__14{font-size:14px}.wt-sky-reader-global.wt-sky-font-size__15{font-size:15px}.wt-sky-reader-global.wt-sky-font-size__16{font-size:16px}.wt-sky-reader-global.wt-sky-font-size__17{font-size:17px}.wt-sky-reader-global.wt-sky-font-size__18{font-size:18px}.wt-sky-reader-wrap{z-index:9999999999;position:fixed;left:0;top:0;width:100%;height:100%;overflow:auto}.wt-sky-reader{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-smoothing:antialiased;font-family:Open Sans,sans-serif;transition:background-color .15s linear;overflow:hidden;min-height:100%}.wt-sky-reader__main{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:center;-ms-flex-pack:center;justify-content:center;padding-left:42px;padding-right:42px}.wt-sky-reader__article{position:relative;max-width:90vw;width:60vw;padding:45px 60px;box-sizing:border-box}.wt-sky-reader__side{-webkit-box-flex:0;-ms-flex:0 0 340px;flex:0 0 340px;position:relative;width:340px;padding:60px 20px;box-sizing:border-box}.wt-sky-reader__tools{position:fixed;width:300px;overflow-y:auto;height:85%}.wt-sky-reader__tools .vimbox-words__item-text-line{opacity:.3}.wt-sky-reader__tools::-webkit-scrollbar{width:6px}.wt-sky-reader__tools::-webkit-scrollbar-thumb,.wt-sky-reader__tools::-webkit-scrollbar-track{border-radius:6px}</style><style type="text/css">.wt-sky-reader--light{background-color:#fff;color:#333}.wt-sky-reader--light .wt-sky-reader__side{box-shadow:inset 1px 0 0 0 hsla(0,0%,60%,.15)}.wt-sky-reader--sepia{background-color:#fff8e8;color:#5b4636}.wt-sky-reader--sepia .wt-sky-reader__side{box-shadow:inset 1px 0 0 0 hsla(25,17%,61%,.15)}.wt-sky-reader--dark{background-color:#222;color:#ddd}.wt-sky-reader--dark .wt-sky-reader__side{box-shadow:inset 1px 0 0 0 hsla(0,0%,60%,.15)}</style><style type="text/css">.wt-sky-reader--light .wt-sky-reader__tools::-webkit-scrollbar-track{background:#fff}.wt-sky-reader--light .wt-sky-reader__tools::-webkit-scrollbar-thumb{background-color:#999}.wt-sky-reader--light .wt-sky-reader__settings{background-color:#fff;border-color:hsla(0,0%,60%,.2)}.wt-sky-reader--light .wt-sky-reader__settings:after{border-left-color:#fff}.wt-sky-reader--light .wt-sky-reader__settings:before{border-left-color:#ebebeb}.wt-sky-reader--light .vimbox-words__item-text-line,.wt-sky-reader--light .vimbox-words__item-text-list{background-color:#999}.wt-sky-reader--light .vimbox-words__item-text-inner{background-color:#fff}.wt-sky-reader--light .vimbox-words__item:hover,.wt-sky-reader--light .vimbox-words__item:hover .vimbox-words__item-text-inner{background-color:#f5f5f5}.wt-sky-reader--light .vimbox-words__item:hover .vimbox-words__item-text-list{background-position:0 0}.wt-sky-reader--light .vimbox-words__item-text-sound{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxOSAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+MUJEREIyQUItRDY0NS00NDNDLTk1MjYtMEYzMEE3RDNBNkNDPC90aXRsZT48cGF0aCBkPSJNMTIuOTkgMy43NTlhLjc4MS43ODEgMCAwIDAtLjYwNC4yMzNsLS4xMDQuMTA4YS44MDMuODAzIDAgMCAwLS4wNTYgMS4wNjkgNC42MDEgNC42MDEgMCAwIDEgMS4wMzEgMi45MjcgNC42MzUgNC42MzUgMCAwIDEtLjkwOCAyLjc2NS44MDIuODAyIDAgMCAwIC4wNzYgMS4wNDFsLjEwNS4xMDdjLjE1LjE1LjM1My4yMzQuNTYyLjIzNGwuMDU4LS4wMDJhLjgxLjgxIDAgMCAwIC41OC0uMzE5IDYuMzY1IDYuMzY1IDAgMCAwIDEuMjY2LTMuODI3IDYuMzM2IDYuMzM2IDAgMCAwLTEuNDMyLTQuMDQ0Ljc5Mi43OTIgMCAwIDAtLjU3NC0uMjkyem0zLjQzOC0yLjQ3NWExMC4zMDQgMTAuMzA0IDAgMCAxIC4xNjggMTMuNDI2Ljc5Ni43OTYgMCAwIDEtLjU3NC4yODJsLS4wMzIuMDAxYS43OTcuNzk3IDAgMCAxLS41NjItLjIzM2wtLjEwNC0uMTA0YS44LjggMCAwIDEtLjA0NS0xLjA3OSA4LjU2MyA4LjU2MyAwIDAgMCAxLjk4Ni01LjQ4MiA4LjUzNCA4LjUzNCAwIDAgMC0yLjEyOC01LjY0NS44MDIuODAyIDAgMCAxIC4wMzEtMS4wOTRsLjEwNC0uMTA1YS43OTUuNzk1IDAgMCAxIDEuMTU2LjAzM3pNOCAzLjE2M3Y5LjY3NGwtMi42ODUtMi4zNDRBMiAyIDAgMCAwIDQgMTBIMlY2aDJjLjQ4NCAwIC45NTEtLjE3NSAxLjMxNS0uNDkzTDggMy4xNjN6TTguOTY4IDBjLS4yMzYgMC0uNDY5LjA4MS0uNjU4LjIzOEw0IDRIMWMtLjU2OSAwLTEgLjQzLTEgMXY2YzAgLjU3LjQzMSAxIDEgMWgzbDQuMzEgMy43NjJhMS4wMjUgMS4wMjUgMCAwIDAgMS4wOTcuMTM5Yy4zNjMtLjE2OS41OTMtLjUzMy41OTMtLjkzM1YxLjAzM0ExLjAzMSAxLjAzMSAwIDAgMCA4Ljk2OCAweiIgZmlsbD0iIzk5OTk5OSIgZmlsbC1ydWxlPSJldmVub2RkIiAvPjwvc3ZnPg==);background-color:#f5f5f5}.wt-sky-reader--light .vimbox-words__item-text-sound:hover{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxOSAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+MUJEREIyQUItRDY0NS00NDNDLTk1MjYtMEYzMEE3RDNBNkNDPC90aXRsZT48cGF0aCBkPSJNMTIuOTkgMy43NTlhLjc4MS43ODEgMCAwIDAtLjYwNC4yMzNsLS4xMDQuMTA4YS44MDMuODAzIDAgMCAwLS4wNTYgMS4wNjkgNC42MDEgNC42MDEgMCAwIDEgMS4wMzEgMi45MjcgNC42MzUgNC42MzUgMCAwIDEtLjkwOCAyLjc2NS44MDIuODAyIDAgMCAwIC4wNzYgMS4wNDFsLjEwNS4xMDdjLjE1LjE1LjM1My4yMzQuNTYyLjIzNGwuMDU4LS4wMDJhLjgxLjgxIDAgMCAwIC41OC0uMzE5IDYuMzY1IDYuMzY1IDAgMCAwIDEuMjY2LTMuODI3IDYuMzM2IDYuMzM2IDAgMCAwLTEuNDMyLTQuMDQ0Ljc5Mi43OTIgMCAwIDAtLjU3NC0uMjkyem0zLjQzOC0yLjQ3NWExMC4zMDQgMTAuMzA0IDAgMCAxIC4xNjggMTMuNDI2Ljc5Ni43OTYgMCAwIDEtLjU3NC4yODJsLS4wMzIuMDAxYS43OTcuNzk3IDAgMCAxLS41NjItLjIzM2wtLjEwNC0uMTA0YS44LjggMCAwIDEtLjA0NS0xLjA3OSA4LjU2MyA4LjU2MyAwIDAgMCAxLjk4Ni01LjQ4MiA4LjUzNCA4LjUzNCAwIDAgMC0yLjEyOC01LjY0NS44MDIuODAyIDAgMCAxIC4wMzEtMS4wOTRsLjEwNC0uMTA1YS43OTUuNzk1IDAgMCAxIDEuMTU2LjAzM3pNOCAzLjE2M3Y5LjY3NGwtMi42ODUtMi4zNDRBMiAyIDAgMCAwIDQgMTBIMlY2aDJjLjQ4NCAwIC45NTEtLjE3NSAxLjMxNS0uNDkzTDggMy4xNjN6TTguOTY4IDBjLS4yMzYgMC0uNDY5LjA4MS0uNjU4LjIzOEw0IDRIMWMtLjU2OSAwLTEgLjQzLTEgMXY2YzAgLjU3LjQzMSAxIDEgMWgzbDQuMzEgMy43NjJhMS4wMjUgMS4wMjUgMCAwIDAgMS4wOTcuMTM5Yy4zNjMtLjE2OS41OTMtLjUzMy41OTMtLjkzM1YxLjAzM0ExLjAzMSAxLjAzMSAwIDAgMCA4Ljk2OCAweiIgZmlsbD0iIzk5OTk5OSIgZmlsbC1ydWxlPSJldmVub2RkIiAvPjwvc3ZnPg==)}.wt-sky-reader--light .wt-sky-reader__dictionary--empty{color:#999}.wt-sky-reader--light .wt-sky-reader__settings-font-item{border-color:hsla(0,0%,60%,.5)}.wt-sky-reader--light .wt-sky-reader__settings-size-button{background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSI2NSIgdmlld0JveD0iMCAwIDE2IDY1Ij4KICA8c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTYiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgLTIgMTYgMTIiPgogICAgPHJlY3QgeD0iMTAiIHk9IjExOSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjIiIHJ4PSIxIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTAgLTExOSkiIGZpbGw9IiM5OTk5OTkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgLz4KICA8L3N2Zz4KICA8c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTYiIGhlaWdodD0iMjYiIHZpZXdCb3g9IjAgLTEwIDE2IDI2IiB5PSIxMiI+CiAgICA8ZyBmaWxsPSIjOTk5OTk5IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICA8cmVjdCB5PSI3IiB3aWR0aD0iMTYiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiM5OTk5OTkiIC8+CiAgICAgIDxyZWN0IHg9IjciIHdpZHRoPSIyIiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iIzk5OTk5OSIgLz4KICAgIDwvZz4KICA8L3N2Zz4KICA8c3ZnIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEwIDEwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHk9IjU0IiB4PSIzIj48cGF0aCBkPSJNNCA0SC45OTVDLjQ1NSA0IDAgNC40NDggMCA1YzAgLjU1Ni40NDYgMSAuOTk1IDFINHYzLjAwNWMwIC41NC40NDguOTk1IDEgLjk5NS41NTYgMCAxLS40NDYgMS0uOTk1VjZoMy4wMDVjLjU0IDAgLjk5NS0uNDQ4Ljk5NS0xIDAtLjU1Ni0uNDQ2LTEtLjk5NS0xSDZWLjk5NUM2IC40NTUgNS41NTIgMCA1IDBjLS41NTYgMC0xIC40NDYtMSAuOTk1VjR6IiBmaWxsPSIjRkZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIC8+PC9zdmc+Cjwvc3ZnPg==);border-color:hsla(0,0%,60%,.5)}.wt-sky-reader--light .wt-sky-reader__settings-size-button:active{box-shadow:inset 0 0 5px 0 hsla(0,0%,60%,.5)}.wt-sky-reader--light .wt-sky-reader__settings-size-button--disabled{background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSI2NSIgdmlld0JveD0iMCAwIDE2IDY1Ij4KICA8c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTYiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgLTIgMTYgMTIiPgogICAgPHJlY3QgeD0iMTAiIHk9IjExOSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjIiIHJ4PSIxIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTAgLTExOSkiIGZpbGw9IiM5OTk5OTk1MCIgZmlsbC1ydWxlPSJldmVub2RkIiAvPgogIDwvc3ZnPgogIDxzdmcgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSIxNiIgaGVpZ2h0PSIyNiIgdmlld0JveD0iMCAtMTAgMTYgMjYiIHk9IjEyIj4KICAgIDxnIGZpbGw9IiM5OTk5OTk1MCIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgPHJlY3QgeT0iNyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSIjOTk5OTk5NTAiIC8+CiAgICAgIDxyZWN0IHg9IjciIHdpZHRoPSIyIiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iIzk5OTk5OTUwIiAvPgogICAgPC9nPgogIDwvc3ZnPgogIDxzdmcgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTAgMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeT0iNTQiIHg9IjMiPjxwYXRoIGQ9Ik00IDRILjk5NUMuNDU1IDQgMCA0LjQ0OCAwIDVjMCAuNTU2LjQ0NiAxIC45OTUgMUg0djMuMDA1YzAgLjU0LjQ0OC45OTUgMSAuOTk1LjU1NiAwIDEtLjQ0NiAxLS45OTVWNmgzLjAwNWMuNTQgMCAuOTk1LS40NDguOTk1LTEgMC0uNTU2LS40NDYtMS0uOTk1LTFINlYuOTk1QzYgLjQ1NSA1LjU1MiAwIDUgMGMtLjU1NiAwLTEgLjQ0Ni0xIC45OTVWNHoiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCIgLz48L3N2Zz4KPC9zdmc+)}.wt-sky-reader--light .wt-sky-reader__settings-size-value{color:#333;border-top-color:hsla(0,0%,60%,.5);border-bottom-color:hsla(0,0%,60%,.5)}.wt-sky-reader--light .wt-sky-reader__settings-translation-head,.wt-sky-reader--light .wt-sky-reader__settings-translation-label{color:#333}.wt-sky-reader--sepia .wt-sky-reader__tools::-webkit-scrollbar-track{background:#fff8e8}.wt-sky-reader--sepia .wt-sky-reader__tools::-webkit-scrollbar-thumb{background-color:#ad998b}.wt-sky-reader--sepia .wt-sky-reader__settings{background-color:#fff8e8;border-color:hsla(25,17%,61%,.2)}.wt-sky-reader--sepia .wt-sky-reader__settings:after{border-left-color:#fff8e8}.wt-sky-reader--sepia .wt-sky-reader__settings:before{border-left-color:#efe6d6}.wt-sky-reader--sepia .vimbox-words__item-text-line,.wt-sky-reader--sepia .vimbox-words__item-text-list{background-color:#ad998b}.wt-sky-reader--sepia .vimbox-words__item-text-inner{background-color:#fff8e8}.wt-sky-reader--sepia .vimbox-words__item:hover,.wt-sky-reader--sepia .vimbox-words__item:hover .vimbox-words__item-text-inner{background-color:#f7efde}.wt-sky-reader--sepia .vimbox-words__item:hover .vimbox-words__item-text-list{background-position:0 -12px}.wt-sky-reader--sepia .vimbox-words__item-text-sound{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxOSAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+MUJEREIyQUItRDY0NS00NDNDLTk1MjYtMEYzMEE3RDNBNkNDPC90aXRsZT48cGF0aCBkPSJNMTIuOTkgMy43NTlhLjc4MS43ODEgMCAwIDAtLjYwNC4yMzNsLS4xMDQuMTA4YS44MDMuODAzIDAgMCAwLS4wNTYgMS4wNjkgNC42MDEgNC42MDEgMCAwIDEgMS4wMzEgMi45MjcgNC42MzUgNC42MzUgMCAwIDEtLjkwOCAyLjc2NS44MDIuODAyIDAgMCAwIC4wNzYgMS4wNDFsLjEwNS4xMDdjLjE1LjE1LjM1My4yMzQuNTYyLjIzNGwuMDU4LS4wMDJhLjgxLjgxIDAgMCAwIC41OC0uMzE5IDYuMzY1IDYuMzY1IDAgMCAwIDEuMjY2LTMuODI3IDYuMzM2IDYuMzM2IDAgMCAwLTEuNDMyLTQuMDQ0Ljc5Mi43OTIgMCAwIDAtLjU3NC0uMjkyem0zLjQzOC0yLjQ3NWExMC4zMDQgMTAuMzA0IDAgMCAxIC4xNjggMTMuNDI2Ljc5Ni43OTYgMCAwIDEtLjU3NC4yODJsLS4wMzIuMDAxYS43OTcuNzk3IDAgMCAxLS41NjItLjIzM2wtLjEwNC0uMTA0YS44LjggMCAwIDEtLjA0NS0xLjA3OSA4LjU2MyA4LjU2MyAwIDAgMCAxLjk4Ni01LjQ4MiA4LjUzNCA4LjUzNCAwIDAgMC0yLjEyOC01LjY0NS44MDIuODAyIDAgMCAxIC4wMzEtMS4wOTRsLjEwNC0uMTA1YS43OTUuNzk1IDAgMCAxIDEuMTU2LjAzM3pNOCAzLjE2M3Y5LjY3NGwtMi42ODUtMi4zNDRBMiAyIDAgMCAwIDQgMTBIMlY2aDJjLjQ4NCAwIC45NTEtLjE3NSAxLjMxNS0uNDkzTDggMy4xNjN6TTguOTY4IDBjLS4yMzYgMC0uNDY5LjA4MS0uNjU4LjIzOEw0IDRIMWMtLjU2OSAwLTEgLjQzLTEgMXY2YzAgLjU3LjQzMSAxIDEgMWgzbDQuMzEgMy43NjJhMS4wMjUgMS4wMjUgMCAwIDAgMS4wOTcuMTM5Yy4zNjMtLjE2OS41OTMtLjUzMy41OTMtLjkzM1YxLjAzM0ExLjAzMSAxLjAzMSAwIDAgMCA4Ljk2OCAweiIgZmlsbD0iI2FkOTk4YiIgZmlsbC1ydWxlPSJldmVub2RkIiAvPjwvc3ZnPg==);background-color:#f7efde}.wt-sky-reader--sepia .vimbox-words__item-text-sound:hover{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxOSAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+MUJEREIyQUItRDY0NS00NDNDLTk1MjYtMEYzMEE3RDNBNkNDPC90aXRsZT48cGF0aCBkPSJNMTIuOTkgMy43NTlhLjc4MS43ODEgMCAwIDAtLjYwNC4yMzNsLS4xMDQuMTA4YS44MDMuODAzIDAgMCAwLS4wNTYgMS4wNjkgNC42MDEgNC42MDEgMCAwIDEgMS4wMzEgMi45MjcgNC42MzUgNC42MzUgMCAwIDEtLjkwOCAyLjc2NS44MDIuODAyIDAgMCAwIC4wNzYgMS4wNDFsLjEwNS4xMDdjLjE1LjE1LjM1My4yMzQuNTYyLjIzNGwuMDU4LS4wMDJhLjgxLjgxIDAgMCAwIC41OC0uMzE5IDYuMzY1IDYuMzY1IDAgMCAwIDEuMjY2LTMuODI3IDYuMzM2IDYuMzM2IDAgMCAwLTEuNDMyLTQuMDQ0Ljc5Mi43OTIgMCAwIDAtLjU3NC0uMjkyem0zLjQzOC0yLjQ3NWExMC4zMDQgMTAuMzA0IDAgMCAxIC4xNjggMTMuNDI2Ljc5Ni43OTYgMCAwIDEtLjU3NC4yODJsLS4wMzIuMDAxYS43OTcuNzk3IDAgMCAxLS41NjItLjIzM2wtLjEwNC0uMTA0YS44LjggMCAwIDEtLjA0NS0xLjA3OSA4LjU2MyA4LjU2MyAwIDAgMCAxLjk4Ni01LjQ4MiA4LjUzNCA4LjUzNCAwIDAgMC0yLjEyOC01LjY0NS44MDIuODAyIDAgMCAxIC4wMzEtMS4wOTRsLjEwNC0uMTA1YS43OTUuNzk1IDAgMCAxIDEuMTU2LjAzM3pNOCAzLjE2M3Y5LjY3NGwtMi42ODUtMi4zNDRBMiAyIDAgMCAwIDQgMTBIMlY2aDJjLjQ4NCAwIC45NTEtLjE3NSAxLjMxNS0uNDkzTDggMy4xNjN6TTguOTY4IDBjLS4yMzYgMC0uNDY5LjA4MS0uNjU4LjIzOEw0IDRIMWMtLjU2OSAwLTEgLjQzLTEgMXY2YzAgLjU3LjQzMSAxIDEgMWgzbDQuMzEgMy43NjJhMS4wMjUgMS4wMjUgMCAwIDAgMS4wOTcuMTM5Yy4zNjMtLjE2OS41OTMtLjUzMy41OTMtLjkzM1YxLjAzM0ExLjAzMSAxLjAzMSAwIDAgMCA4Ljk2OCAweiIgZmlsbD0iI2FkOTk4YiIgZmlsbC1ydWxlPSJldmVub2RkIiAvPjwvc3ZnPg==)}.wt-sky-reader--sepia .wt-sky-reader__dictionary--empty{color:#ad998b}.wt-sky-reader--sepia .wt-sky-reader__settings-font-item{border-color:hsla(25,17%,61%,.5)}.wt-sky-reader--sepia .wt-sky-reader__settings-size-button{background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSI2NSIgdmlld0JveD0iMCAwIDE2IDY1Ij4KICA8c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTYiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgLTIgMTYgMTIiPgogICAgPHJlY3QgeD0iMTAiIHk9IjExOSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjIiIHJ4PSIxIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTAgLTExOSkiIGZpbGw9IiNhZDk5OGIiIGZpbGwtcnVsZT0iZXZlbm9kZCIgLz4KICA8L3N2Zz4KICA8c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTYiIGhlaWdodD0iMjYiIHZpZXdCb3g9IjAgLTEwIDE2IDI2IiB5PSIxMiI+CiAgICA8ZyBmaWxsPSIjYWQ5OThiIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICA8cmVjdCB5PSI3IiB3aWR0aD0iMTYiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiNhZDk5OGIiIC8+CiAgICAgIDxyZWN0IHg9IjciIHdpZHRoPSIyIiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iI2FkOTk4YiIgLz4KICAgIDwvZz4KICA8L3N2Zz4KICA8c3ZnIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEwIDEwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHk9IjU0IiB4PSIzIj48cGF0aCBkPSJNNCA0SC45OTVDLjQ1NSA0IDAgNC40NDggMCA1YzAgLjU1Ni40NDYgMSAuOTk1IDFINHYzLjAwNWMwIC41NC40NDguOTk1IDEgLjk5NS41NTYgMCAxLS40NDYgMS0uOTk1VjZoMy4wMDVjLjU0IDAgLjk5NS0uNDQ4Ljk5NS0xIDAtLjU1Ni0uNDQ2LTEtLjk5NS0xSDZWLjk5NUM2IC40NTUgNS41NTIgMCA1IDBjLS41NTYgMC0xIC40NDYtMSAuOTk1VjR6IiBmaWxsPSIjRkZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIC8+PC9zdmc+Cjwvc3ZnPg==);border-color:hsla(25,17%,61%,.5)}.wt-sky-reader--sepia .wt-sky-reader__settings-size-button:active{box-shadow:inset 0 0 5px 0 hsla(25,17%,61%,.5)}.wt-sky-reader--sepia .wt-sky-reader__settings-size-button--disabled{background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSI2NSIgdmlld0JveD0iMCAwIDE2IDY1Ij4KICA8c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTYiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgLTIgMTYgMTIiPgogICAgPHJlY3QgeD0iMTAiIHk9IjExOSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjIiIHJ4PSIxIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTAgLTExOSkiIGZpbGw9IiNhZDk5OGI1MCIgZmlsbC1ydWxlPSJldmVub2RkIiAvPgogIDwvc3ZnPgogIDxzdmcgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSIxNiIgaGVpZ2h0PSIyNiIgdmlld0JveD0iMCAtMTAgMTYgMjYiIHk9IjEyIj4KICAgIDxnIGZpbGw9IiNhZDk5OGI1MCIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgPHJlY3QgeT0iNyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSIjYWQ5OThiNTAiIC8+CiAgICAgIDxyZWN0IHg9IjciIHdpZHRoPSIyIiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iI2FkOTk4YjUwIiAvPgogICAgPC9nPgogIDwvc3ZnPgogIDxzdmcgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTAgMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeT0iNTQiIHg9IjMiPjxwYXRoIGQ9Ik00IDRILjk5NUMuNDU1IDQgMCA0LjQ0OCAwIDVjMCAuNTU2LjQ0NiAxIC45OTUgMUg0djMuMDA1YzAgLjU0LjQ0OC45OTUgMSAuOTk1LjU1NiAwIDEtLjQ0NiAxLS45OTVWNmgzLjAwNWMuNTQgMCAuOTk1LS40NDguOTk1LTEgMC0uNTU2LS40NDYtMS0uOTk1LTFINlYuOTk1QzYgLjQ1NSA1LjU1MiAwIDUgMGMtLjU1NiAwLTEgLjQ0Ni0xIC45OTVWNHoiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCIgLz48L3N2Zz4KPC9zdmc+)}.wt-sky-reader--sepia .wt-sky-reader__settings-size-value{color:#5b4636;border-top-color:hsla(25,17%,61%,.5);border-bottom-color:hsla(25,17%,61%,.5)}.wt-sky-reader--sepia .wt-sky-reader__settings-translation-head,.wt-sky-reader--sepia .wt-sky-reader__settings-translation-label{color:#5b4636}.wt-sky-reader--dark .wt-sky-reader__tools::-webkit-scrollbar-track{background:#222}.wt-sky-reader--dark .wt-sky-reader__tools::-webkit-scrollbar-thumb{background-color:#999}.wt-sky-reader--dark .wt-sky-reader__settings{background-color:#222;border-color:hsla(0,0%,60%,.2)}.wt-sky-reader--dark .wt-sky-reader__settings:after{border-left-color:#222}.wt-sky-reader--dark .wt-sky-reader__settings:before{border-left-color:#3a3a3a}.wt-sky-reader--dark .vimbox-words__item-text-line,.wt-sky-reader--dark .vimbox-words__item-text-list{background-color:#999}.wt-sky-reader--dark .vimbox-words__item-text-inner{background-color:#222}.wt-sky-reader--dark .vimbox-words__item:hover,.wt-sky-reader--dark .vimbox-words__item:hover .vimbox-words__item-text-inner{background-color:#2f2f2f}.wt-sky-reader--dark .vimbox-words__item:hover .vimbox-words__item-text-list{background-position:0 0}.wt-sky-reader--dark .vimbox-words__item-text-sound{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxOSAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+MUJEREIyQUItRDY0NS00NDNDLTk1MjYtMEYzMEE3RDNBNkNDPC90aXRsZT48cGF0aCBkPSJNMTIuOTkgMy43NTlhLjc4MS43ODEgMCAwIDAtLjYwNC4yMzNsLS4xMDQuMTA4YS44MDMuODAzIDAgMCAwLS4wNTYgMS4wNjkgNC42MDEgNC42MDEgMCAwIDEgMS4wMzEgMi45MjcgNC42MzUgNC42MzUgMCAwIDEtLjkwOCAyLjc2NS44MDIuODAyIDAgMCAwIC4wNzYgMS4wNDFsLjEwNS4xMDdjLjE1LjE1LjM1My4yMzQuNTYyLjIzNGwuMDU4LS4wMDJhLjgxLjgxIDAgMCAwIC41OC0uMzE5IDYuMzY1IDYuMzY1IDAgMCAwIDEuMjY2LTMuODI3IDYuMzM2IDYuMzM2IDAgMCAwLTEuNDMyLTQuMDQ0Ljc5Mi43OTIgMCAwIDAtLjU3NC0uMjkyem0zLjQzOC0yLjQ3NWExMC4zMDQgMTAuMzA0IDAgMCAxIC4xNjggMTMuNDI2Ljc5Ni43OTYgMCAwIDEtLjU3NC4yODJsLS4wMzIuMDAxYS43OTcuNzk3IDAgMCAxLS41NjItLjIzM2wtLjEwNC0uMTA0YS44LjggMCAwIDEtLjA0NS0xLjA3OSA4LjU2MyA4LjU2MyAwIDAgMCAxLjk4Ni01LjQ4MiA4LjUzNCA4LjUzNCAwIDAgMC0yLjEyOC01LjY0NS44MDIuODAyIDAgMCAxIC4wMzEtMS4wOTRsLjEwNC0uMTA1YS43OTUuNzk1IDAgMCAxIDEuMTU2LjAzM3pNOCAzLjE2M3Y5LjY3NGwtMi42ODUtMi4zNDRBMiAyIDAgMCAwIDQgMTBIMlY2aDJjLjQ4NCAwIC45NTEtLjE3NSAxLjMxNS0uNDkzTDggMy4xNjN6TTguOTY4IDBjLS4yMzYgMC0uNDY5LjA4MS0uNjU4LjIzOEw0IDRIMWMtLjU2OSAwLTEgLjQzLTEgMXY2YzAgLjU3LjQzMSAxIDEgMWgzbDQuMzEgMy43NjJhMS4wMjUgMS4wMjUgMCAwIDAgMS4wOTcuMTM5Yy4zNjMtLjE2OS41OTMtLjUzMy41OTMtLjkzM1YxLjAzM0ExLjAzMSAxLjAzMSAwIDAgMCA4Ljk2OCAweiIgZmlsbD0iIzk5OTk5OSIgZmlsbC1ydWxlPSJldmVub2RkIiAvPjwvc3ZnPg==);background-color:#2f2f2f}.wt-sky-reader--dark .vimbox-words__item-text-sound:hover{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxOSAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+MUJEREIyQUItRDY0NS00NDNDLTk1MjYtMEYzMEE3RDNBNkNDPC90aXRsZT48cGF0aCBkPSJNMTIuOTkgMy43NTlhLjc4MS43ODEgMCAwIDAtLjYwNC4yMzNsLS4xMDQuMTA4YS44MDMuODAzIDAgMCAwLS4wNTYgMS4wNjkgNC42MDEgNC42MDEgMCAwIDEgMS4wMzEgMi45MjcgNC42MzUgNC42MzUgMCAwIDEtLjkwOCAyLjc2NS44MDIuODAyIDAgMCAwIC4wNzYgMS4wNDFsLjEwNS4xMDdjLjE1LjE1LjM1My4yMzQuNTYyLjIzNGwuMDU4LS4wMDJhLjgxLjgxIDAgMCAwIC41OC0uMzE5IDYuMzY1IDYuMzY1IDAgMCAwIDEuMjY2LTMuODI3IDYuMzM2IDYuMzM2IDAgMCAwLTEuNDMyLTQuMDQ0Ljc5Mi43OTIgMCAwIDAtLjU3NC0uMjkyem0zLjQzOC0yLjQ3NWExMC4zMDQgMTAuMzA0IDAgMCAxIC4xNjggMTMuNDI2Ljc5Ni43OTYgMCAwIDEtLjU3NC4yODJsLS4wMzIuMDAxYS43OTcuNzk3IDAgMCAxLS41NjItLjIzM2wtLjEwNC0uMTA0YS44LjggMCAwIDEtLjA0NS0xLjA3OSA4LjU2MyA4LjU2MyAwIDAgMCAxLjk4Ni01LjQ4MiA4LjUzNCA4LjUzNCAwIDAgMC0yLjEyOC01LjY0NS44MDIuODAyIDAgMCAxIC4wMzEtMS4wOTRsLjEwNC0uMTA1YS43OTUuNzk1IDAgMCAxIDEuMTU2LjAzM3pNOCAzLjE2M3Y5LjY3NGwtMi42ODUtMi4zNDRBMiAyIDAgMCAwIDQgMTBIMlY2aDJjLjQ4NCAwIC45NTEtLjE3NSAxLjMxNS0uNDkzTDggMy4xNjN6TTguOTY4IDBjLS4yMzYgMC0uNDY5LjA4MS0uNjU4LjIzOEw0IDRIMWMtLjU2OSAwLTEgLjQzLTEgMXY2YzAgLjU3LjQzMSAxIDEgMWgzbDQuMzEgMy43NjJhMS4wMjUgMS4wMjUgMCAwIDAgMS4wOTcuMTM5Yy4zNjMtLjE2OS41OTMtLjUzMy41OTMtLjkzM1YxLjAzM0ExLjAzMSAxLjAzMSAwIDAgMCA4Ljk2OCAweiIgZmlsbD0iIzk5OTk5OSIgZmlsbC1ydWxlPSJldmVub2RkIiAvPjwvc3ZnPg==)}.wt-sky-reader--dark .wt-sky-reader__dictionary--empty{color:#999}.wt-sky-reader--dark .wt-sky-reader__settings-font-item{border-color:hsla(0,0%,60%,.5)}.wt-sky-reader--dark .wt-sky-reader__settings-size-button{background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSI2NSIgdmlld0JveD0iMCAwIDE2IDY1Ij4KICA8c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTYiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgLTIgMTYgMTIiPgogICAgPHJlY3QgeD0iMTAiIHk9IjExOSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjIiIHJ4PSIxIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTAgLTExOSkiIGZpbGw9IiM5OTk5OTkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgLz4KICA8L3N2Zz4KICA8c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTYiIGhlaWdodD0iMjYiIHZpZXdCb3g9IjAgLTEwIDE2IDI2IiB5PSIxMiI+CiAgICA8ZyBmaWxsPSIjOTk5OTk5IiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPgogICAgICA8cmVjdCB5PSI3IiB3aWR0aD0iMTYiIGhlaWdodD0iMiIgcng9IjEiIGZpbGw9IiM5OTk5OTkiIC8+CiAgICAgIDxyZWN0IHg9IjciIHdpZHRoPSIyIiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iIzk5OTk5OSIgLz4KICAgIDwvZz4KICA8L3N2Zz4KICA8c3ZnIHdpZHRoPSIxMCIgaGVpZ2h0PSIxMCIgdmlld0JveD0iMCAwIDEwIDEwIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHk9IjU0IiB4PSIzIj48cGF0aCBkPSJNNCA0SC45OTVDLjQ1NSA0IDAgNC40NDggMCA1YzAgLjU1Ni40NDYgMSAuOTk1IDFINHYzLjAwNWMwIC41NC40NDguOTk1IDEgLjk5NS41NTYgMCAxLS40NDYgMS0uOTk1VjZoMy4wMDVjLjU0IDAgLjk5NS0uNDQ4Ljk5NS0xIDAtLjU1Ni0uNDQ2LTEtLjk5NS0xSDZWLjk5NUM2IC40NTUgNS41NTIgMCA1IDBjLS41NTYgMC0xIC40NDYtMSAuOTk1VjR6IiBmaWxsPSIjRkZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIC8+PC9zdmc+Cjwvc3ZnPg==);border-color:hsla(0,0%,60%,.5)}.wt-sky-reader--dark .wt-sky-reader__settings-size-button:active{box-shadow:inset 0 0 5px 0 hsla(0,0%,60%,.5)}.wt-sky-reader--dark .wt-sky-reader__settings-size-button--disabled{background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSI2NSIgdmlld0JveD0iMCAwIDE2IDY1Ij4KICA8c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTYiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgLTIgMTYgMTIiPgogICAgPHJlY3QgeD0iMTAiIHk9IjExOSIgd2lkdGg9IjE2IiBoZWlnaHQ9IjIiIHJ4PSIxIiB0cmFuc2Zvcm09InRyYW5zbGF0ZSgtMTAgLTExOSkiIGZpbGw9IiM5OTk5OTk1MCIgZmlsbC1ydWxlPSJldmVub2RkIiAvPgogIDwvc3ZnPgogIDxzdmcgeG1sbnM6eGxpbms9Imh0dHA6Ly93d3cudzMub3JnLzE5OTkveGxpbmsiIHdpZHRoPSIxNiIgaGVpZ2h0PSIyNiIgdmlld0JveD0iMCAtMTAgMTYgMjYiIHk9IjEyIj4KICAgIDxnIGZpbGw9IiM5OTk5OTk1MCIgZmlsbC1ydWxlPSJldmVub2RkIj4KICAgICAgPHJlY3QgeT0iNyIgd2lkdGg9IjE2IiBoZWlnaHQ9IjIiIHJ4PSIxIiBmaWxsPSIjOTk5OTk5NTAiIC8+CiAgICAgIDxyZWN0IHg9IjciIHdpZHRoPSIyIiBoZWlnaHQ9IjE2IiByeD0iMSIgZmlsbD0iIzk5OTk5OTUwIiAvPgogICAgPC9nPgogIDwvc3ZnPgogIDxzdmcgd2lkdGg9IjEwIiBoZWlnaHQ9IjEwIiB2aWV3Qm94PSIwIDAgMTAgMTAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgeT0iNTQiIHg9IjMiPjxwYXRoIGQ9Ik00IDRILjk5NUMuNDU1IDQgMCA0LjQ0OCAwIDVjMCAuNTU2LjQ0NiAxIC45OTUgMUg0djMuMDA1YzAgLjU0LjQ0OC45OTUgMSAuOTk1LjU1NiAwIDEtLjQ0NiAxLS45OTVWNmgzLjAwNWMuNTQgMCAuOTk1LS40NDguOTk1LTEgMC0uNTU2LS40NDYtMS0uOTk1LTFINlYuOTk1QzYgLjQ1NSA1LjU1MiAwIDUgMGMtLjU1NiAwLTEgLjQ0Ni0xIC45OTVWNHoiIGZpbGw9IiNGRkYiIGZpbGwtcnVsZT0iZXZlbm9kZCIgLz48L3N2Zz4KPC9zdmc+)}.wt-sky-reader--dark .wt-sky-reader__settings-size-value{color:#ddd;border-top-color:hsla(0,0%,60%,.5);border-bottom-color:hsla(0,0%,60%,.5)}.wt-sky-reader--dark .wt-sky-reader__settings-translation-head,.wt-sky-reader--dark .wt-sky-reader__settings-translation-label{color:#ddd}.wt-sky-reader .wt-sky-reader__settings-skin-item--light{border-color:hsla(0,0%,60%,.5);color:#333;background-color:#fff}.wt-sky-reader .wt-sky-reader__settings-skin-item--dark{border-color:hsla(0,0%,60%,.5);color:#ddd;background-color:#222}.wt-sky-reader .wt-sky-reader__settings-skin-item--sepia{border-color:hsla(25,17%,61%,.5);color:#5b4636;background-color:#fff8e8}</style><style type="text/css">.vimbox-words{display:-webkit-box;display:-ms-flexbox;display:flex;-ms-flex-wrap:wrap;flex-wrap:wrap;clear:both;margin-bottom:10px;font-family:Open Sans,sans-serif}.vimbox-words__item{position:relative;width:33.33%;min-width:300px;padding:0;border-radius:3px}.vimbox-words__item-text-list{position:absolute;content:"";width:6px;height:6px;display:block;left:12px;top:13px;background-color:#ccc;border-radius:3px}.vimbox-words__item:hover{background-color:#eff6ff}.vimbox-words__item:hover .vimbox-words__item-text-list{position:absolute;content:"";cursor:pointer;width:12px;height:12px;display:block;left:9px;top:10px;border-radius:0;background-color:transparent;background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxMiIgaGVpZ2h0PSIzNiIgdmlld0JveD0iMCAwIDEyIDM2Ij48c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiI+PHBhdGggZD0iTS43NS43NWwxMC41IDEwLjVtLTEwLjUgMEwxMS4yNS43NSIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjEuNSIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PC9zdmc+PHN2ZyB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyIiB2aWV3Qm94PSIwIDAgMTIgMTIiIHk9IjEyIj48cGF0aCBkPSJNLjc1Ljc1bDEwLjUgMTAuNW0tMTAuNSAwTDExLjI1Ljc1IiBzdHJva2U9IiNBRDk5OEIiIHN0cm9rZS13aWR0aD0iMS41IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz48c3ZnIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIiB5PSIyNCIgd2lkdGg9IjEyIiBoZWlnaHQ9IjEyIiB2aWV3Qm94PSIwIDAgMTIgMTIiPjxwYXRoIGZpbGw9Im5vbmUiIHN0cm9rZT0iI2IyYjJiMiIgc3Ryb2tlLXdpZHRoPSIxLjUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLW1pdGVybGltaXQ9IjEwIiBkPSJNLjc1Ljc1bDEwLjUgMTAuNW0tMTAuNSAwTDExLjI1Ljc1Ii8+PC9zdmc+PC9zdmc+);background-position:0 0;background-size:12px auto;background-repeat:no-repeat;opacity:.5}.vimbox-words__item:hover .vimbox-words__item-text-list:hover{opacity:1}.vimbox-words__item-text{position:relative;height:32px;width:50%;display:inline-block;box-sizing:border-box;padding-left:12px;line-height:21px;vertical-align:top}.vimbox-words__item-text-line{position:absolute;right:6px;top:16px;left:24px;background-color:#ededed;height:1px}.vimbox-words__item-text-inner{position:absolute;left:24px;top:4px;background-color:#fff;padding:0 5px}.vimbox-words__item:hover .vimbox-words__item-text-inner{background-color:#eff6ff}.vimbox-words__item-text-sound{display:none;margin-left:6px;cursor:pointer;width:18px;height:13px;vertical-align:middle;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxOSAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+MUJEREIyQUItRDY0NS00NDNDLTk1MjYtMEYzMEE3RDNBNkNDPC90aXRsZT48cGF0aCBkPSJNMTIuOTkgMy43NTlhLjc4MS43ODEgMCAwIDAtLjYwNC4yMzNsLS4xMDQuMTA4YS44MDMuODAzIDAgMCAwLS4wNTYgMS4wNjkgNC42MDEgNC42MDEgMCAwIDEgMS4wMzEgMi45MjcgNC42MzUgNC42MzUgMCAwIDEtLjkwOCAyLjc2NS44MDIuODAyIDAgMCAwIC4wNzYgMS4wNDFsLjEwNS4xMDdjLjE1LjE1LjM1My4yMzQuNTYyLjIzNGwuMDU4LS4wMDJhLjgxLjgxIDAgMCAwIC41OC0uMzE5IDYuMzY1IDYuMzY1IDAgMCAwIDEuMjY2LTMuODI3IDYuMzM2IDYuMzM2IDAgMCAwLTEuNDMyLTQuMDQ0Ljc5Mi43OTIgMCAwIDAtLjU3NC0uMjkyem0zLjQzOC0yLjQ3NWExMC4zMDQgMTAuMzA0IDAgMCAxIC4xNjggMTMuNDI2Ljc5Ni43OTYgMCAwIDEtLjU3NC4yODJsLS4wMzIuMDAxYS43OTcuNzk3IDAgMCAxLS41NjItLjIzM2wtLjEwNC0uMTA0YS44LjggMCAwIDEtLjA0NS0xLjA3OSA4LjU2MyA4LjU2MyAwIDAgMCAxLjk4Ni01LjQ4MiA4LjUzNCA4LjUzNCAwIDAgMC0yLjEyOC01LjY0NS44MDIuODAyIDAgMCAxIC4wMzEtMS4wOTRsLjEwNC0uMTA1YS43OTUuNzk1IDAgMCAxIDEuMTU2LjAzM3pNOCAzLjE2M3Y5LjY3NGwtMi42ODUtMi4zNDRBMiAyIDAgMCAwIDQgMTBIMlY2aDJjLjQ4NCAwIC45NTEtLjE3NSAxLjMxNS0uNDkzTDggMy4xNjN6TTguOTY4IDBjLS4yMzYgMC0uNDY5LjA4MS0uNjU4LjIzOEw0IDRIMWMtLjU2OSAwLTEgLjQzLTEgMXY2YzAgLjU3LjQzMSAxIDEgMWgzbDQuMzEgMy43NjJhMS4wMjUgMS4wMjUgMCAwIDAgMS4wOTcuMTM5Yy4zNjMtLjE2OS41OTMtLjUzMy41OTMtLjkzM1YxLjAzM0ExLjAzMSAxLjAzMSAwIDAgMCA4Ljk2OCAweiIgZmlsbD0iI2NiY2JjYiIgZmlsbC1ydWxlPSJldmVub2RkIiAvPjwvc3ZnPg==);background-size:15px auto;background-repeat:no-repeat;background-position:0;background-color:#eff6ff;position:absolute;top:5px;right:-17px}.vimbox-words__item-text-sound:hover{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxOSAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+MUJEREIyQUItRDY0NS00NDNDLTk1MjYtMEYzMEE3RDNBNkNDPC90aXRsZT48cGF0aCBkPSJNMTIuOTkgMy43NTlhLjc4MS43ODEgMCAwIDAtLjYwNC4yMzNsLS4xMDQuMTA4YS44MDMuODAzIDAgMCAwLS4wNTYgMS4wNjkgNC42MDEgNC42MDEgMCAwIDEgMS4wMzEgMi45MjcgNC42MzUgNC42MzUgMCAwIDEtLjkwOCAyLjc2NS44MDIuODAyIDAgMCAwIC4wNzYgMS4wNDFsLjEwNS4xMDdjLjE1LjE1LjM1My4yMzQuNTYyLjIzNGwuMDU4LS4wMDJhLjgxLjgxIDAgMCAwIC41OC0uMzE5IDYuMzY1IDYuMzY1IDAgMCAwIDEuMjY2LTMuODI3IDYuMzM2IDYuMzM2IDAgMCAwLTEuNDMyLTQuMDQ0Ljc5Mi43OTIgMCAwIDAtLjU3NC0uMjkyem0zLjQzOC0yLjQ3NWExMC4zMDQgMTAuMzA0IDAgMCAxIC4xNjggMTMuNDI2Ljc5Ni43OTYgMCAwIDEtLjU3NC4yODJsLS4wMzIuMDAxYS43OTcuNzk3IDAgMCAxLS41NjItLjIzM2wtLjEwNC0uMTA0YS44LjggMCAwIDEtLjA0NS0xLjA3OSA4LjU2MyA4LjU2MyAwIDAgMCAxLjk4Ni01LjQ4MiA4LjUzNCA4LjUzNCAwIDAgMC0yLjEyOC01LjY0NS44MDIuODAyIDAgMCAxIC4wMzEtMS4wOTRsLjEwNC0uMTA1YS43OTUuNzk1IDAgMCAxIDEuMTU2LjAzM3pNOCAzLjE2M3Y5LjY3NGwtMi42ODUtMi4zNDRBMiAyIDAgMCAwIDQgMTBIMlY2aDJjLjQ4NCAwIC45NTEtLjE3NSAxLjMxNS0uNDkzTDggMy4xNjN6TTguOTY4IDBjLS4yMzYgMC0uNDY5LjA4MS0uNjU4LjIzOEw0IDRIMWMtLjU2OSAwLTEgLjQzLTEgMXY2YzAgLjU3LjQzMSAxIDEgMWgzbDQuMzEgMy43NjJhMS4wMjUgMS4wMjUgMCAwIDAgMS4wOTcuMTM5Yy4zNjMtLjE2OS41OTMtLjUzMy41OTMtLjkzM1YxLjAzM0ExLjAzMSAxLjAzMSAwIDAgMCA4Ljk2OCAweiIgZmlsbD0iI2IyYjJiMiIgZmlsbC1ydWxlPSJldmVub2RkIiAvPjwvc3ZnPg==)}.vimbox-words__item:hover .vimbox-words__item-text-sound{display:inline-block}.vimbox-words__item-translation{position:relative;top:4px;width:50%;line-height:21px;display:inline-block;color:#999;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;box-sizing:border-box;padding-bottom:8px}@media print{.vimbox-words__item{width:50%}.vimbox-words__item-text-list{display:none}.vimbox-words__item-text-inner{left:0}}</style><style type="text/css">.wt-sky-reader__dictionary{font-size:15px}.wt-sky-reader__dictionary--empty{text-align:center;line-height:1.33}.wt-sky-reader .vimbox-words__item{width:100%;min-width:0}.wt-sky-reader .vimbox-words__item,.wt-sky-reader .vimbox-words__item-text-inner{transition:background-color .15s linear}.wt-sky-reader .vimbox-words{margin-bottom:0}</style><style type="text/css">.wt-sky-reader--serif .wt-sky-reader__article{font-family:Georgia,Times New Roman,serif}.wt-sky-reader__article-content{overflow-x:hidden}.wt-sky-reader__article.wt-sky-col-size__40{width:40vw}.wt-sky-reader__article.wt-sky-col-size__45{width:45vw}.wt-sky-reader__article.wt-sky-col-size__50{width:50vw}.wt-sky-reader__article.wt-sky-col-size__55{width:55vw}.wt-sky-reader__article.wt-sky-col-size__60{width:60vw}.wt-sky-reader__article.wt-sky-col-size__65{width:65vw}.wt-sky-reader__article.wt-sky-col-size__70{width:70vw}.wt-sky-reader__article.wt-sky-col-size__75{width:75vw}.wt-sky-reader__article.wt-sky-col-size__80{width:80vw}.wt-sky-reader__article.wt-sky-col-size__85{width:85vw}.wt-sky-reader__article.wt-sky-col-size__90{width:90vw}.wt-sky-reader__article a,.wt-sky-reader__article abbr,.wt-sky-reader__article address,.wt-sky-reader__article area,.wt-sky-reader__article article,.wt-sky-reader__article aside,.wt-sky-reader__article audio,.wt-sky-reader__article b,.wt-sky-reader__article blockquote,.wt-sky-reader__article canvas,.wt-sky-reader__article caption,.wt-sky-reader__article cite,.wt-sky-reader__article code,.wt-sky-reader__article data,.wt-sky-reader__article dd,.wt-sky-reader__article del,.wt-sky-reader__article details,.wt-sky-reader__article dfn,.wt-sky-reader__article div,.wt-sky-reader__article dl,.wt-sky-reader__article dt,.wt-sky-reader__article em,.wt-sky-reader__article footer,.wt-sky-reader__article h1,.wt-sky-reader__article h2,.wt-sky-reader__article h3,.wt-sky-reader__article h4,.wt-sky-reader__article h5,.wt-sky-reader__article h6,.wt-sky-reader__article head,.wt-sky-reader__article header,.wt-sky-reader__article hr,.wt-sky-reader__article i,.wt-sky-reader__article img,.wt-sky-reader__article ins,.wt-sky-reader__article li,.wt-sky-reader__article map,.wt-sky-reader__article nav,.wt-sky-reader__article ol,.wt-sky-reader__article p,.wt-sky-reader__article picture,.wt-sky-reader__article pre,.wt-sky-reader__article progress,.wt-sky-reader__article q,.wt-sky-reader__article s,.wt-sky-reader__article samp,.wt-sky-reader__article section,.wt-sky-reader__article small,.wt-sky-reader__article source,.wt-sky-reader__article span,.wt-sky-reader__article strong,.wt-sky-reader__article sub,.wt-sky-reader__article summary,.wt-sky-reader__article sup,.wt-sky-reader__article table,.wt-sky-reader__article tbody,.wt-sky-reader__article td,.wt-sky-reader__article tfoot,.wt-sky-reader__article th,.wt-sky-reader__article thead,.wt-sky-reader__article time,.wt-sky-reader__article tr,.wt-sky-reader__article track,.wt-sky-reader__article u,.wt-sky-reader__article ul,.wt-sky-reader__article var,.wt-sky-reader__article video,.wt-sky-reader__article wbr{white-space:normal;word-wrap:break-word;max-width:100%;height:auto;font-size:1.8rem;margin-top:0;margin-bottom:.8rem}.wt-sky-reader__article h1{font-size:3rem;line-height:1.4;font-weight:600;margin-bottom:1.1rem}.wt-sky-reader__article h2{font-size:2.2rem;line-height:1.5;font-weight:400}.wt-sky-reader__article h3,.wt-sky-reader__article h4,.wt-sky-reader__article h5,.wt-sky-reader__article h6{font-size:1.9rem;line-height:1.58;font-weight:400}.wt-sky-reader__article *+h1,.wt-sky-reader__article *+h2,.wt-sky-reader__article *+h3,.wt-sky-reader__article *+h4,.wt-sky-reader__article *+h5,.wt-sky-reader__article *+h6{margin-top:1.5rem}.wt-sky-reader__article p{font-size:1.8rem;line-height:1.67}.wt-sky-reader__article p *{margin-bottom:0}.wt-sky-reader__article b{font-weight:600}.wt-sky-reader__article img{display:block}.wt-sky-reader__article ol,.wt-sky-reader__article ul{padding-left:3.6rem;list-style:none}.wt-sky-reader__article ol ol,.wt-sky-reader__article ol ul,.wt-sky-reader__article ul ol,.wt-sky-reader__article ul ul{margin:0}.wt-sky-reader__article ol li,.wt-sky-reader__article ul li{font-size:1.8rem;line-height:3rem;margin-bottom:.6rem}.wt-sky-reader__article ul li{position:relative}.wt-sky-reader__article ul li:before{content:"\2022";width:2.4rem;margin-left:-3.6rem;margin-right:1.2rem;font-size:2.4rem;font-weight:700;text-align:right;position:absolute;top:.1rem;left:-.1rem}.wt-sky-reader__article ol{counter-reset:item}.wt-sky-reader__article ol li:before{display:inline-block;width:2.4rem;margin-left:-3.6rem;margin-right:1.2rem;direction:rtl;content:counter(item);counter-increment:item;font-size:1.6rem;font-weight:400;line-height:3rem;text-align:right}.wt-sky-reader__article ol li ol li:before{content:counter(item,lower-alpha);counter-increment:item}.wt-sky-reader__article a:active,.wt-sky-reader__article a:hover,.wt-sky-reader__article a:link,.wt-sky-reader__article a:visited{color:#5d9cec}.wt-sky-reader__article blockquote{font-size:2.2rem;line-height:1.5;margin:0;padding-left:3.6rem;padding-right:3.6rem;position:relative}.wt-sky-reader__article blockquote:after,.wt-sky-reader__article blockquote:before{content:"";background-repeat:no-repeat;background-position:50%;background-size:1.8rem 2rem;display:block;width:1.8rem;height:2rem;position:absolute;top:.5rem}.wt-sky-reader__article blockquote:before{left:0}.wt-sky-reader__article blockquote:after{right:0;-webkit-transform:rotate(180deg);transform:rotate(180deg)}.wt-sky-reader__article hr{border:0;height:1px;opacity:.25;border-radius:1px}.wt-sky-reader__article wt-tw{position:relative}.wt-sky-reader__article wt-w{display:inline;cursor:pointer;font-size:inherit}.wt-sky-reader__article wt-w::-moz-selection{color:#fff;background-color:#5d9cec}.wt-sky-reader__article wt-w::selection{color:#fff;background-color:#5d9cec}.wt-sky-reader__article wt-w:hover{color:#5d9cec;border-radius:1px;background-color:rgba(93,156,236,.15)}.wt-sky-reader__article wt-t{display:inline;cursor:default;font-style:italic;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none}.wt-sky-reader__article.wt-sky-translation__right wt-t{padding-left:.2rem;font-size:1.8rem}.wt-sky-reader__article.wt-sky-translation__replace wt-tw{display:inline-block;text-align:center;font-size:inherit}.wt-sky-reader__article.wt-sky-translation__replace wt-tw wt-w{display:block;font-size:1.3rem;font-weight:400;line-height:0;margin-bottom:0}.wt-sky-reader__article.wt-sky-translation__replace wt-tw wt-t{display:block}.wt-sky-reader__article.wt-sky-translation__above wt-tw{display:inline-block;text-align:center;font-size:inherit}.wt-sky-reader__article.wt-sky-translation__above wt-tw wt-t{display:block;font-size:1.3rem;font-weight:400;line-height:0;margin-bottom:0}.wt-sky-reader__article.wt-sky-translation__above wt-tw wt-w{display:block}</style><style type="text/css">.wt-sky-reader--light .wt-sky-reader__article h3,.wt-sky-reader--light .wt-sky-reader__article h4,.wt-sky-reader--light .wt-sky-reader__article h5,.wt-sky-reader--light .wt-sky-reader__article h6,.wt-sky-reader--light .wt-sky-reader__article ol li:before,.wt-sky-reader--light .wt-sky-reader__article ul li:before{color:#999}.wt-sky-reader--light .wt-sky-reader__article hr{background-color:#999}.wt-sky-reader--light .wt-sky-reader__article blockquote:after,.wt-sky-reader--light .wt-sky-reader__article blockquote:before{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAxOCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOC44NjMgMTAuMDczbDcuNzItOS45NzYgMS4xNDMuOTI1LTQuODQzIDguNzFMMTggMTguOTNsLTEuMDk2Ljk3NC04LjA0MS05Ljgzem0tOC44NjMgMEw5LjczMSAwbDEuMTg4Ljk3My02LjM5NiA4LjgwOCA2LjY3IDkuMTk3TDEwLjAwNSAyMCAwIDEwLjA3M3oiIGZpbGw9IiM5OTk5OTkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgb3BhY2l0eT0iLjUiIC8+PC9zdmc+)}.wt-sky-reader--light .wt-sky-reader__article.wt-sky-translation__above wt-t,.wt-sky-reader--light .wt-sky-reader__article.wt-sky-translation__replace wt-tw wt-w,.wt-sky-reader--light .wt-sky-reader__article.wt-sky-translation__right wt-t{color:#999}.wt-sky-reader--sepia .wt-sky-reader__article h3,.wt-sky-reader--sepia .wt-sky-reader__article h4,.wt-sky-reader--sepia .wt-sky-reader__article h5,.wt-sky-reader--sepia .wt-sky-reader__article h6,.wt-sky-reader--sepia .wt-sky-reader__article ol li:before,.wt-sky-reader--sepia .wt-sky-reader__article ul li:before{color:#ad998b}.wt-sky-reader--sepia .wt-sky-reader__article hr{background-color:#ad998b}.wt-sky-reader--sepia .wt-sky-reader__article blockquote:after,.wt-sky-reader--sepia .wt-sky-reader__article blockquote:before{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAxOCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOC44NjMgMTAuMDczbDcuNzItOS45NzYgMS4xNDMuOTI1LTQuODQzIDguNzFMMTggMTguOTNsLTEuMDk2Ljk3NC04LjA0MS05Ljgzem0tOC44NjMgMEw5LjczMSAwbDEuMTg4Ljk3My02LjM5NiA4LjgwOCA2LjY3IDkuMTk3TDEwLjAwNSAyMCAwIDEwLjA3M3oiIGZpbGw9IiNhZDk5OGIiIGZpbGwtcnVsZT0iZXZlbm9kZCIgb3BhY2l0eT0iLjUiIC8+PC9zdmc+)}.wt-sky-reader--sepia .wt-sky-reader__article.wt-sky-translation__above wt-t,.wt-sky-reader--sepia .wt-sky-reader__article.wt-sky-translation__replace wt-tw wt-w,.wt-sky-reader--sepia .wt-sky-reader__article.wt-sky-translation__right wt-t{color:#ad998b}.wt-sky-reader--dark .wt-sky-reader__article h3,.wt-sky-reader--dark .wt-sky-reader__article h4,.wt-sky-reader--dark .wt-sky-reader__article h5,.wt-sky-reader--dark .wt-sky-reader__article h6,.wt-sky-reader--dark .wt-sky-reader__article ol li:before,.wt-sky-reader--dark .wt-sky-reader__article ul li:before{color:#999}.wt-sky-reader--dark .wt-sky-reader__article hr{background-color:#999}.wt-sky-reader--dark .wt-sky-reader__article blockquote:after,.wt-sky-reader--dark .wt-sky-reader__article blockquote:before{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAxOCAyMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNOC44NjMgMTAuMDczbDcuNzItOS45NzYgMS4xNDMuOTI1LTQuODQzIDguNzFMMTggMTguOTNsLTEuMDk2Ljk3NC04LjA0MS05Ljgzem0tOC44NjMgMEw5LjczMSAwbDEuMTg4Ljk3My02LjM5NiA4LjgwOCA2LjY3IDkuMTk3TDEwLjAwNSAyMCAwIDEwLjA3M3oiIGZpbGw9IiM5OTk5OTkiIGZpbGwtcnVsZT0iZXZlbm9kZCIgb3BhY2l0eT0iLjUiIC8+PC9zdmc+)}.wt-sky-reader--dark .wt-sky-reader__article.wt-sky-translation__above wt-t,.wt-sky-reader--dark .wt-sky-reader__article.wt-sky-translation__replace wt-tw wt-w,.wt-sky-reader--dark .wt-sky-reader__article.wt-sky-translation__right wt-t{color:#999}</style><style type="text/css">.wt-sky-reader__settings{position:fixed;top:140px;right:65px;padding:20px;border-radius:6px;box-shadow:0 6px 12px 0 rgba(0,0,0,.15);border:2px solid}.wt-sky-reader__settings:after,.wt-sky-reader__settings:before{left:100%;top:40px;border:solid transparent;content:" ";height:0;width:0;position:absolute;pointer-events:none}.wt-sky-reader__settings:after{border-width:5px;margin-top:-5px}.wt-sky-reader__settings:before{border-width:8px;margin-top:-8px}.wt-sky-reader__settings-font{display:-webkit-box;display:-ms-flexbox;display:flex;margin-bottom:25px}.wt-sky-reader__settings-font-item{width:115px;height:77px;border-radius:4px;border:1px solid;margin-right:10px;box-sizing:border-box;padding:12px 0;text-align:center;line-height:1.4;position:relative;cursor:pointer}.wt-sky-reader__settings-font-item:before{content:"Aa";text-align:center;width:100%;display:block;font-size:30px;height:40px}.wt-sky-reader__settings-font-item--active:after{content:"";height:4px;border-radius:4px;background-color:#5d9cec;display:inline-block;width:115px;position:absolute;bottom:-8px;left:0}.wt-sky-reader__settings-font-item--sans-serif{font-family:Open Sans,sans-serif;font-size:13px}.wt-sky-reader__settings-font-item--serif{font-family:Georgia,Times New Roman,serif;font-size:14px}.wt-sky-reader__settings-size{display:-webkit-box;display:-ms-flexbox;display:flex;margin-bottom:15px}.wt-sky-reader__settings-size-button{width:36px;height:36px;border-radius:4px;border:1px solid;box-sizing:border-box;cursor:pointer;background-repeat:no-repeat;background-size:16px auto}.wt-sky-reader__settings-size-button--minus{border-radius:4px 0 0 4px;background-position:9px 14px}.wt-sky-reader__settings-size-button--plus{border-radius:0 4px 4px 0;background-position:9px -13px}.wt-sky-reader__settings-size-button--disabled{cursor:default}.wt-sky-reader__settings-size-button--disabled:active{box-shadow:none!important}.wt-sky-reader__settings-size-value{font-size:14px;text-align:center;width:170px;height:36px;line-height:36px;border-top:1px solid;border-bottom:1px solid;box-sizing:border-box}.wt-sky-reader__settings-skin{display:-webkit-box;display:-ms-flexbox;display:flex;margin-bottom:35px}.wt-sky-reader__settings-skin-item{width:76px;height:36px;border-radius:4px;border:1px solid;box-sizing:border-box;margin-right:7px;padding-top:7px;padding-bottom:10px;text-align:center;font-size:14px;cursor:pointer;position:relative;line-height:1.5}.wt-sky-reader__settings-skin-item--active:after{content:"";height:4px;border-radius:4px;background-color:#5d9cec;display:inline-block;width:76px;position:absolute;bottom:-8px;left:0}.wt-sky-reader__settings-translation{padding-left:1px}.wt-sky-reader__settings-translation-head{font-size:14px;font-weight:600;line-height:1.43}.wt-sky-reader__settings-translation-label{display:block;font-size:14px;line-height:1.57;color:#5b4636}.wt-sky-reader__settings-translation-radio{margin:0 7px 0 0}</style><style type="text/css">.wt-sky-progress-bar{position:fixed;top:0;left:0;width:100%;height:2px;z-index:1}.wt-sky-progress-bar__line{height:100%;width:0;background-color:#ff3d6f;transition:width .15s linear}</style><style type="text/css">.wt-sky-reader-notification{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-smoothing:antialiased;position:fixed;box-sizing:border-box;right:55px;top:120px;width:245px;padding:10px 12px 14px;font-family:Open Sans,sans-serif;font-size:13px;font-weight:600;line-height:1.4;color:#fff;border-radius:6px;background-color:rgba(73,137,220,.95);box-shadow:0 0 20px 0 rgba(0,0,0,.2);border:1px solid transparent;z-index:9999999999;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;text-align:left;transition:top .15s linear}.wt-sky-reader-notification:after{right:-15px;top:20px;content:" ";height:0;width:0;position:absolute;pointer-events:none;border:solid transparent;border-left-color:rgba(73,137,220,.95);border-width:7px;margin-top:-7px}.wt-sky-reader-notification__buttons{margin-top:10px;display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;-webkit-box-align:center;-ms-flex-align:center;align-items:center}.wt-sky-reader-notification__button-turn-on{display:inline-block;box-sizing:border-box;font-size:15px;font-weight:600;color:#333;width:136px;padding:3px 12px 4px 45px;border-radius:66px;box-shadow:inset 0 -1px 0 0 rgba(0,0,0,.07);background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAyNCAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RjAzODJFNjEtODUwRS00QzIyLUJFMDMtMkE5QzlCRDc5NDkwPC90aXRsZT48cGF0aCBkPSJNMS4wNjkgMy4wOThIMHYxLjQ5OGguNzA3QTQuOTQgNC45NCAwIDAgMCAuNjkgNWMwIDIuNzU3IDIuMjYgNSA1LjAzNyA1IDIuNzc4IDAgNS4wMzgtMi4yNDMgNS4wMzgtNSAwLS41NTMtLjA5Mi0xLjA4NS0uMjYtMS41ODNBMS41MSAxLjUxIDAgMCAxIDEyIDIuMTJhMS41MSAxLjUxIDAgMCAxIDEuNDk2IDEuMjk1QTQuOTQzIDQuOTQzIDAgMCAwIDEzLjIzNiA1YzAgMi43NTcgMi4yNiA1IDUuMDM3IDUgMi43NzggMCA1LjAzOC0yLjI0MyA1LjAzOC01IDAtLjEzNi0uMDA3LS4yNy0uMDE4LS40MDRIMjRWMy4wOThoLTEuMDdBNS4wNDUgNS4wNDUgMCAwIDAgMTguMjczIDBhNS4wNDYgNS4wNDYgMCAwIDAtMy44NzQgMS44MDcgMy4wMjIgMy4wMjIgMCAwIDAtNC44IDBBNS4wNDUgNS4wNDUgMCAwIDAgNS43MjcgMCA1LjA0NSA1LjA0NSAwIDAgMCAxLjA3IDMuMDk4em0xNy4yMDQtMS42QzIwLjIxOCAxLjQ5OCAyMS44IDMuMDcgMjEuOCA1YzAgMS45MzEtMS41ODMgMy41MDItMy41MjggMy41MDItMS45NDYgMC0zLjUyOS0xLjU3LTMuNTI5LTMuNTAyIDAtMS45MyAxLjU4My0zLjUwMiAzLjUyOS0zLjUwMnptLTEyLjU0NyAwQzcuNjcyIDEuNDk4IDkuMjU0IDMuMDcgOS4yNTQgNWMwIDEuOTMxLTEuNTgyIDMuNTAyLTMuNTI4IDMuNTAyLTEuOTQ1IDAtMy41MjgtMS41Ny0zLjUyOC0zLjUwMiAwLTEuOTMgMS41ODMtMy41MDIgMy41MjgtMy41MDJ6IiBmaWxsPSIjMzMzIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=),linear-gradient(180deg,#fff,#f5f5f5);background-repeat:no-repeat;background-position:12px,50%;background-size:24px 10px,100%;cursor:pointer}.wt-sky-reader-notification__button-close{display:inline-block;width:65px;cursor:pointer;font-size:15px;font-weight:600}</style><style type="text/css">.wt-sky-toolbar-wrap{position:relative}.wt-sky-toolbar{position:fixed;width:42px;border-radius:6px 0 0 6px;z-index:9999999999;right:0;top:70px;background-color:rgba(0,0,0,.2);padding-top:6px;padding-bottom:6px;-webkit-user-select:none;-moz-user-select:none;-ms-user-select:none;user-select:none;cursor:move}.wt-sky-toolbar--active,.wt-sky-toolbar:hover{background-color:rgba(93,156,236,.85);box-shadow:0 4px 6px 0 rgba(0,0,0,.1)}.wt-sky-toolbar__button-reading-list{width:42px;height:42px;padding:0;border:none;cursor:pointer;background-color:transparent;background-repeat:no-repeat;background-position:50%;display:block;transition:background-color .15s linear;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAxNiAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTMuNzE0IDBIMi4yODZDMS4wMjMgMCAuMDEgMS4xOTMuMDEgMi42NjdMMCAyNGw4LTUuMzMzTDE2IDI0VjIuNjY3QzE2IDEuMTkzIDE0Ljk3NyAwIDEzLjcxNCAwek0xMyAxOWwtNS0zLjU3N0wzIDE5VjNoMTB2MTZ6IiBmaWxsPSIjRkZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiLz48L3N2Zz4=);background-size:16px 24px}.wt-sky-toolbar__button-reading-list:hover{background-color:#5d9cec}.wt-sky-toolbar__button-reading-list--disabled{opacity:.5}.wt-sky-toolbar__button-reading-list--disabled:hover{background-color:transparent}.wt-sky-toolbar__button-reading-list--saved{background-image:url(data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIxNiIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDE2IDI0Ij48cGF0aCBmaWxsPSIjRkYzRDZGIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik0xMy43MTQgMEgyLjI4NkMxLjAyMyAwIC4wMSAxLjE5My4wMSAyLjY2N0wwIDI0bDgtNS4zMzNMMTYgMjRWMi42NjdDMTYgMS4xOTMgMTQuOTc3IDAgMTMuNzE0IDB6Ii8+PC9zdmc+)}.wt-sky-toolbar__button-reader{width:42px;height:42px;padding:0;border:none;cursor:pointer;background-color:transparent;background-repeat:no-repeat;background-position:50%;display:block;transition:background-color .15s linear;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMzIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAzMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PHRpdGxlPkRBRkMxMDFFLUNCN0QtNDY0Ri1CRTQzLTYyQzlCRERBMUNGOTwvdGl0bGU+PGRlZnM+PGNpcmNsZSBpZD0iYSIgY3g9IjgiIGN5PSI2IiByPSI2Ii8+PG1hc2sgaWQ9ImMiIHg9IjAiIHk9IjAiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgZmlsbD0iI2ZmZiI+PHVzZSB4bGluazpocmVmPSIjYSIvPjwvbWFzaz48Y2lyY2xlIGlkPSJiIiBjeD0iMjQiIGN5PSI2IiByPSI2Ii8+PG1hc2sgaWQ9ImQiIHg9IjAiIHk9IjAiIHdpZHRoPSIxMiIgaGVpZ2h0PSIxMiIgZmlsbD0iI2ZmZiI+PHVzZSB4bGluazpocmVmPSIjYiIvPjwvbWFzaz48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIHN0cm9rZT0iI0ZGRiIgbWFzaz0idXJsKCNjKSIgc3Ryb2tlLXdpZHRoPSI2IiB4bGluazpocmVmPSIjYSIvPjx1c2Ugc3Ryb2tlPSIjRkZGIiBtYXNrPSJ1cmwoI2QpIiBzdHJva2Utd2lkdGg9IjYiIHhsaW5rOmhyZWY9IiNiIi8+PHJlY3QgZmlsbD0iI0ZGRiIgeD0iMTEiIHk9IjMiIHdpZHRoPSIxMCIgaGVpZ2h0PSIzIiByeD0iMS41Ii8+PHJlY3QgZmlsbD0iI0ZGRiIgeT0iMyIgd2lkdGg9IjUiIGhlaWdodD0iMyIgcng9IjEuNSIvPjxyZWN0IGZpbGw9IiNGRkYiIHg9IjI3IiB5PSIzIiB3aWR0aD0iNSIgaGVpZ2h0PSIzIiByeD0iMS41Ii8+PC9nPjwvc3ZnPg==);background-size:32px 12px}.wt-sky-toolbar__button-reader:hover{background-color:#5d9cec}.wt-sky-toolbar__button-reader--active,.wt-sky-toolbar__button-reader--active:hover{background-color:#ff3d6f}.wt-sky-toolbar__button-reader--disabled{opacity:.5;cursor:default}.wt-sky-toolbar__button-reader--disabled:hover{background-color:transparent}.wt-sky-toolbar__reader-buttons{max-height:0;overflow:hidden;background-color:#e5e5e5;transition:max-height .3s linear}.wt-sky-toolbar__reader-buttons--active{max-height:90px}.wt-sky-toolbar__button-settings{width:42px;height:42px;padding:0;border:none;cursor:pointer;background-color:transparent;background-repeat:no-repeat;background-position:50%;display:block;opacity:.3;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMjAiIHZpZXdCb3g9IjAgMCAyMCAyMCIgZmlsbD0ibm9uZSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj4KPHBhdGggZmlsbC1ydWxlPSJldmVub2RkIiBjbGlwLXJ1bGU9ImV2ZW5vZGQiIGQ9Ik02LjgzNzgxIDIuNjQ5MzNDNi4yNTkxNyAyLjg5ODYgNS43MTU4MiAzLjIxNDIgNS4yMTczMyAzLjU4NjU0TDMuNTQ5NDkgMy4xMDk0NEMzLjAxNDEyIDIuOTU2MjkgMi4zNjYwOCAzLjIyMjU5IDIuMDg5OTkgMy43MDA4TDAuNTg5Nzk1IDYuMjk5MkMwLjMxMTc0OSA2Ljc4MDc5IDAuNDExMTM4IDcuNDc1NjggMC44MDc0MTcgNy44NTg4NUwyLjA1NDI3IDkuMDY0NDRDMi4wMTg1MiA5LjM3MTMzIDIuMDAwMTUgOS42ODM1MiAyLjAwMDE1IDEwQzIuMDAwMTUgMTAuMzE2NSAyLjAxODUyIDEwLjYyODcgMi4wNTQyNyAxMC45MzU2TDAuODA3NDE3IDEyLjE0MTJDMC40MDcxMDIgMTIuNTI4MiAwLjMxMzcwNiAxMy4yMjI2IDAuNTg5Nzk1IDEzLjcwMDhMMi4wODk5OSAxNi4yOTkyQzIuMzY4MDMgMTYuNzgwOCAzLjAxOTUyIDE3LjA0MjIgMy41NDk0OSAxNi44OTA2TDUuMjE3MzMgMTYuNDEzNUM1LjcxNTgyIDE2Ljc4NTggNi4yNTkxNyAxNy4xMDE0IDYuODM3ODEgMTcuMzUwN0w3LjI1ODA3IDE5LjAzMTdDNy4zOTMxMyAxOS41NzE5IDcuOTQ3NzcgMjAgOC40OTk5NSAyMEgxMS41MDAzQzEyLjA1NjQgMjAgMTIuNjA4NSAxOS41NjY1IDEyLjc0MjIgMTkuMDMxN0wxMy4xNjI1IDE3LjM1MDdDMTMuNzQxMSAxNy4xMDE0IDE0LjI4NDUgMTYuNzg1OCAxNC43ODMgMTYuNDEzNUwxNi40NTA4IDE2Ljg5MDZDMTYuOTg2MiAxNy4wNDM3IDE3LjYzNDIgMTYuNzc3NCAxNy45MTAzIDE2LjI5OTJMMTkuNDEwNSAxMy43MDA4QzE5LjY4ODUgMTMuMjE5MiAxOS41ODkyIDEyLjUyNDMgMTkuMTkyOSAxMi4xNDEyTDE3Ljk0NiAxMC45MzU2QzE3Ljk4MTggMTAuNjI4NyAxOC4wMDAxIDEwLjMxNjUgMTguMDAwMSAxMEMxOC4wMDAxIDkuNjgzNTIgMTcuOTgxOCA5LjM3MTMzIDE3Ljk0NiA5LjA2NDQ0TDE5LjE5MjkgNy44NTg4NUMxOS41OTMyIDcuNDcxNzggMTkuNjg2NiA2Ljc3NzQxIDE5LjQxMDUgNi4yOTkyTDE3LjkxMDMgMy43MDA4QzE3LjYzMjMgMy4yMTkyMSAxNi45ODA4IDIuOTU3ODQgMTYuNDUwOCAzLjEwOTQ0TDE0Ljc4MyAzLjU4NjU0QzE0LjI4NDUgMy4yMTQyIDEzLjc0MTEgMi44OTg2IDEzLjE2MjUgMi42NDkzM0wxMi43NDIyIDAuOTY4Mjg4QzEyLjYwNzIgMC40MjgwNyAxMi4wNTI1IDAgMTEuNTAwMyAwSDguNDk5OTVDNy45NDM4NiAwIDcuMzkxNzcgMC40MzM1MTggNy4yNTgwNyAwLjk2ODI4OEw2LjgzNzgxIDIuNjQ5MzNaTTIuNjAyNzIgNi44MTI3MkwzLjU0MTE3IDUuMTg3MjhMNS42MjAxNiA1Ljc4Mkw2LjQxNDIgNS4xODg4OEM2Ljc5MDUgNC45MDc4MSA3LjE5ODE3IDQuNjcxNzcgNy42MjkwOCA0LjQ4NjE0TDguNTM4MDUgNC4wOTQ1N0w5LjA2MTcgMkgxMC45Mzg2TDExLjQ2MjIgNC4wOTQ1N0wxMi4zNzEyIDQuNDg2MTRDMTIuODAyMSA0LjY3MTc3IDEzLjIwOTggNC45MDc4MSAxMy41ODYxIDUuMTg4ODhMMTQuMzgwMSA1Ljc4MkwxNi40NTkxIDUuMTg3MjhMMTcuMzk3NiA2LjgxMjcyTDE1Ljg0NTEgOC4zMTM4NUwxNS45NTk1IDkuMjk1ODNDMTUuOTg2NSA5LjUyNzk5IDE2LjAwMDEgOS43NjI5MyAxNi4wMDAxIDEwQzE2LjAwMDEgMTAuMjM3MSAxNS45ODY1IDEwLjQ3MiAxNS45NTk1IDEwLjcwNDJMMTUuODQ1MSAxMS42ODYyTDE3LjM5NzYgMTMuMTg3M0wxNi40NTkxIDE0LjgxMjdMMTQuMzgwMSAxNC4yMThMMTMuNTg2MSAxNC44MTExQzEzLjIwOTggMTUuMDkyMiAxMi44MDIxIDE1LjMyODIgMTIuMzcxMiAxNS41MTM5TDExLjQ2MjIgMTUuOTA1NEwxMC45Mzg2IDE4SDkuMDYxN0w4LjUzODA1IDE1LjkwNTRMNy42MjkwOCAxNS41MTM5QzcuMTk4MTcgMTUuMzI4MiA2Ljc5MDUgMTUuMDkyMiA2LjQxNDIgMTQuODExMUw1LjYyMDE2IDE0LjIxOEwzLjU0MTE3IDE0LjgxMjdMMi42MDI3MiAxMy4xODczTDQuMTU1MjIgMTEuNjg2Mkw0LjA0MDg0IDEwLjcwNDJDNC4wMTM4IDEwLjQ3MiA0LjAwMDE0IDEwLjIzNzEgNC4wMDAxNCAxMEM0LjAwMDE0IDkuNzYyOTMgNC4wMTM4IDkuNTI3OTkgNC4wNDA4NCA5LjI5NTgzTDQuMTU1MjIgOC4zMTM4NUwyLjYwMjcyIDYuODEyNzJaTTEwLjAwMDEgMTRDNy43OTEwMSAxNCA2LjAwMDE0IDEyLjIwOTEgNi4wMDAxNCAxMEM2LjAwMDE0IDcuNzkwODYgNy43OTEwMSA2IDEwLjAwMDEgNkMxMi4yMDkzIDYgMTQuMDAwMSA3Ljc5MDg2IDE0LjAwMDEgMTBDMTQuMDAwMSAxMi4yMDkxIDEyLjIwOTMgMTQgMTAuMDAwMSAxNFpNMTIuMDAwMiAxMEMxMi4wMDAyIDExLjEwNDYgMTEuMTA0NyAxMiAxMC4wMDAyIDEyQzguODk1NTggMTIgOC4wMDAxNSAxMS4xMDQ2IDguMDAwMTUgMTBDOC4wMDAxNSA4Ljg5NTQzIDguODk1NTggOCAxMC4wMDAyIDhDMTEuMTA0NyA4IDEyLjAwMDIgOC44OTU0MyAxMi4wMDAyIDEwWiIgZmlsbD0iIzAwMCIgLz4KPC9zdmc+Cg==);background-size:24px 24px;transition:-webkit-transform .3s ease-in-out .15s;transition:transform .3s ease-in-out .15s;transition:transform .3s ease-in-out .15s,-webkit-transform .3s ease-in-out .15s}.wt-sky-toolbar__button-settings:hover{opacity:.8;-webkit-transform:rotate(1turn);transform:rotate(1turn);transition:-webkit-transform .3s ease-in-out;transition:transform .3s ease-in-out;transition:transform .3s ease-in-out,-webkit-transform .3s ease-in-out}.wt-sky-toolbar__button-settings--active{opacity:.8}.wt-sky-toolbar__button-minimize{width:42px;height:42px;padding:0;border:none;cursor:pointer;background-color:transparent;background-repeat:no-repeat;background-position:50%;display:block;opacity:.3;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTgiIHZpZXdCb3g9IjAgMCAyMCAxOCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxyZWN0IHg9IjE3IiB3aWR0aD0iMyIgaGVpZ2h0PSIxOCIgcng9Ii41IiAvPjxyZWN0IHk9IjciIHdpZHRoPSI5IiBoZWlnaHQ9IjQiIHJ4PSIuNSIgLz48cGF0aCBkPSJNMTMuMjkgOC4yOWMuMzkyLjM5Mi4zOTEgMS4wMjkgMCAxLjQybC01LjU4IDUuNThjLS4zOTIuMzkyLS43MS4yNi0uNzEtLjI5N1YzLjAwN2MwLS41NTYuMzE5LS42ODguNzEtLjI5N2w1LjU4IDUuNTh6IiAvPjwvZz48L3N2Zz4=);background-size:20px 18px}.wt-sky-toolbar__button-minimize:hover{opacity:.8}.wt-sky-toolbar__button-dictionary{width:42px;height:42px;padding:0;border:none;cursor:pointer;background-color:transparent;background-repeat:no-repeat;background-position:50%;display:block;opacity:.3;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjQiIGhlaWdodD0iMjQiIHZpZXdCb3g9IjAgMCAyNCAyNCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMjMuMDEzIDBBMTkuMjQgMTkuMjQgMCAwIDAgMTIgMy43NSAxOS4yMzYgMTkuMjM2IDAgMCAwIC45ODcgMEgwdjE5LjU3MmguOTg3YzMuMTA0LjAxNSA2LjE0My44ODggOC43ODIgMi41MjEuNDc2LjM1Mi45MjcuNzM2IDEuMzUgMS4xNDhsLjgzMS43NTloLjFsLjgzNS0uNzVjLjQyNC0uNDEzLjg3NS0uNzk3IDEuMzUtMS4xNDlhMTYuODUzIDE2Ljg1MyAwIDAgMSA4Ljc4NC0yLjUySDI0VjBoLS45ODd6TTEwLjUgMTkuNUExNC41NjUgMTQuNTY1IDAgMCAwIDMgMTYuOFYzYzQuMTc1LjMxNSA2LjAyMSAxLjU0NSA3LjUgM3YxMy41ek0yMSAxNi44Yy0yLjcwMi4xODUtNS4zIDEuMTItNy41IDIuN1Y2YzEuNDc3LTEuNDU1IDMuMzI1LTIuNjg1IDcuNS0zdjEzLjh6IiBmaWxsPSIjMDAwIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiIC8+PC9zdmc+);background-size:24px 24px}.wt-sky-toolbar__button-dictionary-wrap{position:relative}.wt-sky-toolbar__button-dictionary:hover{opacity:.8}.wt-sky-toolbar__button-dictionary-badge{height:18px;border-radius:9px;background-color:#fc6e51;font-family:Open Sans,sans-serif;line-height:1.5;font-size:12px;font-weight:700;text-align:center;color:#fff;position:absolute;display:inline-block;padding-left:6px;padding-right:6px;right:-3px;top:-3px;cursor:pointer}.wt-sky-toolbar__button-dictionary-wrap:hover .wt-sky-toolbar__button-dictionary{opacity:1}.wt-sky-toolbar__hint .wt-sky-hint__content{padding:3px 7px 4px;font-size:15px}.wt-sky-toolbar--moving,.wt-sky-toolbar--moving:hover{background-color:#5d9cec;box-shadow:0 0 7px 2px #4a89dc;opacity:.6}</style><link href="https://fonts.googleapis.com/css?family=Open+Sans:400,600&amp;subset=cyrillic" rel="stylesheet" id="wt-sky-css--725574360"><style type="text/css">.wt-sky-reading-list-page{text-rendering:optimizeLegibility;-webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;font-smoothing:antialiased;margin:0;padding:0;font-family:Open Sans,sans-serif;font-size:16px;color:#333;background-color:#fff}.wt-sky-reading-list-page h1,.wt-sky-reading-list-page h2{font-weight:300;margin:0;padding:0}.wt-sky-reading-list-page h1{font-size:36px}.wt-sky-reading-list-page h2{font-size:30px}.wt-sky-reading-list-page form{margin:0}.wt-sky-reading-list-page .header{height:45px;background-color:#4a89dc;margin-bottom:40px}.wt-sky-reading-list-page .logo{width:228px;height:45px;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAcgAAAA6CAMAAAADUjl+AAAC/VBMVEVHcEz///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////9QdgzTAAAA/nRSTlMAAzflMHb9mTQc7hEUvA4MAnDingHgJPv8LtgJhPAIQPUeLciYlNMS/gZMDwQb9mf5LKT6+FTG9AvyHwUY0F3BWx0NIBn3XJKMCui+ejYHf95u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);background-repeat:no-repeat;background-position:0;background-size:228px 29px;background-color:transparent}.wt-sky-reading-list-page .container{position:relative;max-width:1000px;margin:0 auto;padding:0 10px}.wt-sky-reading-list-page .page{font-weight:300;padding-bottom:48px}.wt-sky-reading-list-page .main{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between}</style><style type="text/css">.wt-sky-reading-list-page .page__header{font-size:30px;line-height:1.33;margin-top:0;margin-bottom:30px}.wt-sky-reading-list-page .page__header-title{font-family:Fira Sans,sans-serif;padding-right:22px}.wt-sky-reading-list-page .page__header-title--loading{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTgiIGhlaWdodD0iMTgiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyIgdmlld0JveD0iMCAwIDEwMCAxMDAiIHByZXNlcnZlQXNwZWN0UmF0aW89InhNaWRZTWlkIiBjbGFzcz0idWlsLWRlZmF1bHQiPjxwYXRoIGZpbGw9Im5vbmUiIGNsYXNzPSJiayIgZD0iTTAgMGgxMDB2MTAwSDB6Ii8+PHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iMTAiIHJ5PSIxMCIgZmlsbD0iIzRhODlkYyIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoMCAtMzApIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiBmcm9tPSIxIiB0bz0iMCIgZHVyPSIxLjJzIiBiZWdpbj0iMHMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0PjxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjEwIiByeT0iMTAiIGZpbGw9IiM0YTg5ZGMiIHRyYW5zZm9ybT0icm90YXRlKDMwIDEwNS45OCA2NSkiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIGZyb209IjEiIHRvPSIwIiBkdXI9IjEuMnMiIGJlZ2luPSIwLjA5OTk5OTk5OTk5OTk5OTk5cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz48L3JlY3Q+PHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iMTAiIHJ5PSIxMCIgZmlsbD0iIzRhODlkYyIgdHJhbnNmb3JtPSJyb3RhdGUoNjAgNzUuOTggNjUpIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiBmcm9tPSIxIiB0bz0iMCIgZHVyPSIxLjJzIiBiZWdpbj0iMC4xOTk5OTk5OTk5OTk5OTk5OHMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0PjxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjEwIiByeT0iMTAiIGZpbGw9IiM0YTg5ZGMiIHRyYW5zZm9ybT0icm90YXRlKDkwIDY1IDY1KSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgZnJvbT0iMSIgdG89IjAiIGR1cj0iMS4ycyIgYmVnaW49IjAuM3MiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0PjxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjEwIiByeT0iMTAiIGZpbGw9IiM0YTg5ZGMiIHRyYW5zZm9ybT0icm90YXRlKDEyMCA1OC42NiA2NSkiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIGZyb209IjEiIHRvPSIwIiBkdXI9IjEuMnMiIGJlZ2luPSIwLjM5OTk5OTk5OTk5OTk5OTk3cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz48L3JlY3Q+PHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iMTAiIHJ5PSIxMCIgZmlsbD0iIzRhODlkYyIgdHJhbnNmb3JtPSJyb3RhdGUoMTUwIDU0LjAyIDY1KSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgZnJvbT0iMSIgdG89IjAiIGR1cj0iMS4ycyIgYmVnaW49IjAuNXMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0PjxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjEwIiByeT0iMTAiIGZpbGw9IiM0YTg5ZGMiIHRyYW5zZm9ybT0icm90YXRlKDE4MCA1MCA2NSkiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIGZyb209IjEiIHRvPSIwIiBkdXI9IjEuMnMiIGJlZ2luPSIwLjZzIiByZXBlYXRDb3VudD0iaW5kZWZpbml0ZSIvPjwvcmVjdD48cmVjdCB4PSI0Ni41IiB5PSI0MCIgd2lkdGg9IjciIGhlaWdodD0iMjAiIHJ4PSIxMCIgcnk9IjEwIiBmaWxsPSIjNGE4OWRjIiB0cmFuc2Zvcm09InJvdGF0ZSgtMTUwIDQ1Ljk4IDY1KSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgZnJvbT0iMSIgdG89IjAiIGR1cj0iMS4ycyIgYmVnaW49IjAuNzAwMDAwMDAwMDAwMDAwMXMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0PjxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjEwIiByeT0iMTAiIGZpbGw9IiM0YTg5ZGMiIHRyYW5zZm9ybT0icm90YXRlKC0xMjAgNDEuMzQgNjUpIj48YW5pbWF0ZSBhdHRyaWJ1dGVOYW1lPSJvcGFjaXR5IiBmcm9tPSIxIiB0bz0iMCIgZHVyPSIxLjJzIiBiZWdpbj0iMC43OTk5OTk5OTk5OTk5OTk5cyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz48L3JlY3Q+PHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iMTAiIHJ5PSIxMCIgZmlsbD0iIzRhODlkYyIgdHJhbnNmb3JtPSJyb3RhdGUoLTkwIDM1IDY1KSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgZnJvbT0iMSIgdG89IjAiIGR1cj0iMS4ycyIgYmVnaW49IjAuODk5OTk5OTk5OTk5OTk5OXMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0PjxyZWN0IHg9IjQ2LjUiIHk9IjQwIiB3aWR0aD0iNyIgaGVpZ2h0PSIyMCIgcng9IjEwIiByeT0iMTAiIGZpbGw9IiM0YTg5ZGMiIHRyYW5zZm9ybT0icm90YXRlKC02MCAyNC4wMiA2NSkiPjxhbmltYXRlIGF0dHJpYnV0ZU5hbWU9Im9wYWNpdHkiIGZyb209IjEiIHRvPSIwIiBkdXI9IjEuMnMiIGJlZ2luPSIxcyIgcmVwZWF0Q291bnQ9ImluZGVmaW5pdGUiLz48L3JlY3Q+PHJlY3QgeD0iNDYuNSIgeT0iNDAiIHdpZHRoPSI3IiBoZWlnaHQ9IjIwIiByeD0iMTAiIHJ5PSIxMCIgZmlsbD0iIzRhODlkYyIgdHJhbnNmb3JtPSJyb3RhdGUoLTMwIC01Ljk4IDY1KSI+PGFuaW1hdGUgYXR0cmlidXRlTmFtZT0ib3BhY2l0eSIgZnJvbT0iMSIgdG89IjAiIGR1cj0iMS4ycyIgYmVnaW49IjEuMDk5OTk5OTk5OTk5OTk5OXMiIHJlcGVhdENvdW50PSJpbmRlZmluaXRlIi8+PC9yZWN0Pjwvc3ZnPg==);background-size:20px 20px;background-color:transparent;background-repeat:no-repeat;background-position:100%}</style><style type="text/css">.wt-sky-reading-list-page .sidebar{-ms-flex-item-align:start;align-self:flex-start;width:270px;margin-right:21px;border-radius:6px;background-color:#fafafa;padding-top:12px;padding-bottom:12px;min-height:200px}.wt-sky-reading-list-page .sidebar__item{padding:2px 18px 3px 45px;font-size:15px;line-height:1.6;color:#333;box-sizing:border-box;cursor:pointer}.wt-sky-reading-list-page .sidebar__item--active,.wt-sky-reading-list-page .sidebar__item:hover{background-color:#eee}.wt-sky-reading-list-page .sidebar__item--all{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxNiAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+QTZENDFCM0ItMzc0Qi00MUNGLTk0QzEtNTFGMzFFQzdDNzREPC90aXRsZT48cGF0aCBkPSJNMCAxYzAtLjU1Mi40NDUtMSAxLTFoMTRjLjU1MiAwIDEgLjQ0NCAxIDEgMCAuNTUyLS40NDUgMS0xIDFIMWMtLjU1MiAwLTEtLjQ0NC0xLTF6bTAgNGMwLS41NTIuNDQ1LTEgMS0xaDE0Yy41NTIgMCAxIC40NDQgMSAxIDAgLjU1Mi0uNDQ1IDEtMSAxSDFjLS41NTIgMC0xLS40NDQtMS0xem0wIDRjMC0uNTUyLjQ0NS0xIDEtMWgxNGMuNTUyIDAgMSAuNDQ0IDEgMSAwIC41NTItLjQ0NSAxLTEgMUgxYy0uNTUyIDAtMS0uNDQ0LTEtMXoiIGZpbGw9IiNBQUEiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);background-repeat:no-repeat;background-position:18px;background-size:16px 10px}.wt-sky-reading-list-page .sidebar__item--favorite{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTUiIHZpZXdCb3g9IjAgMCAxNiAxNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgNS43MjRsLTUuNzYtLjQ3NEw4IDAgNS43NiA1LjI1IDAgNS43MjRsNC4zNiAzLjc1TDMuMDQgMTUgOCAxMi4wNCAxMi45NiAxNWwtMS4zMi01LjU2NnoiIGZpbGw9IiNBQUEiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);background-repeat:no-repeat;background-position:18px;background-size:16px 15px;margin-bottom:15px}.wt-sky-reading-list-page .sidebar__item--tag{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTYiIHZpZXdCb3g9IjAgMCAxNiAxNiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RjlDNkM1NzktMjcxRi00QzRCLUFEMTktMTgwMzUzNkI3RjMyPC90aXRsZT48cGF0aCBkPSJNMTUuNTM1IDguMjA2TDcuNzk0LjQ2NUM3LjUzNS4xNTUgNy4xMjMgMCA2LjcxIDBIMS41NDhBMS41MiAxLjUyIDAgMCAwIDAgMS41NDhWNi43MWMwIC40MTMuMTU1LjgyNS40NjUgMS4wODRsNy43NDEgNy43NDFjLjMxLjMxLjcyMy40NjUgMS4wODQuNDY1YTEuNTcgMS41NyAwIDAgMCAxLjA4NC0uNDY1bDUuMTYxLTUuMTZjLjYyLS41NjkuNjItMS42IDAtMi4xNjl6TTMuNSA1QzIuNjc1IDUgMiA0LjMyNSAyIDMuNVMyLjY3NSAyIDMuNSAyIDUgMi42NzUgNSAzLjUgNC4zMjUgNSAzLjUgNXoiIGZpbGw9IiM3MEE2RTkiLz48L3N2Zz4=);background-repeat:no-repeat;background-position:18px 6px;background-size:16px 16px}.wt-sky-reading-list-page .sidebar__count{float:right;font-size:13px;line-height:1.85;color:#999}</style><style type="text/css">.wt-sky-reading-list-page .items{-webkit-box-flex:1;-ms-flex:1;flex:1}.wt-sky-reading-list-page .items__not-found{font-size:19px;font-weight:600;line-height:1.42;color:#777;width:690px;margin-left:auto;margin-right:auto}</style><style type="text/css">.wt-sky-reading-list-page .search-form{width:100%;display:block;margin-bottom:20px;position:relative}.wt-sky-reading-list-page .search-form__input{display:block;font-family:Open Sans,sans-serif;font-size:16px;color:#333;border-radius:2px;background-color:#fff;box-shadow:inset 0 2px 0 0 rgba(0,0,0,.07);border:1px solid #ccc;width:690px;line-height:22px;margin-left:auto;margin-right:auto;padding:6px 42px 8px;box-sizing:border-box;outline:none}.wt-sky-reading-list-page .search-form__button{border:none;width:17px;height:17px;position:absolute;left:21px;top:10px;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTciIGhlaWdodD0iMTciIHZpZXdCb3g9IjAgMCAxNyAxNyIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48dGl0bGU+RjdEQzBBQzktNjEyQS00MEVDLTk1MUQtQUFEMEE4NDlENDAwPC90aXRsZT48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxwYXRoIGQ9Ik02LjUgMGE2LjUgNi41IDAgMSAxIDAgMTMgNi41IDYuNSAwIDAgMSAwLTEzem0wIDEuNzVhNC43NSA0Ljc1IDAgMSAxIDAgOS41IDQuNzUgNC43NSAwIDAgMSAwLTkuNXoiIGZpbGw9IiNBQUEiLz48cGF0aCBkPSJNMTAuNSAxMC41bDUuNjIgNS42MiIgc3Ryb2tlPSIjQUFBIiBzdHJva2Utd2lkdGg9IjEuNzUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvZz48L3N2Zz4=);background-repeat:no-repeat;background-position:0 0;background-size:17px 17px;background-color:transparent}.wt-sky-reading-list-page .search-form__translate-cancel{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAiIGhlaWdodD0iMTAiIHZpZXdCb3g9IjAgMCAxMCAxMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNLjc1Ljc1bDguNSA4LjVtLTguNSAwbDguNS04LjUiIHN0cm9rZT0iI0ZGRiIgc3Ryb2tlLXdpZHRoPSIxLjUiIGZpbGw9Im5vbmUiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==);background-color:#ccc;background-repeat:no-repeat;background-position:50%;background-size:8px 8px,100%;border-radius:50%;width:18px;height:18px;cursor:pointer;display:inline-block;position:absolute;right:20px;top:10px}.wt-sky-reading-list-page .search-form__translate-cancel:hover{background-color:#5d9cec}</style><style type="text/css"></style><style type="text/css">.wt-sky-reading-list-page .item{display:-webkit-box;display:-ms-flexbox;display:flex;box-sizing:border-box;padding:9px;border:1px solid #fff;position:relative}.wt-sky-reading-list-page .item:hover{border-radius:6px;background-color:#fafafa;border:1px solid #e5e5e5}.wt-sky-reading-list-page .item__preview{width:90px;height:90px;border-radius:3px;border:1px solid rgba(0,0,0,.05);background-color:#fff;background-image:url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAALQAAAC0CAMAAAAKE/YAAAAAUVBMVEVHcEzNzc3j4+Pc3Nzl5eXl5eXMzMzm5ubs7Ozl5eXOzs7U1NTR0dHi4uLS0tLf39/Y2NjZ2dnPz8/V1dXg4ODX19fe3t7h4eHW1tbQ0NDa2trWLvG6AAAACnRSTlMA////7f//phzl28v7rAAAAf1JREFUeNrt3etugkAQQGEussCConhr+/4P2qRpjQiLwqadmfTMb02+nAjBOGaTpCrrwtDUZZUk1aYwNpsqKQtzUya1PXSdFAYHNGjQoEGDBg0aNGjQoEGDBg0aNGjQoEGDBg0aNOhVsz23buG0560s+iN1KyY9SKKPbuUc5dBnt3repNAXFzEXIfQuBt3KoE8uajoR9CEOvRdB7+LQrQj6PQ7tRdA+Du1E0M46+jffAxr0X6FT0KBBgwYNGjRo0KBBgwYNGjRo0KBBgwYNWgDNLwGgQYMGDRo0aNBxgCyzh+6876yh99Ord5rR1++l6vZqB53fvtSkuRF0NtiqPmYW0F0/XL/rO/3o/ewqrEr0dnJrdrfVjM4D/2u4XY/60FkTXixtMp3oUz+3DtufNKKfLq4f1KHHV6D3E9ejKvT4Cmyy8Uc8zVUvffuv20XuLW2qf98rZu8nytD+7ilpJrYqdDN4RArHVoT2+ePrQrH1oJuJb4aB2FrQ48wzsZWgpzKHY6tAhzKHYmtAhzMHYsuj5zNPxhZHP8s8FVsY/UrmcWxZ9GuZR7El0a9nfogtiF6SeRhbDL00831sKfTyzHexZdDrMt9ii6DXZv6JLYKWG9CgQYMGDRo0aNCgQYMGDRo0aNCgQYMGDRo0aND/FW3yQGmTR3ebPCTd4nH0nwJVh1DVXmpkAAAAAElFTkSuQmCC);background-size:cover;background-repeat:no-repeat;background-position:50%;position:relative;margin-right:18px}.wt-sky-reading-list-page .item__progress-bar{width:92px;height:3px;background-color:hsla(0,0%,100%,.2);border-radius:2px 2px 0 0;position:absolute;top:-1px;left:-1px}.wt-sky-reading-list-page .item__progress{height:100%;background-color:#ff3d6f;border-radius:2px 2px 0 0}.wt-sky-reading-list-page .item__label{border-radius:0 2px 2px 0;position:absolute;top:6px;left:-1px;padding:0 4px 1px;line-height:19px;font-size:14px;font-weight:600;color:#fff;background-color:rgba(0,0,0,.51)}.wt-sky-reading-list-page .item__label--new{background-color:#ff3d6f}.wt-sky-reading-list-page .item__content{position:relative;-webkit-box-flex:1;-ms-flex:1;flex:1}.wt-sky-reading-list-page .item__delete{width:12px;height:12px;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNLjc1Ljc1bDEwLjUgMTAuNW0tMTAuNSAwTDExLjI1Ljc1IiBzdHJva2U9IiM5OTkiIHN0cm9rZS13aWR0aD0iMS41IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=);background-repeat:no-repeat;background-position:0 0;background-size:12px 12px;position:absolute;top:11px;right:11px;cursor:pointer;display:block;visibility:hidden;z-index:1}.wt-sky-reading-list-page .item__delete:hover{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIiIGhlaWdodD0iMTIiIHZpZXdCb3g9IjAgMCAxMiAxMiIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNLjc1Ljc1bDEwLjUgMTAuNW0tMTAuNSAwTDExLjI1Ljc1IiBzdHJva2U9IiNGNjYiIHN0cm9rZS13aWR0aD0iMS41IiBmaWxsPSJub25lIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=)}.wt-sky-reading-list-page .item__header{height:27px;margin-bottom:3px}.wt-sky-reading-list-page .item__title{display:inline-block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:530px;font-size:19px;font-weight:600;line-height:1.42;color:#333;cursor:pointer;text-decoration:none}.wt-sky-reading-list-page .item__title:hover{color:#5d9cec}.wt-sky-reading-list-page .item__favorite{width:20px;height:19px;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTkiIHZpZXdCb3g9IjAgMCAyMCAxOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik05NDcgMjI2LjI1bC03LjItLjZMOTM3IDIxOWwtMi44IDYuNjUtNy4yLjYgNS40NSA0Ljc1LTEuNjUgNyA2LjItMy43NSA2LjIgMy43NS0xLjY1LTcuMDV6Ii8+PG1hc2sgaWQ9ImIiIHg9IjAiIHk9IjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIxOSIgZmlsbD0iI2ZmZiI+PHVzZSB4bGluazpocmVmPSIjYSIvPjwvbWFzaz48L2RlZnM+PHVzZSBtYXNrPSJ1cmwoI2IpIiB4bGluazpocmVmPSIjYSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTkyNyAtMjE5KSIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);background-repeat:no-repeat;background-position:0 0;background-size:20px 19px;cursor:pointer;display:inline-block;position:absolute;top:2px;margin-left:6px;visibility:hidden}.wt-sky-reading-list-page .item__favorite:hover{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTkiIHZpZXdCb3g9IjAgMCAyMCAxOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PHRpdGxlPjU4NkE3QjM5LUQyQkItNDU5OC1CQUJELUNGOEU4QkFEMTM5OTwvdGl0bGU+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik03NzcgOTI2LjI1bC03LjItLjZMNzY3IDkxOWwtMi44IDYuNjUtNy4yLjYgNS40NSA0Ljc1LTEuNjUgNyA2LjItMy43NSA2LjIgMy43NS0xLjY1LTcuMDV6Ii8+PG1hc2sgaWQ9ImIiIHg9IjAiIHk9IjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIxOSIgZmlsbD0iI2ZmZiI+PHVzZSB4bGluazpocmVmPSIjYSIvPjwvbWFzaz48L2RlZnM+PHVzZSBtYXNrPSJ1cmwoI2IpIiB4bGluazpocmVmPSIjYSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTc1NyAtOTE5KSIgc3Ryb2tlPSIjRkYzRDZGIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==);visibility:visible}.wt-sky-reading-list-page .item__favorite--active{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTYiIGhlaWdodD0iMTUiIHZpZXdCb3g9IjAgMCAxNiAxNSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cGF0aCBkPSJNMTYgNS43MjRsLTUuNzYtLjQ3NEw4IDAgNS43NiA1LjI1IDAgNS43MjRsNC4zNiAzLjc1TDMuMDQgMTUgOCAxMi4wNCAxMi45NiAxNWwtMS4zMi01LjU2NnoiIGZpbGw9IiNmZjNkNmYiIGZpbGwtcnVsZT0iZXZlbm9kZCIgLz48L3N2Zz4=);visibility:visible}.wt-sky-reading-list-page .item__favorite--active:hover{background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAiIGhlaWdodD0iMTkiIHZpZXdCb3g9IjAgMCAyMCAxOSIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIiB4bWxuczp4bGluaz0iaHR0cDovL3d3dy53My5vcmcvMTk5OS94bGluayI+PGRlZnM+PHBhdGggaWQ9ImEiIGQ9Ik05NDcgMjI2LjI1bC03LjItLjZMOTM3IDIxOWwtMi44IDYuNjUtNy4yLjYgNS40NSA0Ljc1LTEuNjUgNyA2LjItMy43NSA2LjIgMy43NS0xLjY1LTcuMDV6Ii8+PG1hc2sgaWQ9ImIiIHg9IjAiIHk9IjAiIHdpZHRoPSIyMCIgaGVpZ2h0PSIxOSIgZmlsbD0iI2ZmZiI+PHVzZSB4bGluazpocmVmPSIjYSIvPjwvbWFzaz48L2RlZnM+PHVzZSBtYXNrPSJ1cmwoI2IpIiB4bGluazpocmVmPSIjYSIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTkyNyAtMjE5KSIgc3Ryb2tlPSIjOTk5IiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiIGZpbGwtcnVsZT0iZXZlbm9kZCIvPjwvc3ZnPg==)}.wt-sky-reading-list-page .item__info{margin-bottom:10px;font-size:15px;color:#999}.wt-sky-reading-list-page .item__info a{color:#999;text-decoration:none}.wt-sky-reading-list-page .item__actions{display:-webkit-box;display:-ms-flexbox;display:flex;-webkit-box-pack:justify;-ms-flex-pack:justify;justify-content:space-between;visibility:hidden}.wt-sky-reading-list-page .item__tags{-webkit-box-flex:0;-ms-flex:0 0 400px;flex:0 0 400px}.wt-sky-reading-list-page .item__share{text-align:right}.wt-sky-reading-list-page .item__share-icon{display:inline-block;width:26px;height:26px;border-radius:4px;box-shadow:inset 0 -1px 0 0 rgba(0,0,0,.07);margin-left:6px;background-image:url(data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTIyIiBoZWlnaHQ9IjI2IiB2aWV3Qm94PSIwIDAgMTIyIDI2IiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHhtbG5zOnhsaW5rPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5L3hsaW5rIj48dGl0bGU+c29jaWFsLWljb25zPC90aXRsZT48ZGVmcz48cmVjdCBpZD0iYSIgd2lkdGg9IjI2IiBoZWlnaHQ9IjI2IiByeD0iNCIvPjxmaWx0ZXIgeD0iLTEuOSUiIHk9Ii0xLjklIiB3aWR0aD0iMTAzLjglIiBoZWlnaHQ9IjEwMy44JSIgZmlsdGVyVW5pdHM9Im9iamVjdEJvdW5kaW5nQm94IiBpZD0iYiI+PGZlT2Zmc2V0IGR5PSItMSIgaW49IlNvdXJjZUFscGhhIiByZXN1bHQ9InNoYWRvd09mZnNldElubmVyMSIvPjxmZUNvbXBvc2l0ZSBpbj0ic2hhZG93T2Zmc2V0SW5uZXIxIiBpbjI9IlNvdXJjZUFscGhhIiBvcGVyYXRvcj0iYXJpdGhtZXRpYyIgazI9Ii0xIiBrMz0iMSIgcmVzdWx0PSJzaGFkb3dJbm5lcklubmVyMSIvPjxmZUNvbG9yTWF0cml4IHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMC4wNyAwIiBpbj0ic2hhZG93SW5uZXJJbm5lcjEiLz48L2ZpbHRlcj48cmVjdCBpZD0iYyIgeD0iMzIiIHdpZHRoPSIyNiIgaGVpZ2h0PSIyNiIgcng9IjQiLz48ZmlsdGVyIHg9Ii0xLjklIiB5PSItMS45JSIgd2lkdGg9IjEwMy44JSIgaGVpZ2h0PSIxMDMuOCUiIGZpbHRlclVuaXRzPSJvYmplY3RCb3VuZGluZ0JveCIgaWQ9ImQiPjxmZU9mZnNldCBkeT0iLTEiIGluPSJTb3VyY2VBbHBoYSIgcmVzdWx0PSJzaGFkb3dPZmZzZXRJbm5lcjEiLz48ZmVDb21wb3NpdGUgaW49InNoYWRvd09mZnNldElubmVyMSIgaW4yPSJTb3VyY2VBbHBoYSIgb3BlcmF0b3I9ImFyaXRobWV0aWMiIGsyPSItMSIgazM9IjEiIHJlc3VsdD0ic2hhZG93SW5uZXJJbm5lcjEiLz48ZmVDb2xvck1hdHJpeCB2YWx1ZXM9IjAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAuMDcgMCIgaW49InNoYWRvd0lubmVySW5uZXIxIi8+PC9maWx0ZXI+PHJlY3QgaWQ9ImUiIHg9IjY0IiB3aWR0aD0iMjYiIGhlaWdodD0iMjYiIHJ4PSI0Ii8+PGZpbHRlciB4PSItMS45JSIgeT0iLTEuOSUiIHdpZHRoPSIxMDMuOCUiIGhlaWdodD0iMTAzLjglIiBmaWx0ZXJVbml0cz0ib2JqZWN0Qm91bmRpbmdCb3giIGlkPSJmIj48ZmVPZmZzZXQgZHk9Ii0xIiBpbj0iU291cmNlQWxwaGEiIHJlc3VsdD0ic2hhZG93T2Zmc2V0SW5uZXIxIi8+PGZlQ29tcG9zaXRlIGluPSJzaGFkb3dPZmZzZXRJbm5lcjEiIGluMj0iU291cmNlQWxwaGEiIG9wZXJhdG9yPSJhcml0aG1ldGljIiBrMj0iLTEiIGszPSIxIiByZXN1bHQ9InNoYWRvd0lubmVySW5uZXIxIi8+PGZlQ29sb3JNYXRyaXggdmFsdWVzPSIwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwLjA3IDAiIGluPSJzaGFkb3dJbm5lcklubmVyMSIvPjwvZmlsdGVyPjxyZWN0IGlkPSJnIiB4PSI5NiIgd2lkdGg9IjI2IiBoZWlnaHQ9IjI2IiByeD0iNCIvPjxmaWx0ZXIgeD0iLTEuOSUiIHk9Ii0xLjklIiB3aWR0aD0iMTAzLjglIiBoZWlnaHQ9IjEwMy44JSIgZmlsdGVyVW5pdHM9Im9iamVjdEJvdW5kaW5nQm94IiBpZD0iaCI+PGZlT2Zmc2V0IGR5PSItMSIgaW49IlNvdXJjZUFscGhhIiByZXN1bHQ9InNoYWRvd09mZnNldElubmVyMSIvPjxmZUNvbXBvc2l0ZSBpbj0ic2hhZG93T2Zmc2V0SW5uZXIxIiBpbjI9IlNvdXJjZUFscGhhIiBvcGVyYXRvcj0iYXJpdGhtZXRpYyIgazI9Ii0xIiBrMz0iMSIgcmVzdWx0PSJzaGFkb3dJbm5lcklubmVyMSIvPjxmZUNvbG9yTWF0cml4IHZhbHVlcz0iMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMCAwIDAgMC4wNyAwIiBpbj0ic2hhZG93SW5uZXJJbm5lcjEiLz48L2ZpbHRlcj48L2RlZnM+PGcgZmlsbD0ibm9uZSIgZmlsbC1ydWxlPSJldmVub2RkIj48dXNlIGZpbGw9IiMzQjU5OTgiIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSBmaWxsPSIjMDAwIiBmaWx0ZXI9InVybCgjYikiIHhsaW5rOmhyZWY9IiNhIi8+PHVzZSBmaWxsPSIjNEQ3NUEzIiB4bGluazpocmVmPSIjYyIvPjx1c2UgZmlsbD0iIzAwMCIgZmlsdGVyPSJ1cmwoI2QpIiB4bGluazpocmVmPSIjYyIvPjxwYXRoIGQ9Ik00NC44MDUgMTcuOTg5aDEuMDc0YS45MjQuOTI0IDAgMCAwIC40OTEtLjIxLjc0Ny43NDcgMCAwIDAgLjE0OC0uNDU5cy0uMDIxLTEuNDIuNjUtMS42MjdjLjY2LS4yMDQgMS41MDkgMS4zNTcgMi40MDggMS45NmExLjY2IDEuNjYgMCAwIDAgMS4xOTcuMzM3aDIuNDA1czEuMjYtLjA5Mi42Ni0xLjA1NGE3Ljg3NiA3Ljg3NiAwIDAgMC0xLjc4OS0yLjAxM2MtMS41MDctMS4zNjEtMS4zMDUtMS4xNC41MTEtMy40OTUgMS4xMDYtMS40MzUgMS41NDktMi4zMSAxLjQxLTIuNjg1LS4xMzEtLjM1Ni0uOTQtLjI5Ny0uOTQtLjI5N2gtMi43MWEuNjc0LjY3NCAwIDAgMC0uMzUuMDY3Ljc0OC43NDggMCAwIDAtLjI0LjMwNWMtLjI3OC43MTYtLjYxMiAxLjQxLTEgMi4wNzQtMS4yMDUgMS45OTEtMS42ODcgMi4wOTctMS44ODQgMS45NzMtLjQ1OS0uMjg5LS4zNDQtMS4xNTgtLjM0NC0xLjc3NiAwLTEuOTMuMy0yLjczNC0uNTg2LTIuOTQyYTQuNzIgNC43MiAwIDAgMC0xLjI2My0uMTIzIDUuOTk1IDUuOTk1IDAgMCAwLTIuMjQ4LjIyNGMtLjMwNy4xNDYtLjU0NS40NzUtLjQuNDkzLjMwNi4wMjYuNTkyLjE2NS43OTkuMzkuMTg3LjM3LjI4Ljc3OS4yNjggMS4xOTIgMCAwIC4xNiAyLjI3MS0uMzczIDIuNTUzLS4zNjUuMTkzLS44NjYtLjIwMS0xLjk0LTIuMDA4YTE2LjA4OCAxNi4wODggMCAwIDEtLjk2Ny0xLjk2OC43ODIuNzgyIDAgMCAwLS4yMjMtLjI5NCAxLjE0IDEuMTQgMCAwIDAtLjQxNi0uMTYyaC0yLjU3YS44OTUuODk1IDAgMCAwLS41MjkuMTc0LjUzMy41MzMgMCAwIDAtLjAxLjQ0NnMyLjAxNCA0LjYxOCA0LjI5NSA2LjkyOGE2LjMyNSA2LjMyNSAwIDAgMCA0LjQ2NiAxLjk5N3oiIGZpbGw9IiNGRkYiLz48dXNlIGZpbGw9IiM0OEEwREMiIHhsaW5rOmhyZWY9IiNlIi8+PHVzZSBmaWxsPSIjMDAwIiBmaWx0ZXI9InVybCgjZikiIHhsaW5rOmhyZWY9IiNlIi8+PHBhdGggZD0iTTg2IDcuNjU2YTcuNTggNy41OCAwIDAgMS0yLjEyMS41NTcgMy41NjUgMy41NjUgMCAwIDAgMS42MjMtMS45NTUgNy41OCA3LjU4IDAgMCAxLTIuMzQ0Ljg1OEEzLjc2NSAzLjc2NSAwIDAgMCA4MC40NjIgNmMtMi4wMzkgMC0zLjY5MiAxLjU4Mi0zLjY5MiAzLjUzNCAwIC4yNzguMDMyLjU0Ny4wOTUuODA2LTMuMDY4LS4xNDctNS43OS0xLjU1NC03LjYxMS0zLjY5M2EzLjQgMy40IDAgMCAwLS41IDEuNzc3YzAgMS4yMjYuNjUyIDIuMzA4IDEuNjQzIDIuOTQyYTMuODA4IDMuODA4IDAgMCAxLTEuNjczLS40NDN2LjA0NWMwIDEuNzEyIDEuMjcyIDMuMTQgMi45NjIgMy40NjVhMy44NDIgMy44NDIgMCAwIDEtMS42NjguMDZjLjQ3IDEuNDA0IDEuODM0IDIuNDI2IDMuNDQ5IDIuNDU0YTcuNjIyIDcuNjIyIDAgMCAxLTQuNTg2IDEuNTE0IDcuODggNy44OCAwIDAgMS0uODgxLS4wNUExMC43ODkgMTAuNzg5IDAgMCAwIDczLjY2MSAyMGM2Ljc5MiAwIDEwLjUwNy01LjM4NiAxMC41MDctMTAuMDU2IDAtLjE1My0uMDAzLS4zMDYtLjAxMS0uNDU4QTcuMzI2IDcuMzI2IDAgMCAwIDg2IDcuNjU2eiIgZmlsbD0iI0ZGRiIgZmlsbC1ydWxlPSJub256ZXJvIi8+PHVzZSBmaWxsPSIjQUFBIiB4bGluazpocmVmPSIjZyIvPjx1c2UgZmlsbD0iIzAwMCIgZmlsdGVyPSJ1cmwoI2gpIiB4bGluazpocmVmPSIjZyIvPjxwYXRoIGQ9Ik0xMTUuODkgNi4yMDljLTEuNTQ2LTEuNTM0LTMuNzA4LTEuNjE3LTUuMTM4LS4xOTdsLTEuMDEgMS4wMDFhLjk5MS45OTEgMCAwIDAgMS4zOTggMS40MDdsMS4wMDgtMS4wMDFjLjc0Mi0uNzM2IDEuNzEyLS40MzEgMi4zNDYuMTk3YTEuNzU4IDEuNzU4IDAgMCAxIDAgMi41MDNsLTMuMTggMy4xNTRjLTEuNDU0IDEuNDQzLTIuMTM2Ljc2Ni0yLjQyNi40NzdhLjk5Mi45OTIgMCAwIDAtMS4zOTggMS40MDdjLjY2OC42NjIgMS40My45OSAyLjIyOC45OS45NzggMCAyLjAxLS40OTIgMi45OTItMS40NjdsMy4xOC0zLjE1NEEzLjcxOSAzLjcxOSAwIDAgMCAxMTcgOC44NjhhMy43MiAzLjcyIDAgMCAwLTEuMTEtMi42NnptLTkuMDMyIDExLjQ4NWwtLjgwOC44MDRhMS44MTMgMS44MTMgMCAwIDEtMi41NDYgMCAxLjc1NiAxLjc1NiAwIDAgMS0uNTIyLTEuMjUxYzAtLjQ3My4xODYtLjkxNy41MjItMS4yNTJsMi45OC0yLjk1NmMuNjE4LS42MTMgMS43OC0xLjUxNSAyLjYyNi0uNjc1YS45OTEuOTkxIDAgMCAwIDEuMzk4LTEuNDA3Yy0xLjQ0LTEuNDI4LTMuNTY2LTEuMTY0LTUuNDIuNjc0bC0yLjk4IDIuOTU3QTMuNzE2IDMuNzE2IDAgMCAwIDEwMSAxNy4yNDdjMCAxLjAwNC4zOTIgMS45NDggMS4xMDggMi42NThBMy43NzcgMy43NzcgMCAwIDAgMTA0Ljc3NiAyMWMuOTY4IDAgMS45MzQtLjM2NSAyLjY3LTEuMDk1bC44MS0uODA0YS45OTEuOTkxIDAgMSAwLTEuMzk4LTEuNDA3ek0xNC44NDIgMjEuNXYtNy41MjdoMi42NTJsLjM5OC0yLjkzM2gtMy4wNVY5LjE2N2MwLS44NS4yNDctMS40MjggMS41MjYtMS40MjhIMThWNS4xMTZjLS43OS0uMDgtMS41ODMtLjExOS0yLjM3Ny0uMTE2LTIuMzUyIDAtMy45NjMgMS4zNjctMy45NjMgMy44Nzd2Mi4xNjRIOXYyLjkzM2gyLjY2VjIxLjVoMy4xODJ6IiBmaWxsPSIjRkZGIi8+PC9nPjwvc3ZnPg==);background-repeat:no-repeat;background-size:auto;text-decoration:none;cursor:pointer}.wt-sky-reading-list-page .item__share-icon--fb{background-position:0 0}.wt-sky-reading-list-page .item__share-icon--vk{background-position:-32px 0}.wt-sky-reading-list-page .item__share-icon--tw{background-position:-64px 0}.wt-sky-reading-list-page .item__share-icon--link{background-position:-98px 0}.wt-sky-reading-list-page .item:hover .item__actions,.wt-sky-reading-list-page .item:hover .item__delete,.wt-sky-reading-list-page .item:hover .item__favorite{visibility:visible}</style><style type="text/css">.wt-sky-reading-list-page .authorization-call{margin:50px auto}.wt-sky-reading-list-page .authorization-call__header{font-size:28px;text-align:center;margin-bottom:15px}.wt-sky-reading-list-page .authorization-call__content{font-size:16px;text-align:center}.wt-sky-reading-list-page .authorization-call__content a{color:#4a89dc;cursor:pointer}</style></head>
+<body class="body" data-new-gr-c-s-check-loaded="14.984.0" data-gr-ext-installed="">
+<nav class="gosbar">
+    <div class="gosbar__wrapper">
+        <button class="gosbar__button">
+            <img src="/assets/redesign-theme/uikit/gosbar/gosbar-logo.svg" alt="gosbar-logo" class="gosbar__logo" width="30" height="50">
+        </button>
+        <input type="checkbox" id="gosbar-checkbox" class="gosbar__checkbox-control">
+        <label class="gosbar__label-menu" for="gosbar-checkbox">Меню</label>
+        <ul class="gosbar__list">
+            <li class="gosbar__item">
+                <a href="/about" class="gosbar__link">О портале</a>
+            </li>
+            <li class="gosbar__item">
+                <a href="/news" class="gosbar__link">Новости</a>
+            </li>
+            <li class="gosbar__item">
+                <a href="/help" class="gosbar__link">Помощь и поддержка</a>
+            </li>
+        </ul>
+    </div>
+</nav>
+<div class="mega-menu">
+    <div class="mega-menu__wrapper">
+        <div id="_1a8b919a-4c3c-4e26-b5bf-6a330d57197b">
+
+
+
+            <nav>
+                <ul class="mega-menu__menu">
+                    <li>
+                        <button class="mega-menu__toggle" type="button">Все сервисы</button>
+
+
+
+                    </li>
+                    <li>
+
+
+                        <button class="mega-menu__dropdown-toggle" type="button" data-toggle="dropdown" id="megaMenuDropdown1">Неавторизованный</button>
+                        <ul class="dropdown-menu dropdown-menu-left mega-menu__dropdown-menu" aria-labelledby="megaMenuDropdown1">
+                            <li class="mega-menu__dropdown-item">
+                                <a class="mega-menu__dropdown-link" href="/vacancy/search">Поиск работы (С + НеАвт)</a>
+                            </li>
+                            <li class="mega-menu__dropdown-item">
+                                <a class="mega-menu__dropdown-link" href="/cv/search">Поиск работников (Р + НеАвт)</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+
+
+                        <button class="mega-menu__dropdown-toggle" type="button" data-toggle="dropdown" id="megaMenuDropdown2">Соискатель</button>
+                        <ul class="dropdown-menu dropdown-menu-left mega-menu__dropdown-menu" aria-labelledby="megaMenuDropdown2">
+                            <li class="mega-menu__dropdown-item">
+                                <a class="mega-menu__dropdown-link" href="">Мои резюме</a>
+                            </li>
+                            <li class="mega-menu__dropdown-item">
+                                <a class="mega-menu__dropdown-link" href="/auth/candidate/responses">Отклики и приглашения</a>
+                            </li>
+                            <li class="mega-menu__dropdown-item">
+                                <a class="mega-menu__dropdown-link" href="/auth/candidate/courses">Учебные курсы</a>
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+
+
+                        <button class="mega-menu__dropdown-toggle" type="button" data-toggle="dropdown" id="megaMenuDropdown3">Работодатель</button>
+                        <ul class="dropdown-menu dropdown-menu-left mega-menu__dropdown-menu" aria-labelledby="megaMenuDropdown3">
+                            <li class="mega-menu__dropdown-item">
+                                <a class="mega-menu__dropdown-link" href="/auth/manager/vacancies">Управление вакансиями</a>
+                            </li>
+                            <li class="mega-menu__dropdown-item">
+                                <a class="mega-menu__dropdown-link" href="/auth/manager/vacancies/new">Добавить вакансию</a>
+                            </li>
+                            <li class="mega-menu__dropdown-item">
+                                <a class="mega-menu__dropdown-link" href="/auth/manager/tests">Тесты для вакансий</a>
+                            </li>
+                            <li class="mega-menu__dropdown-item">
+                                <a class="mega-menu__dropdown-link" href="/opendata/widgets">Виджеты для импорта вакансий на сайт</a>
+                            </li>
+                            <li class="mega-menu__dropdown-item">
+                                <a class="mega-menu__dropdown-link" href="/auth/manager/responses">Отклики и приглашения</a>
+                            </li>
+                            <li class="mega-menu__dropdown-item">
+                                <a class="mega-menu__dropdown-link" href="">Компания</a>
+                            </li>
+                        </ul>
+                    </li>
+                </ul>
+            </nav>
+            <div class="mega-menu__content">
+                <div data-simplebar="init" class="mega-menu__scroll-wrapper"><div class="simplebar-wrapper" style="margin: 0px;"><div class="simplebar-height-auto-observer-wrapper"><div class="simplebar-height-auto-observer"></div></div><div class="simplebar-mask"><div class="simplebar-offset" style="right: 0px; bottom: 0px;"><div class="simplebar-content-wrapper" style="height: auto; overflow: hidden;"><div class="simplebar-content" style="padding: 0px;">
+                    <div class="mega-menu__content-wrapper">
+                        <button class="mega-menu__close button button_close" type="button">
+                            <svg class="icon">
+                                <use xlink:href="/assets/redesign-theme/uikit/icon/icons.svg#close"></use>
+                            </svg>
+                        </button>
+                        <ul class="mega-menu__list">
+                            <li class="mega-menu__list-item">
+
+                                <span class="mega-menu__list-title">Работа с переездом (С + НеАвт)</span>
+                                <ul class="mega-menu__submenu">
+                                    <li class="mega-menu__submenu-item">
+                                        <a class="mega-menu__submenu-link" href="/information-pages/mobility-program">Работа с переездом по России (С + НеАвт))</a>
+                                    </li>
+                                    <li class="mega-menu__submenu-item">
+                                        <a class="mega-menu__submenu-link" href="/rbg">Работа без границ (С + НеАвт)</a>
+                                    </li>
+                                </ul>
+
+
+
+                            </li><li class="mega-menu__list-item">
+
+                            <span class="mega-menu__list-title">Аналитика (все)</span>
+                            <ul class="mega-menu__submenu">
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/analytics">Аналитическая информация</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/monitoring">Мониторинг трудоустройства выпускников (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/map">Рейтинг регионов (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/professions">Справочник востребованных профессий (все)</a>
+                                </li>
+                            </ul>
+
+
+
+                        </li><li class="mega-menu__list-item">
+
+                            <span class="mega-menu__list-title">Опросы и тесты (все)</span>
+                            <ul class="mega-menu__submenu">
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/proforientation">Профессиональная ориентация (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/questionnaire-candidate">Опросы для соискателя (Все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/questionnaire-employer">Опросы для работодателя (Все)</a>
+                                </li>
+                            </ul>
+
+
+
+                        </li><li class="mega-menu__list-item">
+
+                            <span class="mega-menu__list-title">Иностранная рабочая сила (все)</span>
+                            <ul class="mega-menu__submenu">
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/foreign-labor/uzbek-labor">Найм граждан Узбекистана (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/foreign-labor/tjk-labor">Найм граждан Таджикистана (все)</a>
+                                </li>
+                            </ul>
+
+
+
+                        </li><li class="mega-menu__list-item">
+
+                            <span class="mega-menu__list-title">Помощь в подборе сотрудников (Р)</span>
+                            <ul class="mega-menu__submenu">
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/information-pages/employes-search">О помощи в подборе сотрудников</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/auth/manager/company/staff">Содействие центров занятости в подборе работников (Р)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/auth/manager/company/convicted">Содействие ФСИН в подборе работников (Р)</a>
+                                </li>
+                            </ul>
+
+
+
+                        </li><li class="mega-menu__list-item">
+
+                            <span class="mega-menu__list-title">Стажировка и практика (все)</span>
+                            <ul class="mega-menu__submenu">
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-student">Сводная страница (С)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-student/contracts">Договоры (С)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-student/practice-realization">Входящие заявки (С)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-employer">Сводная страница (Р)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-employer/contracts">Договоры (Р)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-employer/requests-in">Входящие заявки (Р)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-employer/requests-out">Исходящие заявки (Р)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-employer/partners">Партнеры (Р)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-employer/institutes">Реестр образовательных организаций (Р)</a>
+                                </li>
+                            </ul>
+
+
+
+                        </li><li class="mega-menu__list-item">
+
+                            <span class="mega-menu__list-title">Справочная информация (все)</span>
+                            <ul class="mega-menu__submenu">
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/czn">Государственная служба занятости (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/experienced-personnel">Опытные кадры (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/private-employment-agency">Частные агентства занятости (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/information-pages/abilympics">Abilympics</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/information-pages/worldskills">Worldskills</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/help/security">Меры безопасности (все)</a>
+                                </li>
+                            </ul>
+
+
+
+                        </li><li class="mega-menu__list-item">
+
+                            <span class="mega-menu__list-title">Электронный кадровый документооборот (все)</span>
+                            <ul class="mega-menu__submenu">
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/information-pages/ekd-info">Об электронном кадровом документообороте (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/auth/candidate/ekd">Сводная страница (С)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/auth/candidate/ekd/documents-in">Входящие документы (С)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/auth/candidate/ekd/documents-out">Исходящие документы (С)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/auth/manager/ekd">Сводная страница (Р)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/auth/manager/ekd/documents-in">Входящие документы (Р)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/auth/manager/ekd/documents-out">Исходящие документы (Р)</a>
+                                </li>
+                            </ul>
+
+
+
+                        </li><li class="mega-menu__list-item">
+
+                            <span class="mega-menu__list-title">Открытые данные (все)</span>
+                            <ul class="mega-menu__submenu">
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/opendata">Открытые данные (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/opendata/events">Мероприятия (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/opendata/media-partners">Ресурсы, использующие вакансии портала</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/opendata/api">API (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/opendata/datasets">Наборы данных (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/opendata/widgets">Виджеты (все)</a>
+                                </li>
+                            </ul>
+
+
+
+                        </li><li class="mega-menu__list-item">
+
+                            <a class="mega-menu__list-link" href="https://skillsnet.ru/">Социальная сеть Skillsnet (все)</a>
+
+                        </li><li class="mega-menu__list-item">
+
+                            <a class="mega-menu__list-link" href="/auth/candidate/applications">Мои заявления (С)</a>
+
+                        </li><li class="mega-menu__list-item">
+
+                            <span class="mega-menu__list-title">Мобильное приложение (все)</span>
+                            <ul class="mega-menu__submenu">
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/about/mobile">О мобильном приложении (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="">Скачать на iPhone (все)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="">Скачать на Android (все)</a>
+                                </li>
+                            </ul>
+
+
+
+                        </li><li class="mega-menu__list-item">
+
+                            <a class="mega-menu__list-link" href="/articles">Статьи (все)</a>
+
+                        </li><li class="mega-menu__list-item">
+
+                            <span class="mega-menu__list-title">Производственный календарь (все)</span>
+                            <ul class="mega-menu__submenu">
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/information-pages/calendar-2020">2020 год</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/information-pages/calendar-2021">2021 год</a>
+                                </li>
+                            </ul>
+
+
+
+                        </li><li class="mega-menu__list-item">
+
+                            <span class="mega-menu__list-title">Стажировка и практика для образовательной организации (О)</span>
+                            <ul class="mega-menu__submenu">
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-institute">О стажировках и практиках</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-institute/contracts">Договоры (О)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-institute/requests-in">Входящие заявки (О)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-institute/requests-out">Исходящие заявки (О)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-institute/partners">Партнеры (О)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-institute/students">Студенты и выпускники (О)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-institute/organizations">Реестр работодателей (О)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/practices-institute/statistics">Отчеты и аналитика (О)</a>
+                                </li>
+                            </ul>
+
+
+
+                        </li><li class="mega-menu__list-item">
+
+                            <span class="mega-menu__list-title">Жалобы и сообщения (С + Р)</span>
+                            <ul class="mega-menu__submenu">
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/auth/candidate/appeals">Мои жалобы и сообщения (С)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/auth/candidate/appeals/new">Написать жалобу или сообщение (С)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/auth/manager/appeals">Мои жалобы и сообщения (Р)</a>
+                                </li>
+                                <li class="mega-menu__submenu-item">
+                                    <a class="mega-menu__submenu-link" href="/auth/manager/appeals/new">Написать жалобу или сообщение (Р)</a>
+                                </li>
+                            </ul>
+
+
+
+                        </li><li class="mega-menu__list-item">
+
+                            <a class="mega-menu__list-link" href="/rbg">Работа без границ (Р)</a>
+
+                        </li><li class="mega-menu__list-item">
+
+                            <a class="mega-menu__list-link" href="/information-pages/employes-search">Помощь в подборе сотрудников (Не Авт)</a>
+
+                        </li><li class="mega-menu__list-item">
+
+                            <a class="mega-menu__list-link" href="/information-pages/landing-practices">Стажировка и практика (Не Авт)</a>
+
+                        </li><li class="mega-menu__list-item">
+
+                            <a class="mega-menu__list-link" href="/information-pages/landing-ekd">Электронный кадровый документооборот (Не Авт)</a>
+                        </li></ul>
+                    </div>
+                </div></div></div></div><div class="simplebar-placeholder" style="width: 0px; height: 0px;"></div></div><div class="simplebar-track simplebar-horizontal" style="visibility: hidden;"><div class="simplebar-scrollbar" style="width: 0px; display: none;"></div></div><div class="simplebar-track simplebar-vertical" style="visibility: hidden;"><div class="simplebar-scrollbar" style="height: 0px; display: none;"></div></div></div>
+            </div>
+
         </div>
-  </div>
-</th:block>
-</html>
+
+        <div class="mega-menu__user-interface">
+            <script>
+                window.currentRegionCode = "7700000000000";
+                window.regionsList = [{"code":"0500000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0414\u0430\u0433\u0435\u0441\u0442\u0430\u043D","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0414\u0430\u0433\u0435\u0441\u0442\u0430\u043D","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"368000","key":"0500000000000"},{"code":"2400000000000","name":"\u041A\u0440\u0430\u0441\u043D\u043E\u044F\u0440\u0441\u043A\u0438\u0439 \u043A\u0440\u0430\u0439","shortName":"\u041A\u0440\u0430\u0441\u043D\u043E\u044F\u0440\u0441\u043A\u0438\u0439","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"2400000000000"},{"code":"6400000000000","name":"\u0421\u0430\u0440\u0430\u0442\u043E\u0432\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0421\u0430\u0440\u0430\u0442\u043E\u0432\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"410000","key":"6400000000000"},{"code":"2900000000000","name":"\u0410\u0440\u0445\u0430\u043D\u0433\u0435\u043B\u044C\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0410\u0440\u0445\u0430\u043D\u0433\u0435\u043B\u044C\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"2900000000000"},{"code":"2700000000000","name":"\u0425\u0430\u0431\u0430\u0440\u043E\u0432\u0441\u043A\u0438\u0439 \u043A\u0440\u0430\u0439","shortName":"\u0425\u0430\u0431\u0430\u0440\u043E\u0432\u0441\u043A\u0438\u0439","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"2700000000000"},{"code":"7100000000000","name":"\u0422\u0443\u043B\u044C\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0422\u0443\u043B\u044C\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"7100000000000"},{"code":"5400000000000","name":"\u041D\u043E\u0432\u043E\u0441\u0438\u0431\u0438\u0440\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041D\u043E\u0432\u043E\u0441\u0438\u0431\u0438\u0440\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"5400000000000"},{"code":"8700000000000","name":"\u0427\u0443\u043A\u043E\u0442\u0441\u043A\u0438\u0439 \u0430\u0432\u0442\u043E\u043D\u043E\u043C\u043D\u044B\u0439 \u043E\u043A\u0440\u0443\u0433","shortName":"\u0427\u0443\u043A\u043E\u0442\u0441\u043A\u0438\u0439","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"8700000000000"},{"code":"5800000000000","name":"\u041F\u0435\u043D\u0437\u0435\u043D\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041F\u0435\u043D\u0437\u0435\u043D\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"5800000000000"},{"code":"6800000000000","name":"\u0422\u0430\u043C\u0431\u043E\u0432\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0422\u0430\u043C\u0431\u043E\u0432\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"392000","key":"6800000000000"},{"code":"6700000000000","name":"\u0421\u043C\u043E\u043B\u0435\u043D\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0421\u043C\u043E\u043B\u0435\u043D\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"6700000000000"},{"code":"2500000000000","name":"\u041F\u0440\u0438\u043C\u043E\u0440\u0441\u043A\u0438\u0439 \u043A\u0440\u0430\u0439","shortName":"\u041F\u0440\u0438\u043C\u043E\u0440\u0441\u043A\u0438\u0439","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"2500000000000"},{"code":"3200000000000","name":"\u0411\u0440\u044F\u043D\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0411\u0440\u044F\u043D\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"3200000000000"},{"code":"5700000000000","name":"\u041E\u0440\u043B\u043E\u0432\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041E\u0440\u043B\u043E\u0432\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"5700000000000"},{"code":"1900000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0425\u0430\u043A\u0430\u0441\u0438\u044F","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0425\u0430\u043A\u0430\u0441\u0438\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"655000","key":"1900000000000"},{"code":"3300000000000","name":"\u0412\u043B\u0430\u0434\u0438\u043C\u0438\u0440\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0412\u043B\u0430\u0434\u0438\u043C\u0438\u0440\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"3300000000000"},{"code":"4000000000000","name":"\u041A\u0430\u043B\u0443\u0436\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041A\u0430\u043B\u0443\u0436\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"4000000000000"},{"code":"6100000000000","name":"\u0420\u043E\u0441\u0442\u043E\u0432\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0420\u043E\u0441\u0442\u043E\u0432\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"6100000000000"},{"code":"4700000000000","name":"\u041B\u0435\u043D\u0438\u043D\u0433\u0440\u0430\u0434\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041B\u0435\u043D\u0438\u043D\u0433\u0440\u0430\u0434\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"4700000000000"},{"code":"9200000000000","name":"\u0433. \u0421\u0435\u0432\u0430\u0441\u0442\u043E\u043F\u043E\u043B\u044C","shortName":"\u0421\u0435\u0432\u0430\u0441\u0442\u043E\u043F\u043E\u043B\u044C","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"9200000000000"},{"code":"7700000000000","name":"\u0433. \u041C\u043E\u0441\u043A\u0432\u0430","shortName":"\u041C\u043E\u0441\u043A\u0432\u0430","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"7700000000000"},{"code":"3700000000000","name":"\u0418\u0432\u0430\u043D\u043E\u0432\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0418\u0432\u0430\u043D\u043E\u0432\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"3700000000000"},{"code":"5000000000000","name":"\u041C\u043E\u0441\u043A\u043E\u0432\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041C\u043E\u0441\u043A\u043E\u0432\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"5000000000000"},{"code":"1200000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u041C\u0430\u0440\u0438\u0439 \u042D\u043B","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u041C\u0430\u0440\u0438\u0439 \u042D\u043B","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"1200000000000"},{"code":"4900000000000","name":"\u041C\u0430\u0433\u0430\u0434\u0430\u043D\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041C\u0430\u0433\u0430\u0434\u0430\u043D\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"4900000000000"},{"code":"1500000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0421\u0435\u0432\u0435\u0440\u043D\u0430\u044F \u041E\u0441\u0435\u0442\u0438\u044F-\u0410\u043B\u0430\u043D\u0438\u044F","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0421\u0435\u0432\u0435\u0440\u043D\u0430\u044F \u041E\u0441\u0435\u0442\u0438\u044F-\u0410\u043B\u0430\u043D\u0438\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"1500000000000"},{"code":"5200000000000","name":"\u041D\u0438\u0436\u0435\u0433\u043E\u0440\u043E\u0434\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041D\u0438\u0436\u0435\u0433\u043E\u0440\u043E\u0434\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"5200000000000"},{"code":"1100000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u041A\u043E\u043C\u0438","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u041A\u043E\u043C\u0438","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"1100000000000"},{"code":"1700000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0422\u044B\u0432\u0430","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0422\u044B\u0432\u0430","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"660000","key":"1700000000000"},{"code":"6500000000000","name":"\u0421\u0430\u0445\u0430\u043B\u0438\u043D\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0421\u0430\u0445\u0430\u043B\u0438\u043D\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"693000","key":"6500000000000"},{"code":"3100000000000","name":"\u0411\u0435\u043B\u0433\u043E\u0440\u043E\u0434\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0411\u0435\u043B\u0433\u043E\u0440\u043E\u0434\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"3100000000000"},{"code":"3600000000000","name":"\u0412\u043E\u0440\u043E\u043D\u0435\u0436\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0412\u043E\u0440\u043E\u043D\u0435\u0436\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"3600000000000"},{"code":"7000000000000","name":"\u0422\u043E\u043C\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0422\u043E\u043C\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"7000000000000"},{"code":"3500000000000","name":"\u0412\u043E\u043B\u043E\u0433\u043E\u0434\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0412\u043E\u043B\u043E\u0433\u043E\u0434\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"3500000000000"},{"code":"2600000000000","name":"\u0421\u0442\u0430\u0432\u0440\u043E\u043F\u043E\u043B\u044C\u0441\u043A\u0438\u0439 \u043A\u0440\u0430\u0439","shortName":"\u0421\u0442\u0430\u0432\u0440\u043E\u043F\u043E\u043B\u044C\u0441\u043A\u0438\u0439","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"2600000000000"},{"code":"7800000000000","name":"\u0433. \u0421\u0430\u043D\u043A\u0442-\u041F\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433","shortName":"\u0421\u0430\u043D\u043A\u0442-\u041F\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"190000","key":"7800000000000"},{"code":"0900000000000","name":"\u041A\u0430\u0440\u0430\u0447\u0430\u0435\u0432\u043E-\u0427\u0435\u0440\u043A\u0435\u0441\u0441\u043A\u0430\u044F \u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430","shortName":"\u041A\u0430\u0440\u0430\u0447\u0430\u0435\u0432\u043E-\u0427\u0435\u0440\u043A\u0435\u0441\u0441\u043A\u0430\u044F \u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"0900000000000"},{"code":"0800000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u041A\u0430\u043B\u043C\u044B\u043A\u0438\u044F","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u041A\u0430\u043B\u043C\u044B\u043A\u0438\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"0800000000000"},{"code":"7200000000000","name":"\u0422\u044E\u043C\u0435\u043D\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0422\u044E\u043C\u0435\u043D\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"7200000000000"},{"code":"4200000000000","name":"\u041A\u0435\u043C\u0435\u0440\u043E\u0432\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041A\u0435\u043C\u0435\u0440\u043E\u0432\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"4200000000000"},{"code":"8900000000000","name":"\u042F\u043C\u0430\u043B\u043E-\u041D\u0435\u043D\u0435\u0446\u043A\u0438\u0439 \u0430\u0432\u0442\u043E\u043D\u043E\u043C\u043D\u044B\u0439 \u043E\u043A\u0440\u0443\u0433","shortName":"\u042F\u043C\u0430\u043B\u043E-\u041D\u0435\u043D\u0435\u0446\u043A\u0438\u0439","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"629000","key":"8900000000000"},{"code":"0600000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0418\u043D\u0433\u0443\u0448\u0435\u0442\u0438\u044F","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0418\u043D\u0433\u0443\u0448\u0435\u0442\u0438\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"386000","key":"0600000000000"},{"code":"1400000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0421\u0430\u0445\u0430 (\u042F\u043A\u0443\u0442\u0438\u044F)","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0421\u0430\u0445\u0430 (\u042F\u043A\u0443\u0442\u0438\u044F)","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"1400000000000"},{"code":"7900000000000","name":"\u0415\u0432\u0440\u0435\u0439\u0441\u043A\u0430\u044F \u0430\u0432\u0442\u043E\u043D\u043E\u043C\u043D\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0415\u0432\u0440\u0435\u0439\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"7900000000000"},{"code":"1300000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u041C\u043E\u0440\u0434\u043E\u0432\u0438\u044F","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u041C\u043E\u0440\u0434\u043E\u0432\u0438\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"1300000000000"},{"code":"1600000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0422\u0430\u0442\u0430\u0440\u0441\u0442\u0430\u043D","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0422\u0430\u0442\u0430\u0440\u0441\u0442\u0430\u043D","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"420000","key":"1600000000000"},{"code":"4400000000000","name":"\u041A\u043E\u0441\u0442\u0440\u043E\u043C\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041A\u043E\u0441\u0442\u0440\u043E\u043C\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"4400000000000"},{"code":"5100000000000","name":"\u041C\u0443\u0440\u043C\u0430\u043D\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041C\u0443\u0440\u043C\u0430\u043D\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"5100000000000"},{"code":"7600000000000","name":"\u042F\u0440\u043E\u0441\u043B\u0430\u0432\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u042F\u0440\u043E\u0441\u043B\u0430\u0432\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"7600000000000"},{"code":"3900000000000","name":"\u041A\u0430\u043B\u0438\u043D\u0438\u043D\u0433\u0440\u0430\u0434\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041A\u0430\u043B\u0438\u043D\u0438\u043D\u0433\u0440\u0430\u0434\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"3900000000000"},{"code":"6000000000000","name":"\u041F\u0441\u043A\u043E\u0432\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041F\u0441\u043A\u043E\u0432\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"6000000000000"},{"code":"4600000000000","name":"\u041A\u0443\u0440\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041A\u0443\u0440\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"4600000000000"},{"code":"1000000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u041A\u0430\u0440\u0435\u043B\u0438\u044F","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u041A\u0430\u0440\u0435\u043B\u0438\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"1000000000000"},{"code":"2200000000000","name":"\u0410\u043B\u0442\u0430\u0439\u0441\u043A\u0438\u0439 \u043A\u0440\u0430\u0439","shortName":"\u0410\u043B\u0442\u0430\u0439\u0441\u043A\u0438\u0439","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"2200000000000"},{"code":"0300000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0411\u0443\u0440\u044F\u0442\u0438\u044F","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0411\u0443\u0440\u044F\u0442\u0438\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"670000","key":"0300000000000"},{"code":"2800000000000","name":"\u0410\u043C\u0443\u0440\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0410\u043C\u0443\u0440\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"675000","key":"2800000000000"},{"code":"5900000000000","name":"\u041F\u0435\u0440\u043C\u0441\u043A\u0438\u0439 \u043A\u0440\u0430\u0439","shortName":"\u041F\u0435\u0440\u043C\u0441\u043A\u0438\u0439","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"5900000000000"},{"code":"6900000000000","name":"\u0422\u0432\u0435\u0440\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0422\u0432\u0435\u0440\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"6900000000000"},{"code":"2000000000000","name":"\u0427\u0435\u0447\u0435\u043D\u0441\u043A\u0430\u044F \u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430","shortName":"\u0427\u0435\u0447\u0435\u043D\u0441\u043A\u0430\u044F \u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"2000000000000"},{"code":"4100000000000","name":"\u041A\u0430\u043C\u0447\u0430\u0442\u0441\u043A\u0438\u0439 \u043A\u0440\u0430\u0439","shortName":"\u041A\u0430\u043C\u0447\u0430\u0442\u0441\u043A\u0438\u0439","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"4100000000000"},{"code":"0200000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0411\u0430\u0448\u043A\u043E\u0440\u0442\u043E\u0441\u0442\u0430\u043D","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0411\u0430\u0448\u043A\u043E\u0440\u0442\u043E\u0441\u0442\u0430\u043D","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"450000","key":"0200000000000"},{"code":"2300000000000","name":"\u041A\u0440\u0430\u0441\u043D\u043E\u0434\u0430\u0440\u0441\u043A\u0438\u0439 \u043A\u0440\u0430\u0439","shortName":"\u041A\u0440\u0430\u0441\u043D\u043E\u0434\u0430\u0440\u0441\u043A\u0438\u0439","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"2300000000000"},{"code":"9100000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u041A\u0440\u044B\u043C","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u041A\u0440\u044B\u043C","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"9100000000000"},{"code":"5500000000000","name":"\u041E\u043C\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041E\u043C\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"5500000000000"},{"code":"8300000000000","name":"\u041D\u0435\u043D\u0435\u0446\u043A\u0438\u0439 \u0430\u0432\u0442\u043E\u043D\u043E\u043C\u043D\u044B\u0439 \u043E\u043A\u0440\u0443\u0433","shortName":"\u041D\u0435\u043D\u0435\u0446\u043A\u0438\u0439","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"166000","key":"8300000000000"},{"code":"7300000000000","name":"\u0423\u043B\u044C\u044F\u043D\u043E\u0432\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0423\u043B\u044C\u044F\u043D\u043E\u0432\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"433000","key":"7300000000000"},{"code":"6600000000000","name":"\u0421\u0432\u0435\u0440\u0434\u043B\u043E\u0432\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0421\u0432\u0435\u0440\u0434\u043B\u043E\u0432\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"620000","key":"6600000000000"},{"code":"0100000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0410\u0434\u044B\u0433\u0435\u044F","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0410\u0434\u044B\u0433\u0435\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"385000","key":"0100000000000"},{"code":"7500000000000","name":"\u0417\u0430\u0431\u0430\u0439\u043A\u0430\u043B\u044C\u0441\u043A\u0438\u0439 \u043A\u0440\u0430\u0439","shortName":"\u0417\u0430\u0431\u0430\u0439\u043A\u0430\u043B\u044C\u0441\u043A\u0438\u0439","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"7500000000000"},{"code":"6200000000000","name":"\u0420\u044F\u0437\u0430\u043D\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0420\u044F\u0437\u0430\u043D\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"390000","key":"6200000000000"},{"code":"6300000000000","name":"\u0421\u0430\u043C\u0430\u0440\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0421\u0430\u043C\u0430\u0440\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"6300000000000"},{"code":"1800000000000","name":"\u0423\u0434\u043C\u0443\u0440\u0442\u0441\u043A\u0430\u044F \u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430","shortName":"\u0423\u0434\u043C\u0443\u0440\u0442\u0441\u043A\u0430\u044F \u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"1800000000000"},{"code":"3000000000000","name":"\u0410\u0441\u0442\u0440\u0430\u0445\u0430\u043D\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0410\u0441\u0442\u0440\u0430\u0445\u0430\u043D\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"3000000000000"},{"code":"7400000000000","name":"\u0427\u0435\u043B\u044F\u0431\u0438\u043D\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0427\u0435\u043B\u044F\u0431\u0438\u043D\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"454000","key":"7400000000000"},{"code":"5600000000000","name":"\u041E\u0440\u0435\u043D\u0431\u0443\u0440\u0433\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041E\u0440\u0435\u043D\u0431\u0443\u0440\u0433\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"460000","key":"5600000000000"},{"code":"0400000000000","name":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0410\u043B\u0442\u0430\u0439","shortName":"\u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430 \u0410\u043B\u0442\u0430\u0439","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"649000","key":"0400000000000"},{"code":"4300000000000","name":"\u041A\u0438\u0440\u043E\u0432\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041A\u0438\u0440\u043E\u0432\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"610000","key":"4300000000000"},{"code":"4500000000000","name":"\u041A\u0443\u0440\u0433\u0430\u043D\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041A\u0443\u0440\u0433\u0430\u043D\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"641000","key":"4500000000000"},{"code":"5300000000000","name":"\u041D\u043E\u0432\u0433\u043E\u0440\u043E\u0434\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041D\u043E\u0432\u0433\u043E\u0440\u043E\u0434\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"5300000000000"},{"code":"8600000000000","name":"\u0425\u0430\u043D\u0442\u044B-\u041C\u0430\u043D\u0441\u0438\u0439\u0441\u043A\u0438\u0439 \u0430\u0432\u0442\u043E\u043D\u043E\u043C\u043D\u044B\u0439 \u043E\u043A\u0440\u0443\u0433 - \u042E\u0433\u0440\u0430","shortName":"\u0425\u0430\u043D\u0442\u044B-\u041C\u0430\u043D\u0441\u0438\u0439\u0441\u043A\u0438\u0439 \u0430\u0432\u0442\u043E\u043D\u043E\u043C\u043D\u044B\u0439 \u043E\u043A\u0440\u0443\u0433 - \u042E\u0433\u0440\u0430","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"8600000000000"},{"code":"4800000000000","name":"\u041B\u0438\u043F\u0435\u0446\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u041B\u0438\u043F\u0435\u0446\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"4800000000000"},{"code":"9900000000000","name":"\u0433. \u0411\u0430\u0439\u043A\u043E\u043D\u0443\u0440","shortName":"\u0411\u0430\u0439\u043A\u043E\u043D\u0443\u0440","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":"468320","key":"9900000000000"},{"code":"0700000000000","name":"\u041A\u0430\u0431\u0430\u0440\u0434\u0438\u043D\u043E-\u0411\u0430\u043B\u043A\u0430\u0440\u0441\u043A\u0430\u044F \u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430","shortName":"\u041A\u0430\u0431\u0430\u0440\u0434\u0438\u043D\u043E-\u0411\u0430\u043B\u043A\u0430\u0440\u0441\u043A\u0430\u044F \u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"0700000000000"},{"code":"3800000000000","name":"\u0418\u0440\u043A\u0443\u0442\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0418\u0440\u043A\u0443\u0442\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"3800000000000"},{"code":"3400000000000","name":"\u0412\u043E\u043B\u0433\u043E\u0433\u0440\u0430\u0434\u0441\u043A\u0430\u044F \u043E\u0431\u043B\u0430\u0441\u0442\u044C","shortName":"\u0412\u043E\u043B\u0433\u043E\u0433\u0440\u0430\u0434\u0441\u043A\u0430\u044F","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"3400000000000"},{"code":"2100000000000","name":"\u0427\u0443\u0432\u0430\u0448\u0441\u043A\u0430\u044F \u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430","shortName":"\u0427\u0443\u0432\u0430\u0448\u0441\u043A\u0430\u044F \u0420\u0435\u0441\u043F\u0443\u0431\u043B\u0438\u043A\u0430","level":{"key":"STATE","text":"\u043D\u0435 \u0443\u043A\u0430\u0437\u0430\u043D\u043E"},"parentLevel":null,"postIndex":null,"key":"2100000000000"}];
+            </script>
+
+
+            <div class="choose-region__tooltip-trigger" id="_b806504e-82f9-45f2-beb0-7fa9aea31590">
+                <button class="button button_plain choose-region__trigger-button" aria-haspopup="true" aria-expanded="false" data-action="choose-region-trigger">г. Москва</button>
+                <div class="choose-region__tooltip" data-content="choose-region-tooltip">
+                    <div class="choose-region__tooltip-wrapper">
+                        <p class="choose-region__tooltip-text">Ваш регион -
+                            <span class="choose-region__tooltip-region">г. Москва</span>?
+                        </p>
+                        <div class="choose-region__tooltip-buttons">
+                            <button class="choose-region__tooltip-button button button_secondary" data-action="choose-region" type="button">
+                                Выбрать другой регион</button>
+                            <button class="choose-region__tooltip-button button" data-action="choose-region-close" type="button">Да</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mega-menu__user-buttons">
+                <a class="mega-menu__user-button" href="/auth/login/candidate">
+                    <svg class="icon mr-1">
+                        <use xlink:href="/assets/redesign-theme/uikit/icon/icons.svg#login"></use>
+                    </svg>
+                    <span class="button button_plain">Войти</span>
+                </a>
+                <a class="mega-menu__user-button" href="/favorites-autosearch">
+                    <svg class="icon">
+                        <use xlink:href="/assets/redesign-theme/uikit/icon/icons.svg#heart"></use>
+                    </svg>
+                </a>
+                <button class="mega-menu__user-button" type="button" id="megaMenuDropdownUser" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                    <svg class="icon">
+                        <use xlink:href="/assets/redesign-theme/uikit/icon/icons.svg#user"></use>
+                    </svg>
+                </button>
+                <ul class="dropdown-menu dropdown-menu-left mega-menu__dropdown-menu" aria-labelledby="megaMenuDropdownUser">
+                    <li class="mega-menu__dropdown-item">
+                        <a class="mega-menu__dropdown-link" href="/settings">Настройки</a>
+                    </li>
+                    <li class="mega-menu__dropdown-item">
+                        <a class="mega-menu__dropdown-link" href="/auth/logout">Выход</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</div>
+<header class="header">
+    <div class="header__wrapper">
+        <a href="/">
+            <svg class="header__logo" viewBox="0 0 276 107" width="142" height="55" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#6CB2E3" d="M124.374 95.179v-1.955h1.737v3.149h1.9v1.737h-1.9v4.886c0 .326.108.652.326.869.217.217.488.325.814.325.163 0 .271 0 .434-.054.163-.054.272-.054.38-.108l.163-.055v1.738c-.38.108-.814.217-1.357.217-1.792 0-2.714-.977-2.66-2.932V98.11h-1.737v-1.737h.977c.597 0 .923-.38.923-1.194zM135.72 98.056c-.272-.054-.543-.109-.869-.109-.705 0-1.303.218-1.737.706-.434.489-.651 1.14-.651 2.009v5.103h-1.901v-9.446h1.901v.977l.108-.109c.054-.054.163-.163.38-.271.163-.109.38-.272.597-.38.217-.109.489-.217.76-.272a5.39 5.39 0 0 1 .978-.108h.488v1.9h-.054zM143.755 105.819v-.977l-.109.108a2.031 2.031 0 0 1-.326.272c-.162.108-.38.271-.597.38a3.098 3.098 0 0 1-.76.271c-.325.109-.651.109-.977.109-1.14 0-2.009-.38-2.714-1.14-.706-.76-1.032-1.737-1.032-2.986v-5.483h1.9v5.483c0 .652.217 1.249.652 1.683.434.434.923.651 1.574.651.706 0 1.303-.217 1.737-.705.435-.489.652-1.14.652-2.009v-5.103h1.9v9.446h-1.9zM152.441 96.156c.325 0 .705.054 1.031.108.326.109.597.218.814.326.218.109.435.272.598.38.162.109.325.217.38.326l.108.163V92.03h1.9v13.735h-1.9v-1.086l-.38.38c-.163.163-.488.326-1.031.597-.543.272-1.032.326-1.575.326-1.194 0-2.28-.489-3.148-1.411-.869-.978-1.358-2.118-1.358-3.475 0-1.357.435-2.497 1.358-3.474.922-.978 1.954-1.466 3.203-1.466zm-1.738 7.166c.543.597 1.195.923 1.955.923.705 0 1.357-.326 1.954-.923a3.26 3.26 0 0 0 .869-2.226c0-.869-.272-1.629-.869-2.226-.543-.597-1.194-.923-1.954-.923-.706 0-1.357.326-1.955.923a3.259 3.259 0 0 0-.868 2.226c0 .869.271 1.629.868 2.226zM164.764 105.819h-1.9l-3.746-9.446h2.009l2.714 6.895 2.715-6.895h2.008l-3.8 9.446zM175.893 97.459l-1.249 1.248a57.111 57.111 0 0 0-.217-.217c-.108-.108-.271-.217-.597-.38a1.918 1.918 0 0 0-.923-.217c-.434 0-.76.109-.977.272-.217.217-.38.434-.38.705 0 .272.108.489.326.706.217.163.543.326.868.434.326.109.706.217 1.14.38l1.14.489c.38.163.652.434.869.814.217.38.326.815.326 1.357 0 .815-.326 1.52-.978 2.063-.651.543-1.465.869-2.497.869a5.34 5.34 0 0 1-1.303-.163 3.655 3.655 0 0 1-1.031-.434 7.844 7.844 0 0 1-.706-.489c-.217-.163-.326-.326-.434-.434l-.163-.163 1.249-1.249c.054.109.162.218.271.326.109.109.38.326.814.543.38.217.815.326 1.249.326.489 0 .923-.109 1.14-.326.271-.217.38-.489.38-.869 0-.271-.109-.488-.326-.705a3.259 3.259 0 0 0-.868-.435c-.326-.108-.706-.217-1.14-.38l-1.14-.488c-.38-.163-.652-.435-.869-.815-.217-.38-.326-.814-.326-1.357 0-.706.326-1.357.923-1.9.597-.543 1.412-.814 2.335-.814.38 0 .705.054 1.085.108.38.055.652.218.869.326.217.109.434.272.597.38.163.109.271.217.38.326l.163.163zM186.968 101.802h-7.22c.108.651.434 1.248.977 1.737.543.489 1.194.706 1.954.706.543 0 1.032-.109 1.52-.38.489-.272.815-.489.977-.706l.272-.38 1.248 1.249a.738.738 0 0 0-.162.217c-.055.108-.272.271-.489.488a7.676 7.676 0 0 1-.814.598c-.272.162-.652.325-1.14.488-.435.163-.923.217-1.412.217-1.303 0-2.443-.488-3.366-1.465-.923-.978-1.411-2.172-1.411-3.529 0-1.303.488-2.443 1.411-3.42.923-.923 2.009-1.412 3.312-1.412s2.389.434 3.257 1.303c.869.869 1.303 1.954 1.303 3.312l-.217.977zm-4.452-3.963c-.705 0-1.303.217-1.737.651-.434.434-.814.977-.977 1.629h5.32c-.108-.652-.38-1.195-.868-1.629-.489-.434-1.032-.651-1.738-.651zM201.083 105.819v-5.483c0-.76-.163-1.357-.543-1.737-.326-.38-.815-.597-1.412-.597s-1.086.271-1.52.76c-.38.488-.597 1.14-.597 2.008v5.103h-1.9v-5.483c0-.76-.163-1.357-.543-1.737-.326-.38-.814-.597-1.412-.597-.597 0-1.085.271-1.52.76-.38.489-.597 1.14-.597 2.009v5.103h-1.9v-9.446h1.9v.977c.055-.109.163-.217.326-.326.109-.108.434-.326.869-.543a2.94 2.94 0 0 1 1.357-.326c.38 0 .706.055 1.031.163.326.109.597.217.815.38.217.163.38.326.542.489.163.163.272.271.326.38l.109.163c0-.055.054-.109.108-.163.055-.054.163-.217.38-.38l.652-.489c.217-.163.543-.271.868-.38.38-.108.76-.163 1.14-.163 1.086 0 1.901.326 2.552 1.032.597.706.923 1.737.923 3.094v5.483h-1.954v-.054zM207.543 103.81c.271.272.38.543.38.923 0 .326-.109.652-.38.869-.271.271-.543.38-.869.38-.325 0-.651-.109-.868-.38-.272-.272-.38-.543-.38-.869 0-.325.108-.651.38-.923.271-.271.543-.38.868-.38.326 0 .598.163.869.38zM215.306 98.056a4.215 4.215 0 0 0-.868-.109c-.706 0-1.303.218-1.738.706-.434.489-.651 1.14-.651 2.009v5.103h-1.9v-9.446h1.9v.977l.109-.109a1.33 1.33 0 0 1 .38-.271c.162-.109.38-.272.597-.38.217-.109.488-.217.76-.272.271-.054.651-.108.977-.108h.489v1.9h-.055zM223.395 105.819v-.977l-.109.108a2.058 2.058 0 0 1-.325.272c-.163.108-.38.271-.598.38a3.098 3.098 0 0 1-.76.271c-.325.109-.651.109-.977.109-1.14 0-2.008-.38-2.714-1.14-.706-.76-1.032-1.737-1.032-2.986v-5.483h1.9v5.483c0 .652.218 1.249.652 1.683.434.434.923.651 1.574.651.706 0 1.303-.217 1.737-.705.435-.489.652-1.14.652-2.009v-5.103h1.9v9.446h-1.9z"></path>
+                <path fill="#E54A1E" d="M33.062 68.143v34.527c0 2.118 2.28 3.421 4.125 2.335l28.665-17.264c1.737-1.031 1.737-3.583 0-4.614L37.187 65.863c-1.791-1.086-4.125.217-4.125 2.28zM33.062 2.672v34.527c0 2.117 2.28 3.42 4.125 2.334L65.852 22.27c1.737-1.032 1.737-3.583 0-4.614L37.187.392c-1.791-1.086-4.125.217-4.125 2.28zM0 35.408v34.527c0 2.117 2.28 3.42 4.126 2.334L32.79 55.006c1.737-1.032 1.737-3.583 0-4.615L4.126 33.127C2.28 32.042 0 33.346 0 35.407zM66.177 35.408v34.527c0 2.117 2.28 3.42 4.126 2.334l28.664-17.263c1.737-1.032 1.737-3.583 0-4.615L70.303 33.127c-1.846-1.085-4.126.218-4.126 2.28z"></path>
+                <path fill="#004A97" d="M138.38 23.41c1.466.76 2.606 1.791 3.42 3.203.815 1.357 1.195 2.986 1.195 4.886 0 1.846-.38 3.474-1.195 4.886-.814 1.411-1.954 2.443-3.42 3.203-1.466.76-3.257 1.085-5.266 1.085h-4.56v6.95h-5.266V22.323h9.88c2.009-.054 3.746.326 5.212 1.086zm-1.954 11.292c.814-.76 1.248-1.846 1.248-3.257 0-1.412-.434-2.498-1.248-3.258-.815-.76-2.009-1.14-3.638-1.14H128.5v8.795h4.288c1.629 0 2.823-.38 3.638-1.14zM161.561 42.14h-10.586l-2.009 5.428h-5.374l10.152-25.298h5.211l10.206 25.298h-5.537l-2.063-5.429zm-1.629-4.452l-3.583-9.664-3.583 9.664h7.166zM172.961 22.27h18.35v4.669h-13.138v5.211h6.297c2.769 0 4.832.652 6.298 1.9 1.466 1.303 2.171 3.095 2.171 5.538 0 2.551-.814 4.506-2.388 5.863-1.629 1.411-3.855 2.117-6.786 2.117h-10.804V22.27zm10.478 20.955c1.357 0 2.389-.271 3.094-.869.706-.597 1.086-1.465 1.086-2.605 0-2.226-1.411-3.312-4.18-3.312h-5.266v6.786h5.266zM202.223 46.32c-1.9-1.14-3.366-2.715-4.452-4.67-1.086-2.008-1.628-4.234-1.628-6.677 0-2.443.542-4.723 1.628-6.677 1.086-2.009 2.552-3.529 4.452-4.669 1.9-1.14 4.017-1.683 6.406-1.683 2.388 0 4.506.543 6.352 1.683a12.689 12.689 0 0 1 4.451 4.669c1.086 2.009 1.629 4.234 1.629 6.677 0 2.443-.543 4.723-1.629 6.678-1.086 2.008-2.551 3.528-4.451 4.668-1.901 1.14-4.018 1.683-6.352 1.683-2.389 0-4.506-.597-6.406-1.683zm10.043-4.343c1.086-.706 1.954-1.63 2.552-2.878.597-1.248.923-2.606.923-4.18 0-1.574-.326-2.986-.923-4.18-.598-1.249-1.466-2.172-2.552-2.877-1.086-.706-2.28-1.032-3.637-1.032-1.357 0-2.552.326-3.637 1.032-1.086.705-1.955 1.628-2.552 2.877-.597 1.248-.923 2.606-.923 4.18 0 1.574.326 2.986.923 4.18.597 1.249 1.466 2.172 2.552 2.878 1.085.705 2.28 1.03 3.637 1.03 1.303 0 2.551-.325 3.637-1.03zM242.993 27.047h-7.274v20.521h-5.212v-20.52h-7.275V22.27h19.761v4.777zM261.179 42.14h-10.586l-2.009 5.428h-5.374l10.152-25.298h5.211l10.207 25.298h-5.538l-2.063-5.429zm-1.683-4.452l-3.583-9.664-3.583 9.664h7.166zM138.217 58.914c1.466.76 2.606 1.792 3.42 3.203.815 1.358 1.195 2.986 1.195 4.886 0 1.846-.38 3.475-1.195 4.886-.814 1.412-1.954 2.443-3.42 3.203-1.466.76-3.257 1.086-5.266 1.086h-4.56v6.949h-5.266V57.829h9.88c2.009 0 3.746.325 5.212 1.085zm-1.9 11.292c.814-.76 1.249-1.846 1.249-3.257 0-1.412-.435-2.497-1.249-3.257-.814-.76-2.009-1.14-3.637-1.14h-4.289v8.794h4.289c1.574 0 2.768-.38 3.637-1.14zM152.603 81.824c-1.9-1.14-3.366-2.715-4.451-4.669-1.086-2.009-1.629-4.234-1.629-6.677 0-2.498.543-4.723 1.629-6.678 1.085-2.008 2.551-3.528 4.451-4.668 1.9-1.14 4.018-1.683 6.406-1.683 2.389 0 4.506.542 6.352 1.683 1.9 1.14 3.366 2.714 4.451 4.668 1.086 2.009 1.629 4.235 1.629 6.678 0 2.497-.543 4.723-1.629 6.677-1.085 2.009-2.551 3.529-4.451 4.669-1.9 1.14-4.017 1.683-6.352 1.683-2.388 0-4.506-.543-6.406-1.683zm10.043-4.289c1.086-.706 1.955-1.629 2.552-2.877.597-1.249.923-2.606.923-4.18 0-1.575-.326-2.986-.923-4.18-.597-1.25-1.466-2.172-2.552-2.878-1.085-.706-2.28-1.031-3.637-1.031-1.357 0-2.551.325-3.637 1.031-1.086.706-1.954 1.629-2.552 2.877-.597 1.25-.923 2.606-.923 4.18 0 1.575.326 2.986.923 4.18.598 1.25 1.466 2.172 2.552 2.878s2.28 1.032 3.637 1.032c1.303 0 2.552-.38 3.637-1.032zM181.43 81.878c-1.9-1.14-3.366-2.66-4.397-4.669-1.086-2.008-1.629-4.234-1.629-6.731 0-2.498.543-4.778 1.629-6.732 1.086-2.009 2.551-3.529 4.397-4.669 1.9-1.14 3.963-1.683 6.352-1.683 1.954 0 3.746.38 5.374 1.14 1.575.76 2.932 1.9 4.018 3.312l-3.366 3.474c-1.52-1.954-3.475-2.985-5.7-2.985-1.412 0-2.66.325-3.746 1.03a7.44 7.44 0 0 0-2.606 2.878c-.597 1.249-.923 2.606-.923 4.18 0 1.575.326 2.986.923 4.18.597 1.25 1.466 2.172 2.606 2.878 1.086.706 2.388 1.031 3.746 1.031 2.28 0 4.18-.977 5.7-2.986l3.366 3.475c-1.086 1.466-2.443 2.606-4.018 3.366-1.628.76-3.42 1.14-5.374 1.14-2.389 0-4.506-.543-6.352-1.629zM206.24 81.878c-1.9-1.14-3.366-2.66-4.397-4.669-1.086-2.008-1.629-4.234-1.629-6.731 0-2.498.543-4.778 1.629-6.732 1.085-2.009 2.551-3.529 4.397-4.669 1.9-1.14 3.963-1.683 6.352-1.683 1.954 0 3.745.38 5.374 1.14 1.574.76 2.932 1.9 4.017 3.312l-3.365 3.474c-1.521-1.954-3.475-2.985-5.701-2.985-1.411 0-2.66.325-3.746 1.03a7.445 7.445 0 0 0-2.605 2.878c-.598 1.249-.923 2.606-.923 4.18 0 1.575.325 2.986.923 4.18.597 1.25 1.465 2.172 2.605 2.878 1.086.706 2.389 1.031 3.746 1.031 2.28 0 4.18-.977 5.701-2.986l3.365 3.475c-1.085 1.466-2.443 2.606-4.017 3.366-1.629.76-3.42 1.14-5.374 1.14-2.389 0-4.506-.543-6.352-1.629zM226.815 57.829h5.212v16.503l10.857-16.503h4.94v25.298h-5.157v-16.45l-10.858 16.45h-4.994V57.829zM254.99 57.829h5.212v16.503L271.06 57.83H276v25.298h-5.212v-16.45l-10.857 16.45h-4.995V57.829h.054z"></path>
+            </svg>
+        </a>
+        <div class="search-content header__search">
+            <input class="search-content__input" type="search" title="по названию вакансии">
+            <label class="search-content__select select">
+                <div class="dropdown bootstrap-select select__control"><select class="select__control">
+                    <option>по названию вакансии</option>
+                    <option>по описанию вакансии</option>
+                    <option>по названию компании</option>
+                </select><button type="button" tabindex="-1" class="btn dropdown-toggle btn-light" data-toggle="dropdown" role="combobox" aria-owns="bs-select-1" aria-haspopup="listbox" aria-expanded="false" title="по названию вакансии"><div class="filter-option"><div class="filter-option-inner"><div class="filter-option-inner-inner">по названию вакансии</div></div> </div></button><div class="dropdown-menu "><div class="inner show" role="listbox" id="bs-select-1" tabindex="-1"><ul class="dropdown-menu dropdown-menu_inner inner show" role="presentation"></ul></div></div></div>
+            </label>
+            <button class="search-content__button" type="button">
+            <span class="d-none d-lg-block">
+              Найти
+            </span>
+                <span class="d-lg-none">
+              <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M11 19C15.4183 19 19 15.4183 19 11C19 6.58172 15.4183 3 11 3C6.58172 3 3 6.58172 3 11C3 15.4183 6.58172 19 11 19Z" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+                <path d="M20.9999 21L16.6499 16.65" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path>
+              </svg>
+            </span>
+            </button>
+            <button class="search-content__burger" type="button">
+                <svg width="24" height="24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 12h18M3 6h18M3 18h18" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"></path></svg>
+            </button>
+        </div>
+    </div>
+</header>
+
+<main class="main">
+    <div class="main__wrapper">
+
+    </div>
+
+
+
+
+    <div class="row">
+
+
+
+
+        <div data-uid="7cdw2vh779i" class="  col-md-12   " style="height: auto; margin-top: 0px; margin-bottom: 0px;">
+            <!-- Отрисовка инфоблока -->
+
+
+            <div class="ib-container main__wrapper" id="_f062f570-2903-11eb-a09f-85b4053611d6" style="height: auto;">
+
+
+
+                <div class="row">
+
+
+
+
+                    <div data-uid="p1d18p6xxhf" class="  col-md-12   " style="margin-top: 0px; margin-bottom: 0px;">
+                        <!-- Отрисовка инфоблока -->
+
+
+                        <div id="_f062f571-2903-11eb-a09f-85b4053611d6" infoblock-name="Отображение шаблона" class="ib-display_templates">
+                            <div th:insert="~{block :: block}"></div>
+                        </div>
+                        <script>
+                            (function () {
+                                try {
+                                    var chart = JSON.parse("{\"useblock_id\":{\"value\":false,\"label\":\"\u0424\u0438\u043B\u044C\u0442\u0440\u0430\u0446\u0438\u044F \u043F\u043E Block_ID\",\"type\":\"BOOLEAN\"},\"block_id\":{\"value\":null,\"label\":\"BLOCK_ID\",\"type\":\"STRING\",\"link\":\"useblock_id\"},\"usesettings_set\":{\"value\":false,\"label\":\"\u0418\u043C\u043F\u043E\u0440\u0442 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043A\",\"type\":\"BOOLEAN\"},\"settingsset_id\":{\"value\":null,\"label\":\"\u0418\u0434\u0435\u043D\u0442\u0438\u0444\u0438\u043A\u0430\u0442\u043E\u0440 \u043D\u0430\u0431\u043E\u0440\u0430 \u043D\u0430\u0441\u0442\u0440\u043E\u0435\u043A\",\"type\":\"STRING\",\"link\":\"usesettings_set\"},\"name\":{\"label\":\"\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435\",\"value\":\"\u041E\u0442\u043E\u0431\u0440\u0430\u0436\u0435\u043D\u0438\u0435 \u0448\u0430\u0431\u043B\u043E\u043D\u0430\",\"type\":\"STRING\"},\"md\":{\"label\":\"\u0428\u0438\u0440\u0438\u043D\u0430\",\"value\":12,\"type\":\"NUMBER\",\"min\":1,\"max\":12},\"offset\":{\"label\":\"\u041E\u0442\u0441\u0442\u0443\u043F \u0441\u043B\u0435\u0432\u0430\",\"value\":0,\"type\":\"NUMBER\",\"min\":0,\"max\":11},\"marginTop\":{\"label\":\"\u041E\u0442\u0441\u0442\u0443\u043F \u0441\u0432\u0435\u0440\u0445\u0443\",\"value\":0,\"type\":\"NUMBER\"},\"marginBottom\":{\"label\":\"\u041E\u0442\u0441\u0442\u0443\u043F \u0441\u043D\u0438\u0437\u0443\",\"value\":0,\"type\":\"NUMBER\"},\"row\":{\"value\":\"0-0\",\"hidden\":true},\"displayAll\":{\"label\":\"\u041E\u0442\u043E\u0431\u0440\u0430\u0436\u0430\u0442\u044C \u0432\u0435\u0441\u044C \u043D\u0430\u0431\u043E\u0440 \u0434\u0430\u043D\u043D\u044B\u0445\",\"type\":\"BOOLEAN\",\"value\":false},\"html\":{\"label\":\"\u041A\u043E\u0434 \u0448\u0430\u0431\u043B\u043E\u043D\u0430\",\"type\":\"HTMLTEXT\",\"add\":[\"filter\"],\"value\":\"<h1 class=\\\"content__title\\\">\\n    \u0417\u0430\u043F\u0438\u0441\u0430\u0442\u044C\u0441\u044F \u043D\u0430 \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u0435\\n<\/h1>\\n<div class=\\\"row\\\">\\n    <div class=\\\"main__aside-neighbour\\\">\\n        <form action=\\\"\\\" class=\\\"form form_descripted\\\">\\n            <div class=\\\"main__content\\\">\\n                <h2 class=\\\"content__subtitle\\\">\\n                    \u041F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u0430 \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u044F\\n                <\/h2>\\n                <div class=\\\"content_small content_muted mb-3\\\">\\n                    <div class=\\\"content__paragraph\\\">\\n                        \u0414\u043B\u044F \u043F\u043E\u0434\u0431\u043E\u0440\u0430 \u043F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u044B \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u044F, \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u043E\u0434\u043D\u0443 \u0438\u0437 \u0442\u0440\u0435\u0445 \u043F\u0440\u0438\u0432\u0435\u0434\u0435\u043D\u043D\u044B\u0445 \u043A\u0430\u0442\u0435\u0433\u043E\u0440\u0438\u0439:\\n                    <\/div>\\n                    <ul class=\\\"list\\\">\\n                        <li class=\\\"list__item\\\">\\n                            \u0415\u0441\u043B\u0438 \u0432\u044B\u0026nbsp;\u043D\u0435\u0434\u0430\u0432\u043D\u043E \u043E\u043A\u043E\u043D\u0447\u0438\u043B\u0438 \u0438\u043B\u0438 \u0432\u0026nbsp;\u0431\u043B\u0438\u0436\u0430\u0439\u0448\u0435\u0435 \u0432\u0440\u0435\u043C\u044F \u043E\u043A\u043E\u043D\u0447\u0438\u0442\u0435 \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u0435\\n                            \u0432\u0026nbsp;\u043E\u0431\u0440\u0430\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u043D\u043E\u0439 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0446\u0438\u0438, \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u043A\u0430\u0442\u0435\u0433\u043E\u0440\u0438\u044E <strong> \u0026laquo;\u0412\u044B\u043F\u0443\u0441\u043A\u043D\u0438\u043A\\n                                \u043E\u0431\u0440\u0430\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u043D\u043E\u0439 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0446\u0438\u0438\u0026raquo;<\/strong>;\\n                        <\/li>\\n                        <li class=\\\"list__item\\\">\\n                            \u0415\u0441\u043B\u0438 \u0432\u044B\u0026nbsp;\u0026mdash; \u0441\u043F\u0435\u0446\u0438\u0430\u043B\u0438\u0441\u0442, \u043D\u0430\u0445\u043E\u0434\u044F\u0449\u0438\u0439\u0441\u044F \u0432\u0026nbsp;\u043F\u043E\u0438\u0441\u043A\u0435 \u0440\u0430\u0431\u043E\u0442\u044B, \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u043A\u0430\u0442\u0435\u0433\u043E\u0440\u0438\u044E\\n                            <strong>\u0026laquo;\u0418\u0449\u0443 \u0440\u0430\u0431\u043E\u0442\u0443\u0026raquo;<\/strong>;\\n                        <\/li>\\n                        <li class=\\\"list__item\\\">\\n                            \u0415\u0441\u043B\u0438 \u0432\u0026nbsp;\u0441\u0432\u044F\u0437\u0438 \u0441\u0026nbsp;\u044D\u043F\u0438\u0434\u0435\u043C\u0438\u043E\u043B\u043E\u0433\u0438\u0447\u0435\u0441\u043A\u043E\u0439 \u043E\u0431\u0441\u0442\u0430\u043D\u043E\u0432\u043A\u043E\u0439 \u0432\u044B\u0026nbsp;\u043D\u0430\u0445\u043E\u0434\u0438\u0442\u0435\u0441\u044C \u0432\u0026nbsp;\u0447\u0438\u0441\u043B\u0435\\n                            \u0433\u0440\u0430\u0436\u0434\u0430\u043D \u0441\u0026nbsp;\u043F\u043E\u0432\u044B\u0448\u0435\u043D\u043D\u044B\u043C \u0440\u0438\u0441\u043A\u043E\u043C \u043F\u043E\u0442\u0435\u0440\u0438 \u0440\u0430\u0431\u043E\u0442\u044B, \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u043A\u0430\u0442\u0435\u0433\u043E\u0440\u0438\u044E <strong>\u0026laquo;\u041D\u0430\u0445\u043E\u0436\u0443\u0441\u044C\\n                                \u043F\u043E\u0434 \u0440\u0438\u0441\u043A\u043E\u043C \u0443\u0432\u043E\u043B\u044C\u043D\u0435\u043D\u0438\u044F\u0026raquo;<\/strong>.\\n                        <\/li>\\n                    <\/ul>\\n                <\/div>\\n                    <div class=\\\"form__section\\\">\\n                        <fieldset class=\\\"form__fieldset\\\">\\n                            <legend class=\\\"form__title\\\">\u041A\u0430\u0442\u0435\u0433\u043E\u0440\u0438\u044F<\/legend>\\n                            <label class=\\\"radio\\\">\\n                                <input type=\\\"radio\\\" name=\\\"category\\\">\\n                                <span class=\\\"radio__label\\\">\u041D\u0430\u0445\u043E\u0436\u0443\u0441\u044C \u043F\u043E\u0434 \u0440\u0438\u0441\u043A\u043E\u043C \u0443\u0432\u043E\u043B\u044C\u043D\u0435\u043D\u0438\u044F<\/span>\\n                            <\/label>\\n                            <label class=\\\"radio\\\">\\n                                <input type=\\\"radio\\\" name=\\\"category\\\" checked>\\n                                <span class=\\\"radio__label\\\">\u0412\u044B\u043F\u0443\u0441\u043A\u043D\u0438\u043A \u043E\u0431\u0440\u0430\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C\u043D\u043E\u0439 \u043E\u0440\u0433\u0430\u043D\u0438\u0437\u0430\u0446\u0438\u0438<\/span>\\n                            <\/label>\\n                            <label class=\\\"radio\\\">\\n                                <input type=\\\"radio\\\" name=\\\"category\\\">\\n                                <span class=\\\"radio__label\\\">\u0418\u0449\u0443 \u0440\u0430\u0431\u043E\u0442\u0443<\/span>\\n                            <\/label>\\n                        <\/fieldset>\\n                    <\/div>\\n                    <div class=\\\"form__section\\\">\\n                        <div class=\\\"form__description\\\">\u0414\u043B\u044F \u043F\u043E\u0434\u0431\u043E\u0440\u0430 \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u043E\u0439 \u0434\u043B\u044F \u043F\u0440\u043E\u0445\u043E\u0436\u0434\u0435\u043D\u0438\u044F \u043F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u044B \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u044F, \u0432\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0438\u0437 \u0441\u043F\u0438\u0441\u043A\u0430 \u0440\u0435\u0433\u0438\u043E\u043D\\n                        <\/div>\\n                        <label class=\\\"select\\\">\\n                          <select class=\\\"select__control\\\" data-live-search=\\\"true\\\">\\n                            <option value=\\\"1\\\">\u0421\u0430\u043D\u043A\u0442-\u041F\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433<\/option>\\n                            <option value=\\\"2\\\">\u041C\u043E\u0441\u043A\u0432\u0430<\/option>\\n                            <option value=\\\"3\\\">\u0421\u043E\u0447\u0438<\/option>\\n                          <\/select>\\n                          <span class=\\\"select__title\\\">\u0420\u0435\u0433\u0438\u043E\u043D \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u044F<\/span>\\n                        <\/label>\\n                    <\/div>\\n                    <div class=\\\"form__section\\\">\\n                        <div class=\\\"form__description\\\">\u041F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u044B \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u044F \u0434\u043E\u0441\u0442\u0443\u043F\u043D\u044B\u0435 \u0432 \u0432\u0430\u0448\u0435\u043C \u0440\u0435\u0433\u0438\u043E\u043D\u0435\\n                        <\/div>\\n                        <label class=\\\"select\\\">\\n                          <select class=\\\"select__control\\\" data-live-search=\\\"true\\\">\\n                            <option value=\\\"1\\\">\u0412\u0435\u0431 \u0434\u0438\u0437\u0430\u0439\u043D \u0438 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u043A\u0430<\/option>\\n                            <option value=\\\"2\\\">\u0412\u0435\u0431 \u0434\u0438\u0437\u0430\u0439\u043D \u0438 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u043A\u0430<\/option>\\n                            <option value=\\\"3\\\">\u0412\u0435\u0431 \u0434\u0438\u0437\u0430\u0439\u043D \u0438 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u043A\u0430<\/option>\\n                          <\/select>\\n                          <span class=\\\"select__title\\\">\u041F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u0430 \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u044F<\/span>\\n                        <\/label>\\n                    <\/div>\\n                    <div class=\\\"card card_note\\\">\\n                        <div class=\\\"content__paragraph\\\">\\n                            <strong>\u0412\u0435\u0431-\u0434\u0438\u0437\u0430\u0439\u043D \u0438 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u043A\u0430<\/strong>\\n                            <br>\\n                            \u041A\u043E\u043C\u043F\u0435\u0442\u0435\u043D\u0446\u0438\u044F \u043F\u0440\u0435\u0434\u043F\u043E\u043B\u0430\u0433\u0430\u0435\u0442 \u0443\u043C\u0435\u043D\u0438\u0435 \u0441\u043E\u0437\u0434\u0430\u0432\u0430\u0442\u044C \u0432\u0435\u0431-\u0441\u0430\u0439\u0442\u044B \u0438 \u043F\u043E\u0434\u0434\u0435\u0440\u0436\u0438\u0432\u0430\u0442\u044C \u0438\u0445 \u0444\u0443\u043D\u043A\u0446\u0438\u043E\u043D\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u0435. \u0414\u043B\u044F \u0441\u043E\u0437\u0434\u0430\u043D\u0438\u044F \u0432\u0435\u0431-\u0441\u0430\u0439\u0442\u043E\u0432 \u0440\u0430\u0437\u0440\u0430\u0431\u043E\u0442\u0447\u0438\u043A\u0438 \u0434\u043E\u043B\u0436\u043D\u044B \u0443\u043C\u0435\u0442\u044C \u0438\u0441\u043F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u044C \u0441\u043F\u0435\u0446\u0438\u0430\u043B\u044C\u043D\u044B\u0435 \u043F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u044B, \u044F\u0437\u044B\u043A\u0438 \u043F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u0438\u0440\u043E\u0432\u0430\u043D\u0438\u044F \u0438 \u0440\u0430\u0437\u043C\u0435\u0442\u043A\u0438, \u043A\u043E\u0442\u043E\u0440\u044B\u0435 \u0441\u0432\u044F\u0437\u044B\u0432\u0430\u044E\u0442 \u0433\u0440\u0430\u0444\u0438\u0447\u0435\u0441\u043A\u0438\u0435 \u044D\u043B\u0435\u043C\u0435\u043D\u0442\u044B, \u0442\u0435\u043A\u0441\u0442\u044B, \u0444\u043E\u0442\u043E \u0438 \u0441\u0441\u044B\u043B\u043A\u0438 \u043D\u0430 \u0432\u0435\u0431-\u0441\u0442\u0440\u0430\u043D\u0438\u0446\u044B \u0432 \u0435\u0434\u0438\u043D\u044B\u0439 \u0443\u0434\u043E\u0431\u043D\u044B\u0439 \u0438 \u0444\u0443\u043D\u043A\u0446\u0438\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0439 \u0438\u043D\u0444\u043E\u0440\u043C\u0430\u0446\u0438\u043E\u043D\u043D\u044B\u0439 \u043F\u0440\u043E\u0434\u0443\u043A\u0442.\\n                        <\/div>\\n                    <\/div>\\n    \\n                \\n            <\/div>\\n            <div class=\\\"main__content\\\">\\n                <h2 class=\\\"content__subtitle\\\">\\n                    \u0424\u043E\u0440\u043C\u0430 \u0438 \u043C\u0435\u0441\u0442\u043E \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u044F\\n                <\/h2>\\n                <div class=\\\"form__section\\\">\\n                    <label class=\\\"checkbox\\\">\\n                        <input type=\\\"checkbox\\\" checked=\\\"\\\"  name=\\\"\\\">\\n                        <span class=\\\"checkbox__label\\\">\u0414\u0438\u0441\u0442\u0430\u043D\u0446\u0438\u043E\u043D\u043D\u043E\u0435 \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u0435<\/span>\\n                      <\/label>\\n                    \\n                <\/div>\\n                <div class=\\\"form__section\\\">\\n                    <label class=\\\"select\\\">\\n                        <select class=\\\"select__control\\\" data-live-search=\\\"true\\\">\\n                          <option value=\\\"1\\\">\u0421\u041F\u0431 \u0413\u0411\u041F\u041E\u0423 \u00AB\u041F\u0435\u0442\u0440\u043E\u0432\u0441\u043A\u0438\u0439 \u043A\u043E\u043B\u043B\u0435\u0434\u0436\u00BB<\/option>\\n                          <option value=\\\"2\\\">\u0421\u041F\u0431 \u0413\u0411\u041F\u041E\u0423 \u00AB\u041F\u0435\u0442\u0440\u043E\u0432\u0441\u043A\u0438\u0439 \u043A\u043E\u043B\u043B\u0435\u0434\u0436\u00BB<\/option>\\n                          <option value=\\\"2\\\">\u0421\u041F\u0431 \u0413\u0411\u041F\u041E\u0423 \u00AB\u041F\u0435\u0442\u0440\u043E\u0432\u0441\u043A\u0438\u0439 \u043A\u043E\u043B\u043B\u0435\u0434\u0436\u00BB<\/option>\\n                        <\/select>\\n                        <span class=\\\"select__title\\\">\u041C\u0435\u0441\u0442\u043E \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u044F<\/span>\\n                      <\/label>\\n                <\/div>\\n            <\/div>\\n            <div class=\\\"main__content\\\">\\n                <h2 class=\\\"content__subtitle\\\">\\n                    \u041F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0435 \u0434\u0430\u043D\u043D\u044B\u0435\\n                <\/h2>\\n                <dl class=\\\"definitions mb-3\\\">\\n                    <div class=\\\"definitions__item mb-1\\\">\\n                        <dt class=\\\"definitions__key\\\">\u0424\u0418\u041E:<\/dt>\\n                        <dd class=\\\"definitions__value\\\"><p>\u041A\u043E\u043D\u0441\u0442\u0430\u043D\u0442\u0438\u043D\u043E\u043F\u043E\u043B\u044C\u0441\u043A\u0430\u044F \u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u0430 \u0410\u043B\u0435\u043A\u0441\u0430\u043D\u0434\u0440\u043E\u0432\u043D\u0430<\/p><\/dd>\\n                    <\/div>\\n                    <div class=\\\"definitions__item\\\">\\n                        <dt class=\\\"definitions__key\\\">\u0421\u041D\u0418\u041B\u0421:<\/dt>\\n                        <dd class=\\\"definitions__value\\\"><p>0001234000009<\/p><\/dd>\\n                    <\/div>\\n                <\/dl>\\n                <div class=\\\"form__section\\\">\\n                    <div class=\\\"form__description\\\">\\n                        \u0412\u044B\u0431\u0435\u0440\u0438\u0442\u0435 \u0438\u0437 \u0441\u043F\u0438\u0441\u043A\u0430 \u0440\u0435\u0433\u0438\u043E\u043D \u0432\u0430\u0448\u0435\u0433\u043E \u043F\u0440\u043E\u0436\u0438\u0432\u0430\u043D\u0438\u044F\\n                    <\/div>\\n                    <label class=\\\"select select_required\\\">\\n                        <select class=\\\"select__control\\\" data-live-search=\\\"true\\\">\\n                          <option value=\\\"1\\\">\u0421\u0430\u043D\u043A\u0442-\u041F\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433<\/option>\\n                          <option value=\\\"2\\\">\u041C\u043E\u0441\u043A\u0432\u0430<\/option>\\n                          <option value=\\\"2\\\">\u0421\u043E\u0447\u0438<\/option>\\n                        <\/select>\\n                        <span class=\\\"select__title\\\">\u0420\u0435\u0433\u0438\u043E\u043D \u043F\u0440\u043E\u0436\u0438\u0432\u0430\u043D\u0438\u044F<\/span>\\n                      <\/label>\\n                <\/div>\\n                <div class=\\\"form__section\\\">\\n                    <label class=\\\"select select_required\\\">\\n                        <select class=\\\"select__control\\\" data-live-search=\\\"true\\\">\\n                          <option value=\\\"1\\\">\u0421\u0430\u043D\u043A\u0442-\u041F\u0435\u0442\u0435\u0440\u0431\u0443\u0440\u0433<\/option>\\n                          <option value=\\\"2\\\">\u041C\u043E\u0441\u043A\u0432\u0430<\/option>\\n                          <option value=\\\"2\\\">\u0421\u043E\u0447\u0438<\/option>\\n                        <\/select>\\n                        <span class=\\\"select__title\\\">\u0413\u043E\u0440\u043E\u0434 \u043F\u0440\u043E\u0436\u0438\u0432\u0430\u043D\u0438\u044F<\/span>\\n                      <\/label>\\n                <\/div>    \\n                <div class=\\\"form__section\\\">\\n                    <div class=\\\"row\\\">\\n                        <div class=\\\"col-lg-6\\\">\\n                            <label class=\\\"input input_date\\\">\\n                                <input class=\\\"input__control\\\" type=\\\"text\\\"\\n                                       placeholder=\\\"08.08.2020\\\"\\n                                \/>\\n                                <span class=\\\"input__title\\\">\u0414\u0430\u0442\u0430 \u0440\u043E\u0436\u0434\u0435\u043D\u0438\u044F:<\/span>\\n                            <\/label>\\n                        <\/div>\\n                    <\/div>\\n                <\/div>\\n                <div class=\\\"form__section\\\">\\n                    <fieldset class=\\\"form__fieldset\\\">\\n                        <legend class=\\\"form__title\\\">\u041F\u043E\u043B<\/legend>\\n                        <div class=\\\"row\\\">\\n                            <div class=\\\"col-auto\\\">\\n                                <label class=\\\"radio\\\">\\n                                    <input type=\\\"radio\\\" name=\\\"gender\\\">\\n                                    <span class=\\\"radio__label\\\">\u041C\u0443\u0436\u0441\u043A\u043E\u0439<\/span>\\n                                <\/label>\\n                            <\/div>\\n                            <div class=\\\"col-auto\\\">\\n                                <label class=\\\"radio\\\">\\n                                    <input type=\\\"radio\\\" checked name=\\\"gender\\\">\\n                                    <span class=\\\"radio__label\\\">\u0416\u0435\u043D\u0441\u043A\u0438\u0439<\/span>\\n                                <\/label>\\n                            <\/div>\\n                        <\/div>\\n                    <\/fieldset>\\n                <\/div>\\n                <div class=\\\"form__section\\\">\\n                    <div class=\\\"row\\\">\\n                        <div class=\\\"col-lg-6\\\">\\n                            <label class=\\\"input\\\">\\n                                <input class=\\\"input__control\\\" type=\\\"text\\\" required placeholder=\\\"+7(__) ___-__-__\\\" data-inputmask=\\\"'mask': '+\\\\\\\\7(99[9]) 999-99-99', 'numericInput': true\\\" inputmode=\\\"text\\\">\\n                                <span class=\\\"input__title\\\">\u0422\u0435\u043B\u0435\u0444\u043E\u043D<\/span>\\n                            <\/label>\\n                        <\/div>\\n                    <\/div>                    \\n                <\/div>\\n                <div class=\\\"form__section\\\">\\n                    <div class=\\\"form__description\\\">\\n                        \u0423\u043A\u0430\u0436\u0438\u0442\u0435 \u0430\u0434\u0440\u0435\u0441 \u0432\u0430\u0448\u0435\u0439 \u044D\u043B\u0435\u043A\u0442\u0440\u043E\u043D\u043D\u043E\u0439 \u043F\u043E\u0447\u0442\u044B \u0434\u043B\u044F \u043F\u043E\u043B\u0443\u0447\u0435\u043D\u0438\u044F \u0443\u0432\u0435\u0434\u043E\u043C\u043B\u0435\u043D\u0438\u0439 \u043E\u0431 \u0438\u0437\u043C\u0435\u043D\u0435\u043D\u0438\u0438 \u0441\u0442\u0430\u0442\u0443\u0441\u0430 \u0437\u0430\u044F\u0432\u043A\u0438 \u043D\u0430 \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u0435\\n                    <\/div>\\n                    <label class=\\\"input input_error\\\">\\n                        <input class=\\\"input__control\\\" required type=\\\"email\\\"  placeholder=\\\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 email\\\"\/>\\n                        <span class=\\\"input__title\\\">Email<\/span>\\n                        <span class=\\\"input__error\\\">\u0412\u0432\u0435\u0434\u0438\u0442\u0435 \u043A\u043E\u0440\u0440\u0435\u043A\u0442\u043D\u043E\u0435 \u0437\u043D\u0430\u0447\u0435\u043D\u0438\u0435<\/span>\\n                    <\/label>\\n                <\/div>\\n                <div class=\\\"form__section\\\">\\n                    <div class=\\\"form__description\\\">\\n                        \u0423\u043A\u0430\u0436\u0438\u0442\u0435 \u0430\u0434\u0440\u0435\u0441 \u044D\u043B\u0435\u043A\u0442\u0440\u043E\u043D\u043D\u043E\u0439 \u043F\u043E\u0447\u0442\u044B \u043F\u043E\u0432\u0442\u043E\u0440\u043D\u043E\\n                    <\/div>\\n                    <label class=\\\"input\\\">\\n                        <input class=\\\"input__control\\\" required type=\\\"email\\\"  placeholder=\\\"\u0412\u0432\u0435\u0434\u0438\u0442\u0435 email\\\"\/>\\n                        <span class=\\\"input__title\\\">\u041F\u043E\u0434\u0442\u0432\u0435\u0440\u0436\u0434\u0435\u043D\u0438\u0435 email<\/span>\\n                    <\/label>\\n                <\/div>\\n            <\/div>\\n            <button class=\\\"button\\\">\u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0443<\/button>\\n        <\/form>\\n    <\/div>\\n    <div class=\\\"main__aside main__aside_relative mb-3\\\">\\n        <div class=\\\"main__aside-container\\\">\\n            <div class=\\\"card\\\">\\n                <div class=\\\"step-check step-check_fill\\\">\\n                    <div class=\\\"step-check__item\\\">\\n                        <div class=\\\"step-check__label\\\">\\n                            <svg class=\\\"step-check__check\\\">\\n                                <use xlink:href=\\\"\/assets\/redesign-theme\/uikit\/icon\/icons.svg#simple-check\\\"><\/use>\\n                            <\/svg>\\n                        <\/div>\\n                        <div class=\\\"step-check__main\\\">\\n                            <div class=\\\"step-check__title\\\">\\n                                \u0412\u044B\u0431\u043E\u0440 \u043A\u0430\u0442\u0435\u0433\u043E\u0440\u0438\u0438\\n                            <\/div>\\n                        <\/div>\\n                    <\/div>\\n                    <div class=\\\"step-check__item step-check__item_active\\\">\\n                        <div class=\\\"step-check__label\\\">\\n                            <svg class=\\\"step-check__check\\\">\\n                                <use xlink:href=\\\"\/assets\/redesign-theme\/uikit\/icon\/icons.svg#simple-check\\\"><\/use>\\n                            <\/svg>\\n                        <\/div>\\n                        <div class=\\\"step-check__main\\\">\\n                            <div class=\\\"step-check__title\\\">\\n                                \u0420\u0435\u0433\u0438\u043E\u043D \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u044F\\n                            <\/div>\\n                        <\/div>\\n                    <\/div>\\n    \\n                    <div class=\\\"step-check__item step-check__item_disabled\\\">\\n                        <div class=\\\"step-check__label\\\">\\n                            <svg class=\\\"step-check__check\\\">\\n                                <use xlink:href=\\\"\/assets\/redesign-theme\/uikit\/icon\/icons.svg#simple-check\\\"><\/use>\\n                            <\/svg>\\n                        <\/div>\\n                        <div class=\\\"step-check__main\\\">\\n                            <div class=\\\"step-check__title\\\">\\n                                \u041F\u0440\u043E\u0433\u0440\u0430\u043C\u043C\u0430 \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u044F\\n                            <\/div>\\n                        <\/div>\\n                    <\/div>\\n    \\n                    <div class=\\\"step-check__item step-check__item_disabled\\\">\\n                        <div class=\\\"step-check__label\\\">\\n                            <svg class=\\\"step-check__check\\\">\\n                                <use xlink:href=\\\"\/assets\/redesign-theme\/uikit\/icon\/icons.svg#simple-check\\\"><\/use>\\n                            <\/svg>\\n                        <\/div>\\n                        <div class=\\\"step-check__main\\\">\\n                            <div class=\\\"step-check__title\\\">\\n                                \u0424\u043E\u0440\u043C\u0430 \u0438 \u043C\u0435\u0441\u0442\u043E \u043E\u0431\u0443\u0447\u0435\u043D\u0438\u044F\\n                            <\/div>\\n                        <\/div>\\n                    <\/div>\\n    \\n                    <div class=\\\"step-check__item step-check__item_disabled\\\">\\n                        <div class=\\\"step-check__label\\\">\\n                            <svg class=\\\"step-check__check\\\">\\n                                <use xlink:href=\\\"\/assets\/redesign-theme\/uikit\/icon\/icons.svg#simple-check\\\"><\/use>\\n                            <\/svg>\\n                        <\/div>\\n                        <div class=\\\"step-check__main\\\">\\n                            <div class=\\\"step-check__title\\\">\\n                                \u041F\u0435\u0440\u0441\u043E\u043D\u0430\u043B\u044C\u043D\u044B\u0435 \u0434\u0430\u043D\u043D\u044B\u0435\\n                            <\/div>\\n                        <\/div>\\n                    <\/div>\\n    \\n                    <div class=\\\"step-check__item step-check__item_disabled\\\">\\n                        <div class=\\\"step-check__label\\\">\\n                            <svg class=\\\"step-check__check\\\">\\n                                <use xlink:href=\\\"\/assets\/redesign-theme\/uikit\/icon\/icons.svg#simple-check\\\"><\/use>\\n                            <\/svg>\\n                        <\/div>\\n                        <div class=\\\"step-check__main\\\">\\n                            <div class=\\\"step-check__title\\\">\\n                                \u041E\u0442\u043F\u0440\u0430\u0432\u0438\u0442\u044C \u0437\u0430\u044F\u0432\u043A\u0443\\n                            <\/div>\\n                        <\/div>\\n                    <\/div>\\n                <\/div>\\n            <\/div>\\n        <\/div>\\n      <\/div>\\n<\/div>\",\"template\":true,\"text\":true},\"bordersinfoblock\":{\"label\":\"\u0413\u0440\u0430\u043D\u0438\u0446\u044B \u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430\",\"value\":null,\"type\":\"BORDERFIELD\",\"underline\":\"underline\"},\"hideForMobile\":{\"label\":\"\u0421\u043A\u0440\u044B\u0432\u0430\u0442\u044C \u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A \u043D\u0430 \u043C\u0430\u043B\u044B\u0445 \u044D\u043A\u0440\u0430\u043D\u0430\u0445\",\"value\":false,\"type\":\"BOOLEAN\",\"underline\":\"underline\"},\"additionalStyles\":{\"label\":\"\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0435 \u0441\u0442\u0438\u043B\u0438\",\"value\":\"\",\"type\":\"CUSTOMSTYLES\"},\"hideBlock\":{\"label\":\"\u0421\u043A\u0440\u044B\u0432\u0430\u0442\u044C \u0432 \u043E\u0431\u044B\u0447\u043D\u043E\u043C \u0440\u0435\u0436\u0438\u043C\u0435\",\"value\":false,\"type\":\"BOOLEAN\"},\"hideBlockIfLow\":{\"label\":\"\u0421\u043A\u0440\u044B\u0432\u0430\u0442\u044C \u0432 \u0440\u0435\u0436\u0438\u043C\u0435 \u0441\u043B\u0430\u0431\u043E\u0432\u0438\u0434\u044F\u0449\u0438\u0445\",\"value\":false,\"type\":\"BOOLEAN\",\"underline\":\"underline\"},\"__uid\":\"p1d18p6xxhf\",\"deepDataset\":{\"value\":1,\"hidden\":true}}");
+                                    var id =  '#_' + "f062f571-2903-11eb-a09f-85b4053611d6";
+                                    var parent = $(id).parent();
+                                    $(id).addClass('ib-display_templates');
+                                    var iblock = $(id);
+
+                                    var db = parent.closest('div.ib-dashboard');
+
+                                    if (chart.hideBlock && chart.hideBlockIfLow) {
+                                        var lowVis = localStorage.getItem('lowVis');
+                                        if (lowVis === String(false) && chart.hideBlock.value) iblock.hide();
+                                        if (lowVis === String(true) && chart.hideBlockIfLow.value) iblock.hide();
+
+                                        var targetNode = document.querySelector('html');
+                                        // Опции для слежения
+                                        var config = { attributes: true, attributeOldValue: true };
+                                        // Callback для обработки изменений
+                                        var callback = function(mutationsList) {
+                                            if (
+                                                !Array.isArray(mutationsList)
+                                                || mutationsList.length === 0
+                                                || mutationsList[0].type !== 'attributes'
+                                                || mutationsList[0].attributeName !== 'class'
+                                            ) return;
+                                            var oldValue = mutationsList[0].oldValue;
+                                            var mutation = mutationsList[0];
+
+                                            // сняли класс blind
+                                            if (oldValue.indexOf('blind') !== -1 && !mutation.target.classList.contains('blind')) {
+                                                if (chart.hideBlock.value) iblock.hide(); else iblock.show();
+                                            }
+                                            // поставили класс blind
+                                            if (oldValue.indexOf('blind') === -1 && mutation.target.classList.contains('blind')){
+                                                if (chart.hideBlockIfLow.value) iblock.hide(); else iblock.show();
+                                            }
+                                        };
+
+                                        // создаем новый Mutation Observer
+                                        var observer = new MutationObserver(callback);
+
+                                        // Начинаем следить за изменениями
+                                        observer.observe(targetNode, config);
+                                    }
+
+                                    if (_.has(chart, 'usesettings_set') && _.has(chart['usesettings_set'], 'value') && chart['usesettings_set']['value'] === true) {
+                                        if (_.has(window, 'settingssets') && _.has(window['settingssets'], chart['settingsset_id']['value'])) {
+                                            var newProps = window['settingssets'][chart['settingsset_id']['value']];
+                                            _.each(newProps, function (item, key) {
+                                                chart[key] = item
+                                            });
+                                            $(id).html(chart['html']['value']);
+                                        }
+                                    }
+
+
+                                    if (db.length) {
+                                        if (!_.isUndefined(chart['__uid'])) {
+                                            if (_.isUndefined(window['__ib_config_store'])) {
+                                                window['__ib_config_store'] = {} ;
+                                            }
+                                            window['__ib_config_store'][chart['__uid']] = chart;
+                                        }
+                                    }
+
+                                    parent.attr('data-uid', chart.__uid);
+
+                                    if (chart.additionalStyles &&  !_.isEmpty(chart.additionalStyles.value) ) {
+                                        if (chart.additionalStyles.value.cssClass && !_.isEmpty(chart.additionalStyles.value.cssClass)) {
+                                            $(id).addClass(chart.additionalStyles.value.cssClass);
+                                        }
+                                        if (chart.additionalStyles.value.cssContent && !_.isEmpty(chart.additionalStyles.value.cssContent)) {
+                                            var style = $('<style type="text/css"></style>');
+                                            style.text(chart.additionalStyles.value.cssContent);
+                                            $("head").append(style);
+                                        }
+                                    }
+
+                                    if ( !_.isUndefined(chart.bordersinfoblock)   &&  !_.isEmpty(chart.bordersinfoblock.value)) {
+                                        var  borderArr = chart.bordersinfoblock.value.split(',');
+
+                                        $(id).addClass('ib-border');
+
+                                        _.each(borderArr, function (item) {
+                                            $(id).addClass('ib-border__'+ item.trim());
+                                        });
+                                    }
+
+                                    if (!_.isUndefined(chart.marginTop)) {
+                                        iblock.closest("[data-uid]").css("margin-top", chart.marginTop.value);
+                                    }
+                                    if (!_.isUndefined(chart.marginBottom)) {
+                                        iblock.closest("[data-uid]").css("margin-bottom", chart.marginBottom.value);
+                                    }
+
+                                    if (!_.isUndefined(chart.hideForMobile) && chart.hideForMobile.value ) {
+                                        if(device.mobile()) {
+                                            console.log('true');
+                                            parent.addClass('ib-hide');
+                                        }
+                                    }
+
+                                } catch (e) {
+                                    console.log(e)
+                                }
+                            })();
+                        </script>
+
+
+
+                    </div>
+
+
+
+                </div>
+
+
+
+
+            </div>
+            <script>
+                (function () {
+                    try {
+                        var chart = JSON.parse("{\"name\":{\"label\":\"\u041D\u0430\u0437\u0432\u0430\u043D\u0438\u0435\",\"value\":\"\u041A\u043E\u043D\u0442\u0435\u0439\u043D\u0435\u0440\",\"type\":\"STRING\"},\"lg\":{\"label\":\"\u0428\u0438\u0440\u0438\u043D\u0430 \u0428\u0438\u0440\u043E\u043A\u0438\u0435 \u044D\u043A\u0440\u0430\u043D\u044B\",\"value\":0,\"type\":\"NUMBER\"},\"md\":{\"label\":\"\u0428\u0438\u0440\u0438\u043D\u0430 \u0441\u0442\u0430\u043D\u0434\u0430\u0440\u0442\u043D\u044B\u0435 \u044D\u043A\u0440\u0430\u043D\u044B\",\"value\":\"12\",\"type\":\"NUMBER\"},\"sm\":{\"label\":\"\u0428\u0438\u0440\u0438\u043D\u0430 \u043F\u043B\u0430\u043D\u0448\u0435\u0442\u044B\",\"value\":0,\"type\":\"NUMBER\"},\"offset\":{\"label\":\"\u041E\u0442\u0441\u0442\u0443\u043F \u0441\u043B\u0435\u0432\u0430\",\"value\":0,\"type\":\"NUMBER\"},\"marginTop\":{\"label\":\"\u041E\u0442\u0441\u0442\u0443\u043F \u0441\u0432\u0435\u0440\u0445\u0443\",\"value\":0,\"type\":\"NUMBER\"},\"marginBottom\":{\"label\":\"\u041E\u0442\u0441\u0442\u0443\u043F \u0441\u043D\u0438\u0437\u0443\",\"value\":0,\"type\":\"NUMBER\"},\"autoHeight\":{\"value\":true,\"label\":\"\u0410\u0432\u0442\u043E\u043C\u0430\u0442\u0438\u0447\u0435\u0441\u043A\u043E\u0435 \u043E\u043F\u0440\u0435\u0434\u0435\u043B\u0435\u043D\u0438\u0435 \u0432\u044B\u0441\u043E\u0442\u044B\",\"type\":\"BOOLEAN\"},\"height\":{\"label\":\"\u0412\u044B\u0441\u043E\u0442\u0430\",\"value\":200,\"type\":\"NUMBER\",\"link\":\"autoHeight\",\"link_value\":false},\"row\":{\"value\":\"0\",\"hidden\":true},\"backgroundFill\":{\"label\":\"\u0417\u0430\u043B\u0438\u0432\u043A\u0430 \u0444\u043E\u043D\u0430\",\"value\":false,\"type\":\"BOOLEAN\"},\"bordersinfoblock\":{\"label\":\"\u0413\u0440\u0430\u043D\u0438\u0446\u044B \u0438\u043D\u0444\u043E\u0431\u043B\u043E\u043A\u0430\",\"value\":null,\"type\":\"BORDERFIELD\",\"underline\":\"underline\"},\"fixPosInGrid\":{\"label\":\"\u0417\u0430\u0444\u0438\u043A\u0441\u0438\u0440\u043E\u0432\u0430\u0442\u044C \u043F\u043E\u0437\u0438\u0446\u0438\u044E \u0432 \u0441\u0435\u0442\u043A\u0435\",\"value\":false,\"type\":\"BOOLEAN\",\"underline\":\"underline\"},\"additionalStyles\":{\"label\":\"\u0414\u043E\u043F\u043E\u043B\u043D\u0438\u0442\u0435\u043B\u044C\u043D\u044B\u0435 \u0441\u0442\u0438\u043B\u0438\",\"value\":{\"cssClass\":\"main__wrapper\",\"cssContent\":\"\"},\"type\":\"CUSTOMSTYLES\"},\"__uid\":\"7cdw2vh779i\",\"deepDataset\":{\"value\":1,\"hidden\":true}}");
+                        var id = '#_' + "f062f570-2903-11eb-a09f-85b4053611d6";
+                        var parent = $(id).parent();
+
+                        var db = parent.closest('div.ib-dashboard');
+
+                        if (db.length) {
+                            if (!_.isUndefined(chart['__uid'])) {
+                                if (_.isUndefined(window['__ib_config_store'])) {
+                                    window['__ib_config_store'] = {} ;
+                                }
+                                window['__ib_config_store'][chart['__uid']] = chart;
+                            }
+                        }
+
+                        if (!_.isUndefined(chart.autoHeight) && chart.autoHeight.value === true) {
+                            $(id).css('height', 'auto');
+                            parent.css('height', 'auto');
+                        } else {
+                            parent.css('overflow', 'visible');
+                        }
+
+                        if (!_.isUndefined(chart.marginTop)) {
+                            $(id).closest("[data-uid]").css("margin-top", chart.marginTop.value);
+                        }
+                        if (!_.isUndefined(chart.marginBottom)) {
+                            $(id).closest("[data-uid]").css("margin-bottom", chart.marginBottom.value);
+                        }
+
+                        if (!_.isUndefined(chart['backgroundFill']) && chart['backgroundFill']['value'] === true) {
+                            $(id).addClass('ib-main-bg')
+                        }
+
+                        if (!_.isUndefined(chart.bordersinfoblock) && !_.isEmpty(chart.bordersinfoblock.value)) {
+                            var borderArr = chart.bordersinfoblock.value.split(',');
+
+                            $(id).addClass('ib-border');
+
+                            _.each(borderArr, function (item) {
+                                $(id).addClass('ib-border__' + item.trim());
+                            });
+                        }
+
+                        if (!_.isUndefined(chart.hideForMobile) && !_.isEmpty(chart.hideForMobile.value)) {
+                            parent.addClass('ib-hide');
+                        }
+
+
+                        if (!_.isUndefined(chart.additionalStyles)) {
+                            if (!_.isUndefined(chart['additionalStyles']['value']['cssClass']) && !_.isEmpty(chart['additionalStyles']['value']['cssClass'])) {
+                                $(id).addClass(chart['additionalStyles']['value']['cssClass']);
+                            }
+                            if (!_.isUndefined(chart['additionalStyles']['value']['cssContent']) && !_.isEmpty(chart['additionalStyles']['value']['cssContent'])) {
+                                var style = $('<style type="text/css"></style>');
+                                style.text(chart['additionalStyles']['value']['cssContent']);
+                                $('head').append(style);
+                            }
+                        }
+
+
+                    } catch (e) {
+                        console.log(e)
+                    }
+                })();
+            </script>
+
+
+        </div>
+
+
+
+    </div>
+
+</main>
+
+<footer class="footer">
+    <div class="footer__wrapper">
+        <div class="row">
+            <div class="col-lg-8 col-md-6">
+                <div class="row">
+                    <section class="col-sm-6 footer__section">
+                        <a class="footer__logo" href="/">
+                            <svg width="50" height="50" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path fill-rule="evenodd" clip-rule="evenodd" d="M34 16.701C33.0806 15.906 31.7586 15.9242 31 16.155C31.4968 15.5534 32.6546 15.0598 32.9953 15C33.2548 15.096 34 15.851 34 16.701ZM36.9762 14.0812C36.472 11.3502 30.2052 13.16 27.0491 12C26.9887 12.7962 28.0207 14.0718 29.0079 14.5437C27.3206 16.027 25.8057 19.0154 25.4997 22.6662C25.195 19.0154 23.6799 16.027 21.9926 14.5439C22.9796 14.072 24.0127 12.7964 23.9513 12.0003C20.7954 13.1604 14.5283 11.3507 14.0233 14.0817C13.9171 14.66 14.1917 15.5406 14.4882 15.794C14.5413 15.6108 14.8184 15.0115 15.692 14.8772C20.1072 14.2016 23.7935 21.093 20.466 23.8793C20.4153 23.9221 20.444 24 20.5125 24H30.4889C30.5565 24 30.5852 23.9219 30.5352 23.8795C27.2068 21.0933 30.8931 14.2019 35.3085 14.8776C36.1826 15.0118 36.459 15.6109 36.5123 15.7941C36.8088 15.5407 37.0834 14.6601 36.9764 14.0819L36.9762 14.0812ZM37.7908 7.91856C37.7133 7.65942 40.2364 7.65288 40.2364 9.30113C40.2364 10.4055 38.7271 10.9286 38.7271 12.0749C38.7271 12.6086 39.2775 13 39.4463 13C39.0575 11.16 40.6648 12.123 41.0989 12.4669C40.2364 9.99241 42.1778 10.0079 41.9867 8.87329C41.8537 8.08055 40.166 8.31992 39.5554 7.91856C38.4716 7.20664 37.1894 4.43584 36.3445 7.20664C37.9196 8.73279 37.003 10.9795 35.0033 10.9795C35.0033 10.9795 34.9923 11.3088 35.0106 11.3349C37.3957 11.2132 38.2271 9.38349 37.7908 7.91856ZM8.90114 12.4669C9.33513 12.123 10.9422 11.16 10.5544 13C10.7224 13 11.2728 12.6086 11.2728 12.0749C11.2728 10.9286 9.76351 10.4055 9.76351 9.30118C9.76351 7.65296 12.2864 7.65949 12.2091 7.91863C11.7735 9.38372 12.6049 11.2134 14.99 11.3349C15.0076 11.3088 14.9966 10.9793 14.9966 10.9793C12.9977 10.9793 12.0811 8.73285 13.6554 7.20655C12.8105 4.43596 11.5283 7.20655 10.4445 7.91846C9.8337 8.31998 8.14602 8.08044 8.01322 8.87334C7.82292 10.0083 9.76368 9.99279 8.9013 12.4673L8.90114 12.4669ZM16.0002 16.701C16.9203 15.906 18.2427 15.9242 19 16.155C18.5053 15.5534 17.3455 15.0598 17.0057 15C16.7461 15.096 16 15.851 16 16.701H16.0002ZM25.9999 1.4618L25.0001 0L24 1.4618L24.9998 3L26 1.4618H25.9999ZM32.9998 6.01141L31.9997 5L31 6.01141L31.9995 7L33 6.01141H32.9998ZM39.9998 36.0654L39.0001 35L38 36.0652L39.0001 37L40 36.0652L39.9998 36.0654ZM18.9998 6.01141L17.9996 5L17 6.01141L17.9998 7L19 6.01141H18.9998ZM15.903 10.9998H19.1977C21.9677 10.9998 23.214 9.28138 23.5906 7.79122H26.4092C26.7859 9.28138 28.0315 10.9996 30.8024 10.9996H34.0971C34.0971 10.9996 34.6734 10.2094 34.818 9.81811C35.3383 8.41008 34.6734 7.75317 33.7033 7.75317L32.4491 8.902L31.1952 7.75353C30.2251 7.75353 29.5602 8.41008 30.0805 9.81828C30.147 9.9982 30.306 10.2627 30.4566 10.4953C29.2875 10.333 27.7951 9.52406 27.4679 7.79122C27.4679 7.79122 28.3316 6.40452 28.5487 5.84326C29.3274 3.82491 28.3327 3 26.8779 3L24.9998 5.23116L23.1216 3C21.6669 3 20.6723 3.82491 21.4519 5.84326C21.6678 6.40452 22.5325 7.7914 22.5325 7.7914C22.2045 9.52406 20.7124 10.333 19.5434 10.4955C19.6946 10.2626 19.8529 9.9982 19.9191 9.81811C20.4385 8.41008 19.7754 7.75335 18.8045 7.75335L17.5503 8.90218L16.2961 7.75371C15.3255 7.75371 14.6623 8.41025 15.1818 9.81846C15.3263 10.2096 15.9035 11 15.9035 11L15.903 10.9998ZM49.4754 21.6697C48.8595 21.9781 45.2455 23.6522 40.6162 23.0329C40.6641 22.8146 40.7048 22.5947 40.7382 22.3737C43.8193 22.0092 46.3238 21.4924 47.9199 20.6145C49.7392 19.6131 50.5348 17.2224 49.6165 15.4442C49.5927 15.3993 49.5267 15.3912 49.4938 15.429C48.9905 16.0019 45.8264 19.4058 40.8411 20.464C40.8284 20.2086 40.8048 19.9538 40.7704 19.7003C43.1917 18.3425 45.5555 16.7779 46.6814 15.3473C48.3827 13.1843 48.2263 10.4251 46.6071 9.01844C46.5903 9.00413 46.5681 8.99768 46.5461 9.00075C46.5242 9.00381 46.5046 9.01609 46.4925 9.03444C45.9803 9.87024 41.1853 17.534 35.9211 20.8428C35.8568 20.8834 35.7921 20.9232 35.7268 20.9621C35.5758 21.0528 35.5593 21.2469 35.6876 21.362C36.2949 21.9059 36.672 22.6629 36.672 23.5034C36.672 24.9649 35.5331 26.1802 34.0274 26.4439C33.2624 26.5905 32.1582 26.5478 31.0971 26.2009C31.0494 26.1857 31 26.2169 31 26.2642V30.8922C31 30.9666 31.1145 30.9852 31.1414 30.9141C31.7866 29.2243 33.717 28.8653 34.5613 28.8653C34.8651 30.6711 35.4078 32.1667 36.1128 32.9719C37.2609 34.28 39.1356 34.2616 39.9484 33.3573C39.9617 33.3422 39.9674 33.322 39.9639 33.3024C39.9603 33.2827 39.9479 33.2657 39.9302 33.2562C39.4525 32.9849 36.7199 31.3256 36.1729 28.6067C36.3876 28.5346 36.5975 28.4492 36.8013 28.351C37.6835 29.7947 38.9674 31.0804 40.001 31.5716C41.7374 32.3951 43.3268 31.9945 44.0318 30.7889C44.0573 30.7464 44.026 30.6935 43.9742 30.6888C42.9002 30.604 39.6042 29.6698 38.2008 27.3939C38.3631 27.2481 38.5181 27.0946 38.6653 26.9339C40.1341 28.0396 42.2102 29.017 43.6968 29.2165C45.4362 29.4504 47.407 28.9014 47.4547 26.9012C47.4556 26.8613 47.4193 26.8284 47.3763 26.8308C46.7578 26.8678 42.664 27.0439 39.7468 25.388C39.8482 25.1975 39.9427 25.0034 40.0302 24.8063C40.0302 24.8063 44.438 25.8367 46.5266 25.4955C48.602 25.1568 49.8176 23.6268 49.583 21.7231C49.5761 21.6759 49.5203 21.6478 49.4756 21.6702L49.4754 21.6697ZM9.96919 24.8054C10.0569 25.0026 10.1517 25.1967 10.2533 25.3873C7.33681 27.0424 3.2446 26.8677 2.62332 26.8301C2.57969 26.8277 2.54323 26.8621 2.54425 26.9014C2.59281 28.901 4.56301 29.4498 6.30247 29.2159C7.78838 29.0164 9.86559 28.039 11.3339 26.9334C11.4813 27.0939 11.6364 27.2474 11.7985 27.3934C10.3943 29.6692 7.09876 30.6037 6.02489 30.6884C5.97291 30.6935 5.94258 30.7462 5.96729 30.7887C6.67225 31.9944 8.26176 32.395 9.99901 31.5714C11.0316 31.0802 12.3156 29.7944 13.1975 28.3508C13.4015 28.4487 13.6115 28.5341 13.8262 28.6064C13.2793 31.3254 10.5465 32.9844 10.0689 33.2563C10.0512 33.2659 10.0389 33.2829 10.0354 33.3025C10.0318 33.3221 10.0374 33.3423 10.0506 33.3574C10.8635 34.2616 12.7389 34.28 13.8871 32.9718C14.592 32.1666 15.1341 30.6709 15.4377 28.8651C16.2829 28.8651 18.2127 29.224 18.8577 30.9137C18.8855 30.985 19 30.9665 19 30.8918V26.2639C19 26.2167 18.9497 26.1853 18.902 26.2005C17.8413 26.5477 16.7367 26.5898 15.9725 26.4432C14.4661 26.1798 13.327 24.9645 13.327 23.5031C13.327 22.6629 13.7053 21.9051 14.3112 21.3613C14.4407 21.2467 14.4232 21.0525 14.2734 20.9619C14.2076 20.923 14.1422 20.8832 14.0774 20.8427C8.81608 17.5356 4.02368 9.87675 3.50702 9.03552C3.49475 9.0167 3.47486 9.00404 3.45245 9.00081C3.43004 8.99758 3.40732 9.00409 3.39013 9.01866C1.77335 10.4263 1.61624 13.1844 3.31771 15.3469C4.44372 16.7776 6.80754 18.3423 9.22811 19.7002C9.194 19.9536 9.17069 20.2083 9.15825 20.4636C4.17687 19.4063 1.01506 16.008 0.50692 15.431C0.47284 15.3916 0.405531 15.3995 0.382527 15.4445C-0.534238 17.224 0.261541 19.6127 2.07905 20.6142C3.67538 21.4922 6.18012 22.009 9.26117 22.3735C9.29446 22.5945 9.33509 22.8144 9.38301 23.0328C4.75829 23.6512 1.1461 21.9809 0.525153 21.6701C0.479145 21.6469 0.423253 21.6757 0.417459 21.7237C0.183497 23.6273 1.39829 25.1559 3.47379 25.4948C5.56173 25.836 9.96953 24.8055 9.96953 24.8055L9.96919 24.8054ZM38.9383 38.6021L37.2939 37.3065C36.6376 37.6978 36.1554 38.3191 35.9681 39.0474C34.9789 39.1859 32.2826 38.5862 32.5448 38.1884C35.5 34.0259 33.2397 31.5475 30.5229 31.6855V34.4806C30.5229 35.3786 29.7405 36.1062 28.7767 36.1062H26.9006C25.5549 36.1062 24.6788 37.4608 24.6788 37.4608C24.6788 37.4608 23.8027 36.106 22.457 36.106H20.5811C19.6164 36.106 18.8357 35.3784 18.8357 34.4806V31.6855C16.119 31.5475 13.8569 34.0257 16.813 38.1882C17.0729 38.582 14.3012 39.2123 13.0012 39.053C12.6586 38.6973 12.1645 38.473 11.6114 38.473C11.3761 38.4731 11.1428 38.5151 10.9223 38.597C10.9223 38.597 5.81364 33.7532 5.72013 33.7058L5.762 33.608C6.05333 33.063 5.60796 32.469 5.32639 32.5109C5.65349 32.1179 5.66867 30.398 3.85402 30C3.90723 30.3456 3.93427 31.0506 3.93427 31.0506C3.93427 31.0506 2.53378 30.2924 1.83039 30.9469C1.21248 31.6794 2.06991 33.0083 2.06991 33.0083C2.06991 33.0083 1.35326 33.0257 1 32.9957C1.51934 34.7549 3.26141 34.6303 3.63823 34.2832C3.6138 34.5627 4.24357 34.9616 4.77739 34.6419L5.01186 34.5283C5.0532 34.5837 10.0287 39.2913 10.0287 39.2913C9.8002 39.6309 9.69151 40.0477 9.76653 40.4921C9.88463 41.1865 10.4621 41.7622 11.2 41.9117C11.7211 42.0165 12.2109 41.9152 12.6038 41.685L13.9209 42.9091C14.0378 43.0156 14.1965 43.082 14.3734 43.0694C14.6956 43.0478 14.9369 42.7864 14.9125 42.4865C14.902 42.3511 14.8329 42.2349 14.7377 42.1467C14.7168 42.1236 13.3962 40.8958 13.3962 40.8958C14.4856 40.1312 16.5154 39.5923 18.1999 39.5923C18.4957 39.5923 18.6349 39.3414 18.5331 39.0956C17.7698 37.2578 19.4105 35.9262 21.108 37.0101C21.8483 37.4826 22.6004 38.4136 23.167 39.9668C20.3822 40.642 16.8855 42.5024 16.1781 44.533C15.9056 45.3171 16.8055 46.3859 17.8982 46.6009C17.9176 46.6052 17.9378 46.6015 17.9544 46.5907C17.971 46.58 17.9826 46.563 17.9867 46.5436C18.5575 43.5121 21.8131 41.2531 23.507 40.8695C23.592 41.0978 23.5642 41.0239 23.6494 41.2514C21.8044 42.1252 20.0152 43.9679 19.5044 46.1589C19.2698 47.1622 20.3871 48.0666 21.3094 48.3142C21.3559 48.3264 21.4014 48.2943 21.404 48.2495C21.5793 45.4788 22.801 43.1257 23.8955 42.0553C23.9255 42.2647 23.948 42.475 23.963 42.686C23.963 42.686 22.8424 45.8127 22.8424 48.0941C22.8424 49.1555 24.4176 49.8964 24.6502 50C24.941 49.8964 26.5151 49.1555 26.5151 48.0941C26.5151 45.8125 25.3947 42.6858 25.3947 42.6858C25.41 42.4748 25.4329 42.2645 25.4631 42.0551C26.5569 43.126 27.7793 45.478 27.9539 48.2487C27.956 48.2707 27.9677 48.2907 27.9858 48.3033C28.004 48.316 28.0268 48.3199 28.0482 48.3142C28.9717 48.0666 30.088 47.1622 29.8544 46.1589C29.3426 43.9682 27.5543 42.1252 25.7095 41.2514C25.7937 41.0239 25.7658 41.0976 25.8511 40.8693C27.5459 41.2529 30.8003 43.5119 31.3713 46.5434C31.38 46.5837 31.4196 46.6092 31.4597 46.6006C32.5518 46.3857 33.453 45.3166 33.1789 44.5327C32.4733 42.502 28.9757 40.6417 26.1904 39.9665C26.7581 38.4134 27.5103 37.4823 28.2507 37.0097C29.9471 35.9259 31.5879 37.2573 30.8247 39.0952C30.7228 39.341 30.861 39.5919 31.1579 39.5919C33.0635 39.5919 35.411 40.2811 36.34 41.2056C36.9337 42.0976 38.0304 42.6681 39.2683 42.546C40.6748 42.408 41.8216 41.3501 41.98 40.0419C42.1184 38.8959 41.5264 37.867 40.583 37.3062L38.9379 38.6019L38.9383 38.6021ZM27.2356 31.2853C27.8173 31.0679 28.7292 31.2438 28.6982 32.0894C28.6908 32.2813 28.9577 32.2813 28.9771 32.0854C29.1513 30.819 28.3015 30.4545 27.4121 30.6027C27.3016 30.1674 27.2112 29.7867 27.1082 29.4096C27.0261 29.1044 26.996 28.5312 27.3468 28.5312C27.536 28.5312 27.4599 29.0642 27.4421 29.294C27.4265 29.4954 27.4984 29.6174 27.6609 29.6231C27.7621 29.6273 27.8885 29.4972 27.9641 29.4108C28.473 28.8312 28.5912 27.9339 27.9949 27.5012C27.496 27.1378 26.2466 27.4082 25.9032 27.9257C25.8512 27.7307 25.6035 27.4089 25.4847 27.2688C25.3691 27.1319 25.3391 27.0382 25.4989 26.9182C25.5742 26.8599 25.802 26.6318 25.802 26.3963C25.802 26.2571 25.6946 26 25.354 26C25.0852 26 24.7863 26.1873 24.7863 26.6053C24.7863 26.6982 24.8089 26.7977 24.8683 26.9048C24.6985 26.8765 24.237 26.888 24 26.947L27.2765 36C28.2144 35.5339 28.902 34.7959 28.902 34.0038C28.902 33.3288 27.9145 33.5527 27.435 34.0793C27.2808 33.2234 27.1436 32.433 26.9936 31.6453C26.9527 31.428 27.0623 31.35 27.2356 31.2846V31.2853ZM22.4193 25.2126L23.1423 27.0288C22.5234 27.162 21.5278 27.57 21.5278 28.1104C21.5278 28.83 22.936 29.2985 23.75 29.2422C23.7096 29.4064 23.7562 29.5526 23.8828 29.6864C23.5874 29.6864 23.0299 29.8108 22.8469 29.9891C22.4151 29.6255 21.7398 29.4931 21.4186 29.7144C21.0961 29.9374 21.0864 30.3151 21.4232 30.7422C21.6579 31.0378 21.746 31.3295 21.4821 31.672C22.4633 31.672 22.102 30.5185 22.4864 30.5185C22.436 30.7422 22.4668 31.001 22.5785 31.288C22.6524 31.4789 22.6524 31.6144 22.5257 31.798C22.2092 32.2557 21.7168 33.3066 21.7834 34.2571C21.4618 34.2555 21.2982 34.1844 21.4115 33.7869C21.4538 33.6392 21.3528 33.5336 21.2191 33.7159C21.0713 33.9169 21 34.2604 21 34.4071C21 35.2534 22.1153 35.4238 22.5407 35.2448C23.7718 36.3223 26.1904 36.0348 27 35.6733L22.7421 25.1098C22.6551 24.9102 22.3429 25.0056 22.4193 25.2129V25.2126ZM22.0086 34C21.9118 33.5568 22.6474 32.7646 23.5832 32C23.384 32.4983 23.5078 33.3568 23.8984 33.6526C23.2196 33.6526 22.4134 33.7594 22.0084 34H22.0086Z" fill="#25282B"></path>
+                            </svg>
+                        </a>
+                        <h5 class="footer__title">Работа России</h5>
+                        <a class="footer__link" href="/">Trudvsem.ru</a>
+                    </section>
+                    <section class="col-sm-6 footer__section">
+                        <h5 class="footer__nav-title">Работодатели</h5>
+                        <a class="footer__nav-link" href="/cv/search">Найти резюме</a>
+                        <a class="footer__nav-link" href="/vacancies/new">Добавить вакансию</a>
+                        <a class="footer__nav-link" href="/about/employer">Впервые на сайте</a>
+                    </section>
+                    <section class="col-sm-6 footer__section">
+                        <h5 class="footer__nav-title">Общая информация</h5>
+                        <a class="footer__nav-link" href="/czn">Государственная служба занятости</a>
+                        <a class="footer__nav-link" href="/opendata">Открытые данные</a>
+                        <a class="footer__nav-link" href="/opendata/media-partners">Партнеры</a>
+                        <a class="footer__nav-link" href="/help">Помощь</a>
+                    </section>
+                    <section class="col-sm-6 footer__section">
+                        <h5 class="footer__nav-title">Соискатели</h5>
+                        <nav class="footer__nav">
+                            <a class="footer__nav-link" href="/vacancy/search">Найти работу</a>
+                            <a class="footer__nav-link" href="/resumes/new">Добавить резюме</a>
+                            <a class="footer__nav-link" href="/information-pages/biggest-employers">Крупнейшие работодатели</a>
+                            <a class="footer__nav-link" href="/information-pages/special">Трудоустройство инвалидов</a>
+                            <a class="footer__nav-link" href="/about/candidate">Впервые на сайте</a>
+                        </nav>
+                    </section>
+                </div>
+            </div>
+            <section class="col-lg-4 col-md-6 footer__section">
+                <h5 class="footer__nav-title">Полезные ресурсы</h5>
+                <a class="footer__nav-link" target="_blank" href="https://www.rostrud.ru/">Роструд</a>
+                <a class="footer__nav-link" target="_blank" href="https://rosmintrud.ru/">Минтруд России</a>
+                <a class="footer__nav-link" target="_blank" href="https://gossluzhba.gov.ru/">Федеральный портал управленческих кадров</a>
+                <a class="footer__nav-link" target="_blank" href="https://xn--80akibcicpdbetz7e2g.xn--p1ai/">Онлайнинспекция.рф</a>
+                <a class="footer__nav-link" target="_blank" href="http://aiss.gov.ru/">Соотечественники</a>
+                <a class="footer__nav-link" target="_blank" href="https://tpprf.ru/ru/">Торгово-промышленная палата РФ</a>
+                <a class="footer__nav-link" target="_blank" href="https://www.rospotrebnadzor.ru/">Роспотребнадзор</a>
+                <a class="footer__nav-link" target="_blank" href="http://gsz.gov.by/">Государственная служба занятости Республики Беларусь</a>
+                <a class="footer__nav-link" target="_blank" href="https://test-portal.trudvsem.ru/rbg/">Работа без границ</a>
+            </section>
+        </div>
+
+        <div class="footer__important">
+            <a class="footer__nav-link" href="/help/security">Меры безопасности</a>
+            <a class="footer__nav-link" href="/help">Техническая поддержка</a>
+            <a class="footer__nav-link" target="_blank" href="/information/resources/upload/main-page/politic_personal_data.pdf">Политика обработки персональных данных</a>
+        </div>
+
+        <hr class="footer__separator">
+
+        <div class="row">
+            <div class="col-12 col-sm mb-1 footer__copyright">©&nbsp;Федеральная служба по труду и занятости —
+                <a class="link" href="https://rostrud.gov.ru/" target="_blank" rel="noopener"><span class="link__title">rostrud.ru</span></a>. При копировании информации – ссылка на
+                <a class="link" href="https://trudvsem.ru/" target="_blank" rel="noopener"><span class="link__title">trudvsem.ru</span></a> обязательна
+            </div>
+            <div class="col-auto">
+                <a target="_blank" href="https://play.google.com/store/apps/details?id=ru.trudvsem" title="Загрузите на Google play">
+                    <svg width="116" height="35" fill="none" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" clip-rule="evenodd" d="M4.276 0h106.908c2.394 0 4.276 1.972 4.276 4.288v25.727c0 2.402-1.882 4.288-4.276 4.288H4.276C1.882 34.303 0 32.417 0 30.015V4.288C0 1.972 1.882 0 4.276 0zm110.5 4.288c0-1.973-1.625-3.602-3.592-3.602H4.276C2.31.686.684 2.316.684 4.288v25.727c0 1.973 1.625 3.602 3.592 3.602h106.908c1.967 0 3.592-1.63 3.592-3.602V4.288z" fill="#A6A6A6"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M40.434 10.863c.42-.472.588-1.133.588-1.889v-.378h-2.438v.756h1.85c0 .472-.168.85-.42 1.133-.421.473-.842.662-1.43.662-.505 0-.926-.284-1.346-.662-.42-.377-.589-.944-.589-1.606 0-.66.169-1.228.589-1.605.336-.473.841-.662 1.346-.662.588 0 1.009.19 1.345.662l.42-.473c-.167-.283-.42-.472-.756-.66a2.045 2.045 0 0 0-1.01-.284c-.756 0-1.345.283-1.85.85-.504.567-.756 1.228-.756 2.078 0 .85.252 1.511.756 2.078.505.567 1.094.85 1.85.85.758 0 1.346-.283 1.85-.85zm2.187-4.25h2.27V5.95h-2.943v5.668h2.943v-.756h-2.27V9.068h2.102v-.66h-2.102V6.611zm5.045 5.006h-.672V6.612h-1.43v-.66h3.532v.66h-1.43v5.007zm3.869-5.668v5.668h.672V5.95h-.672zm3.448 5.668h-.589V6.612h-1.43v-.66h3.449v.66h-1.43v5.007zm6.223.094c.757 0 1.346-.283 1.85-.85.505-.567.757-1.228.757-2.078 0-.85-.252-1.511-.757-2.078-.504-.567-1.093-.85-1.85-.85-.757 0-1.346.283-1.85.85-.505.567-.757 1.228-.757 2.078 0 .85.252 1.511.757 2.078s1.093.85 1.85.85zm-1.346-1.322c.337.378.841.661 1.346.661.505 0 1.01-.189 1.345-.661.337-.378.59-.945.59-1.606 0-.661-.169-1.228-.59-1.606-.336-.378-.84-.661-1.345-.661s-1.01.189-1.346.661a2.427 2.427 0 0 0-.588 1.606c0 .661.168 1.228.588 1.606zm4.878-4.44v5.668h.589V6.99l2.607 4.629h.673V5.95h-.673v4.44l-2.439-4.44h-.757zM39.982 20.11v1.515h3.7c-.086.841-.43 1.515-.86 1.935-.517.505-1.377 1.095-2.84 1.095-2.323 0-4.044-1.768-4.044-4.04a4.013 4.013 0 0 1 4.044-4.04c1.204 0 2.15.505 2.84 1.094l1.118-1.094c-.947-.842-2.151-1.515-3.872-1.515-3.097 0-5.765 2.525-5.765 5.555s2.668 5.554 5.765 5.554c1.72 0 2.925-.505 3.958-1.599 1.032-1.01 1.376-2.44 1.376-3.535 0-.336 0-.673-.086-.925h-5.334zm9.55-1.094c-2.064 0-3.7 1.515-3.7 3.619 0 2.02 1.636 3.618 3.7 3.618 2.066 0 3.7-1.514 3.7-3.619 0-2.188-1.634-3.618-3.7-3.618zm4.302 3.619c0-2.105 1.635-3.62 3.7-3.62 2.065 0 3.7 1.431 3.7 3.62 0 2.104-1.635 3.618-3.7 3.618-2.065 0-3.7-1.599-3.7-3.619zm1.635-.085c0 1.263.947 2.188 2.065 2.188 1.119 0 2.065-.925 2.065-2.188 0-1.346-.946-2.188-2.065-2.188-1.118 0-2.065.926-2.065 2.188zm-8.002 0c0 1.263.947 2.188 2.065 2.188 1.119 0 2.065-.925 2.065-2.188 0-1.346-.946-2.188-2.065-2.188-1.118 0-2.065.926-2.065 2.188zm28.48-3.534c1.893 0 2.753 1.43 3.097 2.272l.172.42-4.904 2.02c.43.758.947 1.095 1.807 1.095s1.377-.421 1.807-1.01l1.204.841c-.344.59-1.376 1.6-3.011 1.6-2.065 0-3.614-1.6-3.614-3.62 0-2.188 1.549-3.618 3.442-3.618zm-1.893 3.45c0-1.347 1.118-2.104 1.893-2.104.602 0 1.204.337 1.376.758l-3.269 1.346zm-2.41 3.45H70.01v-10.52h1.635v10.52zm-4.215-6.143c-.43-.42-1.119-.842-1.979-.842-1.807 0-3.528 1.6-3.528 3.62a3.523 3.523 0 0 0 3.528 3.534c.86 0 1.549-.42 1.893-.841h.086v.505c0 1.346-.774 2.104-1.979 2.104-.946 0-1.635-.674-1.807-1.263l-1.377.59c.43.925 1.463 2.103 3.27 2.103 1.893 0 3.442-1.094 3.442-3.703v-6.396h-1.55v.589zM63.47 22.55c0 1.263.947 2.188 2.065 2.188 1.119 0 1.979-.925 1.979-2.188 0-1.262-.86-2.188-1.979-2.188-1.118 0-2.065.926-2.065 2.188zm23.059-7.153h-3.872v10.52h1.635V21.96h2.237c1.807 0 3.527-1.262 3.527-3.282s-1.72-3.282-3.527-3.282zm-2.237 5.05h2.323c1.118 0 1.806-.927 1.892-1.852 0-.758-.688-1.768-1.892-1.768h-2.323v3.62zM96.51 18.93c-1.204 0-2.409.505-2.839 1.6l1.463.589c.344-.59.86-.758 1.462-.758.86 0 1.635.505 1.721 1.347v.084c-.258-.168-.946-.42-1.635-.42-1.548 0-3.097.84-3.097 2.356 0 1.43 1.29 2.356 2.667 2.356 1.119 0 1.635-.505 2.065-1.01h.086v.842h1.549v-4.04c-.172-1.851-1.635-2.946-3.442-2.946zm-1.462 4.882c0 .673.774.926 1.29.926.86 0 1.721-.674 1.893-1.684l-.128-.05c-.375-.15-.716-.286-1.334-.286-.775 0-1.721.252-1.721 1.094zm10.325-4.63l-1.807 4.546h-.086l-1.893-4.545h-1.72l2.838 6.396-1.634 3.535h1.634l4.388-9.931h-1.72zm-12.82 6.734h-1.635v-10.52h1.634v10.52z" fill="#25282B"></path><path d="M8.715 6.2c-.261.262-.348.7-.348 1.225v19.341c0 .525.174.963.435 1.226l.087.087 10.799-10.852v-.175L8.715 6.2z" fill="url(#paint0_linear)"></path><path d="M23.171 20.903l-3.57-3.589v-.262l3.57-3.588.087.087 4.268 2.45c1.219.7 1.219 1.838 0 2.539l-4.355 2.363z" fill="url(#paint1_linear)"></path><path d="M23.258 20.815l-3.657-3.676L8.715 28.08c.436.438 1.045.438 1.829.088l12.714-7.352z" fill="url(#paint2_linear)"></path><path d="M23.258 13.464L10.544 6.2c-.784-.438-1.393-.35-1.829.087L19.601 17.14l3.657-3.676z" fill="url(#paint3_linear)"></path><path opacity=".2" d="M23.171 20.728l-12.627 7.176c-.697.438-1.306.35-1.742 0l-.087.088.087.087c.436.35 1.045.438 1.742 0l12.627-7.351z" fill="#F4F7FB"></path><path opacity=".12" fill-rule="evenodd" clip-rule="evenodd" d="M23.171 20.728l4.354-2.45c.523-.35.871-.701.871-1.139 0 .438-.261.876-.87 1.226l-4.268 2.45-.087-.087zM8.382 27.035c.036.366.133.668.333.869h.009c.025.031.051.06.078.087v-.087h-.078a1.696 1.696 0 0 1-.342-.869zm0 0a3.74 3.74 0 0 1-.015-.356v.087c0 .093.005.182.015.269z" fill="#F4F7FB"></path><path opacity=".25" d="M10.545 6.287l16.981 9.715c.523.35.87.7.87 1.137 0-.437-.26-.875-.87-1.225L10.545 6.2c-1.22-.7-2.178-.175-2.178 1.225v.087c0-1.312.958-1.925 2.178-1.225z" fill="#25282B"></path><defs><linearGradient id="paint0_linear" x1="14.843" y1="-6.864" x2="-2.471" y2="-2.206" gradientUnits="userSpaceOnUse"><stop stop-color="#00A0FF"></stop><stop offset=".007" stop-color="#00A1FF"></stop><stop offset=".26" stop-color="#00BEFF"></stop><stop offset=".512" stop-color="#00D2FF"></stop><stop offset=".76" stop-color="#00DFFF"></stop><stop offset="1" stop-color="#00E3FF"></stop></linearGradient><linearGradient id="paint1_linear" x1="29.123" y1="8.273" x2="8.051" y2="8.273" gradientUnits="userSpaceOnUse"><stop stop-color="#FFE000"></stop><stop offset=".409" stop-color="#FFBD00"></stop><stop offset=".775" stop-color="orange"></stop><stop offset="1" stop-color="#FF9C00"></stop></linearGradient><linearGradient id="paint2_linear" x1="8.439" y1="11.463" x2="-5.566" y2="34.86" gradientUnits="userSpaceOnUse"><stop stop-color="#FF3A44"></stop><stop offset="1" stop-color="#C31162"></stop></linearGradient><linearGradient id="paint3_linear" x1=".252" y1="3.206" x2="6.457" y2="13.669" gradientUnits="userSpaceOnUse"><stop stop-color="#32A071"></stop><stop offset=".069" stop-color="#2DA771"></stop><stop offset=".476" stop-color="#15CF74"></stop><stop offset=".801" stop-color="#06E775"></stop><stop offset="1" stop-color="#00F076"></stop></linearGradient></defs></svg>
+                </a>
+            </div>
+            <div class="col-auto">
+                <a target="_blank" href="https://itunes.apple.com/ru/app/rabota-v-rossii/id1080627340?l=en&amp;mt=8" title="Доступно в App Store">
+                    <svg width="117" height="35" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M112.22 34.303H4.076C1.824 34.303 0 32.488 0 30.247V4.057C0 1.814 1.824 0 4.076 0H112.22c2.253 0 4.077 1.815 4.077 4.056v26.19c0 2.242-1.824 4.057-4.077 4.057z" fill="#A6A6A6"></path><path d="M115.441 30.202a3.271 3.271 0 0 1-3.29 3.265H4.145c-1.821 0-3.309-1.457-3.309-3.265V4.12c0-1.808 1.488-3.283 3.31-3.283H112.15c1.822 0 3.309 1.457 3.309 3.283l-.019 26.082z" fill="#E8E8E8"></path><path fill-rule="evenodd" clip-rule="evenodd" d="M23.13 6.693c.147 1.29-.365 2.542-1.096 3.481-.768.921-2.012 1.621-3.219 1.53-.164-1.235.457-2.543 1.134-3.353.768-.903 2.103-1.602 3.181-1.658zm3.95 7.423c-.11.055-2.359 1.4-2.34 4.144.036 3.297 2.87 4.383 2.87 4.383-.018.074-.439 1.584-1.5 3.095-.877 1.344-1.81 2.652-3.29 2.67-.71.018-1.185-.185-1.68-.398-.514-.22-1.048-.449-1.886-.449-.893 0-1.454.239-1.994.468-.467.199-.918.39-1.553.416-1.408.055-2.487-1.418-3.401-2.744-1.847-2.69-3.273-7.607-1.353-10.959.933-1.64 2.633-2.689 4.443-2.726.801-.02 1.573.292 2.247.566.511.207.966.392 1.337.392.334 0 .782-.181 1.302-.392.817-.33 1.814-.734 2.83-.621.713.018 2.688.276 3.968 2.155zM60.936 11.85h-.921V5.857h.921v5.993zm-22.533.056c-.508 0-.96-.018-1.336-.075V6.233a11.17 11.17 0 0 1 1.58-.113c2.126 0 3.104 1.052 3.104 2.762 0 1.954-1.166 3.024-3.348 3.024zM74.667 26.73c.696-.62 1.034-1.428 1.034-2.405 0-.808-.225-1.466-.733-1.992-.47-.545-1.204-1.014-2.2-1.409-.829-.338-1.393-.62-1.694-.902-.357-.281-.526-.676-.526-1.127 0-.413.169-.77.47-1.052.376-.32.884-.488 1.542-.488.828 0 1.561.169 2.22.526l.47-1.503c-.696-.357-1.58-.545-2.633-.545-1.166 0-2.126.3-2.84.902-.715.6-1.073 1.371-1.073 2.33 0 1.465 1.016 2.573 3.047 3.325.753.281 1.28.582 1.6.901.319.32.488.714.488 1.184 0 .526-.188.94-.583 1.259-.395.32-.94.47-1.636.47-.978 0-1.881-.226-2.69-.715l-.433 1.541c.772.47 1.769.714 3.01.714 1.354 0 2.407-.338 3.16-1.014zm-28.91.845h-1.975l-1.09-3.4H38.93l-1.035 3.4h-1.918L39.7 16.002h2.313l3.743 11.573zm-3.385-4.828l-.978-3.025c-.113-.3-.301-1.034-.584-2.18h-.037c-.104.45-.271 1.105-.488 1.953l-.058.227-.959 3.024h3.104zm11.793 3.907c.771-.826 1.166-1.935 1.166-3.363 0-1.258-.32-2.292-.978-3.1-.658-.77-1.486-1.164-2.464-1.164-1.26 0-2.2.507-2.821 1.503h-.038l-.113-1.316h-1.636c.056.94.075 1.86.075 2.743v9H49.2v-4.378c.49.79 1.28 1.184 2.39 1.184 1.034 0 1.88-.376 2.576-1.109zm-.715-3.288c0-.807-.188-1.484-.545-2.01a1.908 1.908 0 0 0-1.618-.826c-.451 0-.865.15-1.241.45-.376.301-.62.696-.734 1.203a2.941 2.941 0 0 0-.094.564v1.39c0 .601.188 1.127.564 1.54.377.414.866.62 1.449.62.696 0 1.241-.263 1.636-.808.395-.526.583-1.24.583-2.123zm10.345 3.288c.772-.826 1.167-1.935 1.167-3.363 0-1.258-.339-2.292-.997-3.1-.659-.77-1.486-1.164-2.464-1.164-1.26 0-2.201.507-2.822 1.503h-.037l-.113-1.316h-1.637c.057.94.076 1.86.076 2.743v9h1.862v-4.378c.489.79 1.279 1.184 2.389 1.184 1.034 0 1.88-.376 2.576-1.109zm-.733-3.288c0-.807-.188-1.484-.546-2.01a1.908 1.908 0 0 0-1.617-.826c-.452 0-.866.15-1.242.45-.376.301-.62.696-.733 1.203a2.488 2.488 0 0 0-.094.564v1.39c0 .601.188 1.127.564 1.54.376.414.865.62 1.448.62.696 0 1.242-.263 1.637-.808.395-.526.583-1.24.583-2.123zm18.79-2.742h-2.05v4.058c0 1.033.357 1.54 1.09 1.54.34 0 .603-.018.828-.094l.057 1.41c-.358.131-.847.206-1.449.206-.733 0-1.297-.225-1.711-.676-.414-.451-.621-1.203-.621-2.255v-4.208h-1.223v-1.39h1.223v-1.522l1.825-.545v2.085h2.05l-.02 1.39zm8.107 5.861c.733-.826 1.11-1.878 1.11-3.156 0-1.24-.358-2.273-1.091-3.062-.734-.808-1.73-1.222-2.953-1.222-1.26 0-2.276.414-3.029 1.24-.752.827-1.128 1.88-1.128 3.175 0 1.24.357 2.274 1.09 3.082.734.807 1.713 1.22 2.935 1.22 1.28 0 2.295-.431 3.066-1.277zm-.809-3.119c0-.77-.17-1.427-.489-1.972-.395-.658-.94-.996-1.674-.996-.752 0-1.317.338-1.712.996-.338.545-.489 1.221-.489 2.01 0 .77.17 1.428.49 1.973.394.657.959.995 1.692.995.715 0 1.26-.338 1.674-1.014.339-.564.508-1.221.508-1.992zm7.373-2.573c.188 0 .395.018.583.056v-1.766c-.15-.019-.3-.038-.47-.038-.47 0-.94.17-1.335.451-.414.32-.734.77-.922 1.315h-.056l-.076-1.596H92.63c.037.883.056 1.747.056 2.63v5.711h1.862V23.18c0-.677.17-1.221.47-1.654.339-.488.847-.732 1.505-.732zm8.897 2.217c0 .281-.019.563-.075.845h-5.568c.019.827.282 1.465.809 1.898.47.394 1.072.582 1.825.582.827 0 1.579-.132 2.257-.395l.282 1.278c-.79.338-1.731.507-2.803.507-1.298 0-2.313-.376-3.047-1.146-.733-.77-1.11-1.785-1.11-3.062 0-1.259.339-2.311 1.035-3.138.715-.902 1.693-1.334 2.915-1.334 1.204 0 2.126.451 2.728 1.334.507.714.752 1.578.752 2.63zm-2.125-1.917c.244.395.376.883.357 1.428h-3.875c.057-.563.245-1.052.546-1.446a1.77 1.77 0 0 1 1.486-.752c.677 0 1.166.244 1.486.77zM37.97 6.89a4.16 4.16 0 0 1 .734-.056c1.354 0 2.069.732 2.069 2.048 0 1.484-.79 2.273-2.182 2.273-.301 0-.508 0-.62-.019V6.89zm6.828 5.054c-1.204 0-1.975-.902-1.975-2.104 0-1.26.79-2.16 2.05-2.16 1.185 0 1.975.845 1.975 2.103 0 1.26-.827 2.16-2.05 2.16zM43.745 9.82c0-.864.432-1.484 1.09-1.484.64 0 1.073.62 1.054 1.465 0 .827-.433 1.484-1.072 1.484-.64 0-1.072-.62-1.072-1.465zm9.95-2.067l-1.28 4.096h-.846l-.526-1.785a15.381 15.381 0 0 1-.339-1.334h-.019a8.16 8.16 0 0 1-.338 1.334l-.564 1.785h-.847l-1.204-4.096h.94l.471 1.954c.113.47.207.902.282 1.315h.02l.008-.04c.074-.332.167-.752.33-1.275l.583-1.954h.752l.564 1.917c.132.47.245.92.339 1.352h.019c.056-.413.15-.864.282-1.352l.508-1.917h.865zm3.818 4.096h.903l-.019-2.442c0-1.071-.564-1.729-1.43-1.729-.545 0-1.053.282-1.297.714h-.02l-.037-.639h-.809c.038.414.038.808.038 1.165v2.93h.922V9.409c0-.526.376-.996.921-.996.546 0 .828.357.828 1.09v2.348zm4.778-2.01c0 1.202.77 2.104 1.975 2.104 1.222 0 2.05-.902 2.05-2.16 0-1.26-.79-2.105-1.975-2.105-1.26 0-2.05.902-2.05 2.16zm2.012-1.503c-.658 0-1.09.62-1.09 1.484 0 .845.432 1.465 1.071 1.465.64 0 1.073-.657 1.073-1.484 0-.845-.414-1.465-1.054-1.465zm5.53 3.043l.075.47.828-.019a6.65 6.65 0 0 1-.056-.977V9.351c0-1.127-.546-1.69-1.618-1.69-.564 0-1.034.112-1.41.356l.187.601c.32-.206.659-.3 1.073-.3.564 0 .846.263.846.808V9.2c-1.524 0-2.408.526-2.408 1.54 0 .696.527 1.203 1.26 1.203.527 0 .922-.188 1.204-.564h.02zm-.056-1.578c-1.016 0-1.524.244-1.524.827 0 .432.263.639.62.639.471 0 .904-.357.904-.827v-.639zm5.285 1.39l.038.658h.846a19.784 19.784 0 0 1-.038-1.109V5.857h-.921v2.386h-.02c-.225-.376-.62-.564-1.165-.564-1.053 0-1.806.902-1.806 2.18 0 1.22.734 2.085 1.73 2.085.621 0 1.054-.263 1.317-.752h.019zm-.094-1.747c0-.582-.376-1.07-.96-1.07-.676 0-1.09.6-1.09 1.446 0 .827.432 1.39 1.072 1.39.583 0 .978-.507.978-1.09v-.676zm4.74.395c0 1.202.771 2.104 1.975 2.104 1.222 0 2.05-.902 2.05-2.16 0-1.26-.79-2.105-1.975-2.105-1.26 0-2.05.902-2.05 2.16zm2.012-1.503c-.658 0-1.072.62-1.072 1.484 0 .845.433 1.465 1.072 1.465.64 0 1.073-.657 1.073-1.484-.02-.845-.433-1.465-1.073-1.465zm6 3.513h.903V9.408c0-1.071-.564-1.729-1.43-1.729-.545 0-1.053.282-1.297.714h-.019l-.038-.639h-.808c.037.414.037.808.037 1.165v2.93h.922V9.409c0-.526.357-.996.903-.996.545 0 .827.357.827 1.09v2.348zm7.054-3.42h-.997v1.992c0 .507.17.752.527.752.169 0 .3-.02.413-.038l.02.695c-.17.075-.415.094-.715.094-.715 0-1.148-.395-1.148-1.428V8.431h-.602v-.677h.602v-.751l.903-.263v1.014h.997v.677zm3.931 3.42h.903V9.389c0-1.071-.527-1.748-1.392-1.748-.545 0-.96.226-1.241.677h-.02V5.857h-.902v6.012h.903v-2.48c0-.658.451-.977.922-.977.545 0 .827.376.827 1.108v2.33zm5.85-1.822h-2.747c.019.77.527 1.22 1.298 1.22.414 0 .771-.074 1.11-.187l.151.639c-.395.169-.847.244-1.374.244-1.279 0-2.05-.808-2.05-2.067 0-1.258.771-2.198 1.938-2.198 1.053 0 1.711.77 1.711 1.954 0 .113 0 .244-.037.395zm-1.731-1.748c.583 0 .903.451.903 1.09h-1.9c.057-.639.471-1.09.997-1.09z" fill="#25282B"></path></svg>
+                </a>
+            </div>
+        </div>
+    </div>
+</footer>
+
+<script src="/resource-provider/redesign.trudvsem.ru/assets/infoblocks/region_change/choose-region.js?r=1605908471131"></script>
+<div id="choose-region-1" class="modal modal_dialog" role="dialog" aria-hidden="true" tabindex="-1">
+    <div class="modal__content">
+        <div class="modal__header">
+            <h3 class="content__section-title_small mb-2">Выберите ваш регион</h3>
+            <button class="modal__close" type="button" data-label="Закрыть" data-dismiss="modal"></button>
+            <label class="input">
+                <input type="search" class="input__control" placeholder="Ваш регион..." data-action="region-filter">
+            </label>
+        </div>
+        <div class="modal__body" role="document">
+            <div class="choose-region">
+                <div data-content="region-list">
+                    <ul class="choose-region__list-region">
+
+                        <li class="choose-region__region">
+                            <button class="choose-region__item" type="button" data-action="set-region" data-uid="9200000000000">г. Севастополь</button>
+                        </li>
+
+                        <li class="choose-region__region">
+                            <button class="choose-region__item" type="button" data-action="set-region" data-uid="7700000000000">г. Москва</button>
+                        </li>
+
+                        <li class="choose-region__region">
+                            <button class="choose-region__item" type="button" data-action="set-region" data-uid="7800000000000">г. Санкт-Петербург</button>
+                        </li>
+
+                        <li class="choose-region__region">
+                            <button class="choose-region__item" type="button" data-action="set-region" data-uid="9900000000000">г. Байконур</button>
+                        </li>
+
+                    </ul>
+
+                    <ol class="choose-region__alphabet" type="A">
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">А</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="2200000000000">Алтайский край</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="2800000000000">Амурская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="2900000000000">Архангельская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="3000000000000">Астраханская область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">Б</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="3100000000000">Белгородская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="3200000000000">Брянская область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">В</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="3300000000000">Владимирская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="3400000000000">Волгоградская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="3500000000000">Вологодская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="3600000000000">Воронежская область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">Е</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="7900000000000">Еврейская автономная область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">З</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="7500000000000">Забайкальский край</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">И</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="3700000000000">Ивановская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="3800000000000">Иркутская область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">К</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="0700000000000">Кабардино-Балкарская Республика</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="3900000000000">Калининградская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="4000000000000">Калужская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="4100000000000">Камчатский край</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="0900000000000">Карачаево-Черкесская Республика</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="4200000000000">Кемеровская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="4300000000000">Кировская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="4400000000000">Костромская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="2300000000000">Краснодарский край</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="2400000000000">Красноярский край</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="4500000000000">Курганская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="4600000000000">Курская область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">Л</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="4700000000000">Ленинградская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="4800000000000">Липецкая область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">М</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="4900000000000">Магаданская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="5000000000000">Московская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="5100000000000">Мурманская область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">Н</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="8300000000000">Ненецкий автономный округ</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="5200000000000">Нижегородская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="5300000000000">Новгородская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="5400000000000">Новосибирская область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">О</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="5500000000000">Омская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="5600000000000">Оренбургская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="5700000000000">Орловская область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">П</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="5800000000000">Пензенская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="5900000000000">Пермский край</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="2500000000000">Приморский край</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="6000000000000">Псковская область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">Р</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="0100000000000">Республика Адыгея</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="0400000000000">Республика Алтай</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="0200000000000">Республика Башкортостан</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="0300000000000">Республика Бурятия</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="0500000000000">Республика Дагестан</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="0600000000000">Республика Ингушетия</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="0800000000000">Республика Калмыкия</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="1000000000000">Республика Карелия</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="1100000000000">Республика Коми</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="9100000000000">Республика Крым</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="1200000000000">Республика Марий Эл</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="1300000000000">Республика Мордовия</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="1400000000000">Республика Саха (Якутия)</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="1500000000000">Республика Северная Осетия-Алания</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="1600000000000">Республика Татарстан</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="1700000000000">Республика Тыва</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="1900000000000">Республика Хакасия</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="6100000000000">Ростовская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="6200000000000">Рязанская область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">С</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="6300000000000">Самарская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="6400000000000">Саратовская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="6500000000000">Сахалинская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="6600000000000">Свердловская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="6700000000000">Смоленская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="2600000000000">Ставропольский край</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">Т</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="6800000000000">Тамбовская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="6900000000000">Тверская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="7000000000000">Томская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="7100000000000">Тульская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="7200000000000">Тюменская область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">У</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="1800000000000">Удмуртская Республика</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="7300000000000">Ульяновская область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">Х</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="2700000000000">Хабаровский край</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="8600000000000">Ханты-Мансийский автономный округ - Югра</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">Ч</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="7400000000000">Челябинская область</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="2000000000000">Чеченская Республика</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="2100000000000">Чувашская Республика</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="8700000000000">Чукотский автономный округ</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                        <li class="choose-region__alphabet-item">
+                            <span class="choose-region__letter">Я</span>
+                            <hr class="separator mt-0">
+                            <ol class="choose-region__list-region">
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="8900000000000">Ямало-Ненецкий автономный округ</button>
+                                </li>
+
+                                <li class="choose-region__region">
+                                    <button class="choose-region__item" type="button" data-action="set-region" data-uid="7600000000000">Ярославская область</button>
+                                </li>
+
+                            </ol>
+                        </li>
+
+                    </ol>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 <script>
-    var ACTIVE_STEP = "step-check__item_active";
-    var DISABLED_STEP = "step-check__item_disabled";
-    var localities;
-    var educationCompetencies;
-    var educationalOrganizations;
-    var cities;
-    var personalInfo;
+    (function () {
+        try {
+            var Selector = {
+                button: "[data-action='choose-region-trigger']",
+            };
+            var Actions = {
+                trigger: "choose-region-trigger",
+                close: "choose-region-close",
+                choose: "choose-region",
+            };
+            var openButtonClass = 'choose-region__trigger-button_open';
+            var chooseRegionButton = $(Selector.button);
+            $("body").on("click",function (event) {
+                var item = $(event.target);
+                var action = item.data("action");
+                switch (action) {
+                    case Actions.trigger:
+                        chooseRegionButton.addClass(openButtonClass);
+                        break;
+                    case Actions.choose:
+                    case Actions.close:
+                        chooseRegionButton.removeClass(openButtonClass);
+                        break;
 
-    function handleCategoryChange() {
-        setLocalities();
-        moveToLocalityStep();
-    }
+                }
+            })
 
-    function handleLocalityChange() {
-        setEducationCompetencies();
-        moveToEducationCompetenceStep();
-    }
-
-    function handleEducationCompetenceChange() {
-        updateEducationCompetenceNote();
-        setEducationalOrganizations();
-        moveToEducationalOrganizationStep();
-    }
-
-    function handleEducationalOrganizationChange() {
-        if (this.event.target.id === "is_distance_learning") {
-            setEducationalOrganizations();
-            moveToEducationalOrganizationStep();
-            return;
+        } catch (e) {
+            console.log(e)
         }
-        setLifeLocalities();
-        moveToPersonalInfoStep();
-    }
-
-    function handleLifeLocalityChange() {
-        setCitiesForRegion($("#personal-info_locality_select").val());
-        moveToPersonalInfoStep();
-    }
-
-    function moveToLocalityStep() {
-        $("#category_step").removeClass(ACTIVE_STEP);
-        $("#locality_step").removeClass(DISABLED_STEP).addClass(ACTIVE_STEP);
-        $("#education-competence_step").removeClass(ACTIVE_STEP).addClass(DISABLED_STEP);
-        $("#educational-organization_step").removeClass(ACTIVE_STEP).addClass(DISABLED_STEP);
-        $("#personal-info_step").removeClass(ACTIVE_STEP).addClass(DISABLED_STEP);
-        $("#send-request_step").removeClass(ACTIVE_STEP).addClass(DISABLED_STEP);
-        $("#locality").show();
-        $("#education-competence").hide();
-        $("#education-competence_note").hide();
-        $("#educational-organization").hide();
-        $("#personal-info").hide();
-        $("#send-request").hide();
-    }
-
-    function moveToEducationCompetenceStep() {
-        $("#locality_step").removeClass(ACTIVE_STEP);
-        $("#education-competence_step").removeClass(DISABLED_STEP).addClass(ACTIVE_STEP);
-        $("#educational-organization_step").removeClass(ACTIVE_STEP).addClass(DISABLED_STEP);
-        $("#personal-info_step").removeClass(ACTIVE_STEP).addClass(DISABLED_STEP);
-        $("#send-request_step").removeClass(ACTIVE_STEP).addClass(DISABLED_STEP);
-        $("#education-competence").show();
-        $("#education-competence_note").hide();
-        $("#educational-organization").hide();
-        $("#personal-info").hide();
-        $("#send-request").hide();
-    }
-
-    function moveToEducationalOrganizationStep() {
-        $("#education-competence_step").removeClass(ACTIVE_STEP);
-        $("#educational-organization_step").removeClass(DISABLED_STEP).addClass(ACTIVE_STEP);
-        $("#personal-info_step").removeClass(ACTIVE_STEP).addClass(DISABLED_STEP);
-        $("#send-request_step").removeClass(ACTIVE_STEP).addClass(DISABLED_STEP);
-        $("#educational-organization").show();
-        $("#personal-info").hide();
-        $("#send-request").hide();
-    }
-
-    function moveToPersonalInfoStep() {
-        $("#educational-organization_step").removeClass(ACTIVE_STEP);
-        $("#personal-info_step").removeClass(DISABLED_STEP).addClass(ACTIVE_STEP);
-        $("#send-request_step").removeClass(ACTIVE_STEP).addClass(DISABLED_STEP);
-        $("#personal-info").show();
-        $("#send-request").hide();
-    }
-
-    function moveToSendRequestStep() {
-        $("#personal-info_step").removeClass(ACTIVE_STEP);
-        $("#send-request_step").removeClass(DISABLED_STEP).addClass(ACTIVE_STEP);
-        $("#send-request").show();
-    }
-
-    function submit() {
-        debugger;
-        if ($("#personal-info_email").val() !== $("#personal-info_email_duplicate").val()) {
-            alert("error");
-        }
-        this.event.preventDefault();
-        return false;
-    }
-
-    function setLocalities() {
-        if (!!localities) {
-            $("#locality_select").prop("selectedIndex", -1);
-            return;
-        }
-         loadLocalities();
-
-
-        addOptions($("#locality_select"), localities);
-    }
-
-    function setEducationCompetencies() {
-         loadEducationCompetencies($("#locality_select").val());
-
-
-        addOptions($("#education-competence_select"), educationCompetencies);
-    }
-
-    function setEducationalOrganizations() {
-         var regionId = $("#locality_select").val();
-         var educationCompetenceId = $("#education-competence_select").val()
-         var isDistanceLearning = $("#is_distance_learning").is(':checked')
-         loadEducationalOrganizations(regionId, educationCompetenceId, isDistanceLearning);
-
-
-        addOptions($("#educational-organization_select"), educationalOrganizations);
-    }
-
-    function setLifeLocalities() {
-        addOptions($("#personal-info_locality_select"), localities);
-    }
-
-    function setCitiesForRegion(regionId) {
-         loadCities(regionId);
-
-        addOptions($("#personal-info_city_select"), cities);
-    }
-
-    function addOptions(targetEl, arr) {
-        targetEl.empty();
-        arr.forEach(function(el) {
-            addOptionEl(targetEl, el.name, el.id);
-        });
-        targetEl.prop("selectedIndex", -1);
-    }
-
-    function addOptionEl(targetEl, name, value) {
-        var option = document.createElement("option");
-        option.setAttribute("value", value);
-        option.innerText = name;
-        targetEl.append(option);
-    }
-
-    function updateEducationCompetenceNote() {
-        var selectedItem = $("#education-competence_select").val();
-        if (!selectedItem) {
-            return;
-        }
-
-        var selectedCompetency = educationCompetencies.filter(function(el) { return el.id === selectedItem; })[0];
-        $("#education-competence_note_title").text(selectedCompetency.name);
-        $("#education-competence_note_description").text(selectedCompetency.description);
-        $("#education-competence_note").show();
-    }
-
-    function validate() {
-        if ($("#personal-info_step").hasClass(ACTIVE_STEP) &&
-            $("#personal-info_locality_select").val() &&
-            $("#personal-info_city_select").val() &&
-            $("#personal-info_phone_number").val() &&
-            $("#personal-info_email").val() &&
-            $("#personal-info_email_duplicate").val()) {
-            moveToSendRequestStep();
-        } else if ($("#send-request_step").hasClass(ACTIVE_STEP) &&
-            !$("#personal-info_locality_select").val() &&
-            !$("#personal-info_city_select").val() &&
-            !$("#personal-info_phone_number").val() &&
-            !$("#personal-info_email").val() &&
-            !$("#personal-info_email_duplicate").val()) {
-            moveToPersonalInfoStep();
-        }
-    }
-
-    function loadLocalities() {
-        var url = "//" + window.location.host + "/iblocks/course/localities";
-        $.ajax({
-            url: url,
-            async: false,
-            type: "GET",
-            success: function(data){
-              localities = data;
-            }
-        });
-    }
-
-    function loadCities(regionId) {
-        var url = "//" + window.location.host + "/iblocks/course/cities?region_id=" + regionId;
-        $.ajax({
-            url: url,
-            async: false,
-            type: "GET",
-            success: function(data){
-              cities = data;
-            }
-        });
-    }
-
-    function loadEducationCompetencies(regionId) {
-        var url = "//" + window.location.host + "/iblocks/course/education-competence?region_id=" + regionId;
-        $.ajax({
-            url: url,
-            async: false,
-            type: "GET",
-            success: function(data){
-              educationCompetencies = data;
-            }
-        });
-    }
-
-    function loadEducationalOrganizations(regionId, educationCompetenceId, isDistanceLearning) {
-        var url = "//" + window.location.host + "/iblocks/course/educational-organizations"
-            + "?regionId=" + regionId
-            + "&education_competence_id=" + educationCompetenceId
-            + "&is_distance_learning=" + isDistanceLearning;
-        $.ajax({
-            url: url,
-            async: false,
-            type: "GET",
-            success: function(data){
-              educationalOrganizations = data;
-            }
-        });
-    }
+    })();
 </script>
+<div id="wt-sky-root"></div></body>
+
+</html>
