@@ -13,7 +13,8 @@ public class GreetingController {
 
     @GetMapping("/")
     public String greeting(@RequestParam(name="name", required=false, defaultValue="World") String name, Model model) {
-        model.addAttribute("name", name);
+        model.addAttribute("fio", "Fomkin Pavel Sergeevich");
+        model.addAttribute("snils", "000000000001");
         return "greeting";
     }
 
