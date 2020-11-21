@@ -2,13 +2,12 @@ package com.example.demo.dto.locality;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
-public class Locality {
+@Data
+@NoArgsConstructor
+public class LocalityDTO {
 
     private String id;
     private String name;

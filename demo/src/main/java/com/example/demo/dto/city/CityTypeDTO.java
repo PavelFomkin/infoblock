@@ -5,13 +5,13 @@ import java.util.stream.Stream;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 
-public enum CityType {
+public enum CityTypeDTO {
     CITY,
     LOCALITY;
 
     @JsonCreator
-    public static CityType getByName(String name) {
-        final Optional<CityType> first = Stream.of(values()).filter(type -> type.name().equalsIgnoreCase(name)).findFirst();
+    public static CityTypeDTO getByName(String name) {
+        final Optional<CityTypeDTO> first = Stream.of(values()).filter(type -> type.name().equalsIgnoreCase(name)).findFirst();
         if (first.isPresent()) {
             return first.get();
         }

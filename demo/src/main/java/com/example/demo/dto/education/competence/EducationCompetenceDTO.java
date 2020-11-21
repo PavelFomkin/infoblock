@@ -2,21 +2,17 @@ package com.example.demo.dto.education.competence;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
-public class EducationCompetence {
+@Data
+@NoArgsConstructor
+public class EducationCompetenceDTO {
 
     private String id;
     private String image;
     private String name;
-    private EducationCompetenceCategory category;
+    private EducationCompetenceCategoryDTO category;
     private String description;
     @JsonProperty("is_available")
     private Boolean isAvailable;

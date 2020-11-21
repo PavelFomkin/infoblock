@@ -4,16 +4,12 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-import lombok.Getter;
-import lombok.RequiredArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
-public class EducationalOrganization {
+@Data
+@NoArgsConstructor
+public class EducationalOrganizationDTO {
 
     private String id;
     private String name;

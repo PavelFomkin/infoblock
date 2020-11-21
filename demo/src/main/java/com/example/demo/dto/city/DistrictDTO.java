@@ -4,11 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 import lombok.*;
 
-@Getter
-@Setter
-@ToString
-@RequiredArgsConstructor
-public class District {
+@Data
+@NoArgsConstructor
+public class DistrictDTO {
 
     private String id;
     @JsonProperty("digital_platform_id")

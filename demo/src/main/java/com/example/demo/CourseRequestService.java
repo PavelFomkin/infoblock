@@ -4,10 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
-import com.example.demo.dto.city.City;
-import com.example.demo.dto.education.competence.EducationCompetence;
-import com.example.demo.dto.education.organization.EducationalOrganization;
-import com.example.demo.dto.locality.Locality;
+import com.example.demo.dto.city.CityDTO;
+import com.example.demo.dto.education.competence.EducationCompetenceDTO;
+import com.example.demo.dto.education.organization.EducationalOrganizationDTO;
+import com.example.demo.dto.locality.LocalityDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -17,19 +17,19 @@ public class CourseRequestService {
 
     private final WorldSkillsRestClient worldSkillsRestClient;
 
-    public List<Locality> getLocalities() {
+    public List<LocalityDTO> getLocalities() {
         return worldSkillsRestClient.getLocalities();
     }
 
-    public List<City> getCities(String regionId) {
+    public List<CityDTO> getCities(String regionId) {
         return worldSkillsRestClient.getCities(regionId);
     }
 
-    public List<EducationCompetence> getEducationCompetencies(String regionId) {
+    public List<EducationCompetenceDTO> getEducationCompetencies(String regionId) {
         return worldSkillsRestClient.getEducationCompetencies(regionId);
     }
 
-    public List<EducationalOrganization> getEducationalOrganizations(String regionId, String educationCompetenceId, Boolean isDistanceLearning) {
+    public List<EducationalOrganizationDTO> getEducationalOrganizations(String regionId, String educationCompetenceId, Boolean isDistanceLearning) {
         return worldSkillsRestClient.getEducationalOrganizations(regionId, educationCompetenceId, isDistanceLearning);
     }
 }

@@ -7,10 +7,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import com.example.demo.dto.city.City;
-import com.example.demo.dto.education.competence.EducationCompetence;
-import com.example.demo.dto.education.organization.EducationalOrganization;
-import com.example.demo.dto.locality.Locality;
+import com.example.demo.dto.city.CityDTO;
+import com.example.demo.dto.education.competence.EducationCompetenceDTO;
+import com.example.demo.dto.education.organization.EducationalOrganizationDTO;
+import com.example.demo.dto.locality.LocalityDTO;
 
 import lombok.RequiredArgsConstructor;
 
@@ -22,27 +22,27 @@ public class WorldSkillsRestClient {
 
     private final RestTemplate restTemplate;
 
-    public List<Locality> getLocalities() {
-        return Arrays.asList(restTemplate.getForObject(PROXY_WS_HOST + "locality", Locality[].class));
+    public List<LocalityDTO> getLocalities() {
+        return Arrays.asList(restTemplate.getForObject(PROXY_WS_HOST + "locality", LocalityDTO[].class));
     }
 
-    public List<City> getCities(String regionId) {
+    public List<CityDTO> getCities(String regionId) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(PROXY_WS_HOST + "cities")
-                .queryParam("region_id", regionId);
-        return Arrays.asList(restTemplate.getForObject(uriBuilder.toUriString(), City[].class));
+                .queryParam("regionId", regionId);
+        return Arrays.asList(restTemplate.getForObject(uriBuilder.toUriString(), CityDTO[].class));
     }
 
-    public List<EducationCompetence> getEducationCompetencies(String regionId) {
+    public List<EducationCompetenceDTO> getEducationCompetencies(String regionId) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(PROXY_WS_HOST + "education-competence")
-                .queryParam("region_id", regionId);
-        return Arrays.asList(restTemplate.getForObject(uriBuilder.toUriString(), EducationCompetence[].class));
+                .queryParam("regionId", regionId);
+        return Arrays.asList(restTemplate.getForObject(uriBuilder.toUriString(), EducationCompetenceDTO[].class));
     }
 
-    public List<EducationalOrganization> getEducationalOrganizations(String regionId, String educationCompetenceId, Boolean isDistanceLearning) {
+    public List<EducationalOrganizationDTO> getEducationalOrganizations(String regionId, String educationCompetenceId, Boolean isDistanceLearning) {
         UriComponentsBuilder uriBuilder = UriComponentsBuilder.fromUriString(PROXY_WS_HOST + "educational-organizations")
-                .queryParam("region_id", regionId)
-                .queryParam("education_competence_id", educationCompetenceId)
-                .queryParam("is_distance_learning", isDistanceLearning);
-        return Arrays.asList(restTemplate.getForObject(uriBuilder.toUriString(), EducationalOrganization[].class));
+                .queryParam("regionId", regionId)
+                .queryParam("educationCompetenceId", educationCompetenceId)
+                .queryParam("isDistanceLearning", isDistanceLearning);
+        return Arrays.asList(restTemplate.getForObject(uriBuilder.toUriString(), EducationalOrganizationDTO[].class));
     }
 }
