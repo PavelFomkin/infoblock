@@ -2,12 +2,23 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <body>
 <div th:fragment="block">
-    <h1 class="content__title">
-      Записаться на обучение
-    </h1>
-    <div class="row">
+  <h1 class="content__title">
+    Записаться на обучение
+  </h1>
+  <div id="request_submitted" style="display: none">
+    <p class="content__paragraph">
+      <strong>Ваша заявка на обучение успешно отправлена!</strong><br>
+      Нам понадобится некоторое время на ее проверку. После завершения проверки вы получите
+      уведомление об изменении статуса заявки на электронную почту, указанную вами в форме заявки на
+      обучение.
+    </p>
+    <p class="content__paragraph content_small content_strong">
+      <a href="/" class="link">Вернуться на главную страницу</a>
+    </p>
+  </div>
+  <div class="row" id="request_main">
       <div class="main__aside-neighbour">
-        <form method="POST" class="form form_descripted" onchange="validate()" onsubmit="submit()">
+        <form id="ws_request_form" action="iblocks/course/request" method="POST" class="form form_descripted" onchange="validate()">
           <div class="main__content">
             <h2 class="content__subtitle">
               Программа обучения
@@ -275,13 +286,30 @@
       </div>
     </div>
     <script>
+
+      $(function() {
+        $('#ws_request_form').submit(function(e) {
+          var $form = $(this);
+          $.ajax({
+            type: $form.attr('method'),
+            url: $form.attr('action'),
+            data: $form.serialize()
+          }).done(function() {
+            $("#request_main").hide();
+            $("#request_submitted").show();
+
+            console.log('success');
+          }).fail(function() {
+            console.log('fail');
+          });
+          e.preventDefault();
+        });
+      });
+
       var ACTIVE_STEP = "step-check__item_active";
       var DISABLED_STEP = "step-check__item_disabled";
       var localities;
       var educationCompetencies;
-      var educationalOrganizations;
-      var cities;
-      var personalInfo;
 
       function handleCategoryChange() {
         setLocalities();
@@ -322,7 +350,7 @@
         $("#personal-info_step").removeClass(ACTIVE_STEP).addClass(DISABLED_STEP);
         $("#send-request_step").removeClass(ACTIVE_STEP).addClass(DISABLED_STEP);
         $("#locality").show();
-        $("#education-competence").hide();
+        $("#education-competence, ").hide();
         $("#education-competence_note").hide();
         $("#educational-organization").hide();
         $("#personal-info").hide();
@@ -381,16 +409,10 @@
           return;
         }
         loadLocalities();
-
-
-        addOptions($("#locality_select"), localities);
       }
 
       function setEducationCompetencies() {
         loadEducationCompetencies($("#locality_select").val());
-
-
-        addOptions($("#education-competence_select"), educationCompetencies);
       }
 
       function setEducationalOrganizations() {
@@ -398,9 +420,6 @@
         var educationCompetenceId = $("#education-competence_select").val()
         var isDistanceLearning = $("#is_distance_learning").is(':checked')
         loadEducationalOrganizations(regionId, educationCompetenceId, isDistanceLearning);
-
-
-        addOptions($("#educational-organization_select"), educationalOrganizations);
       }
 
       function setLifeLocalities() {
@@ -409,8 +428,6 @@
 
       function setCitiesForRegion(regionId) {
         loadCities(regionId);
-
-        addOptions($("#personal-info_city_select"), cities);
       }
 
       function addOptions(targetEl, arr) {
@@ -459,54 +476,41 @@
       }
 
       function loadLocalities() {
-        var url = "//" + window.location.host + "/iblocks/course/localities";
-        $.ajax({
-          url: url,
-          async: false,
-          type: "GET",
-          success: function(data){
-            localities = data;
-          }
-        });
+        load("/iblocks/course/localities", function(data) {
+          localities = data;
+          addOptions($("#locality_select"), localities);
+        })
       }
 
-      function loadCities(regionId) {
-        var url = "//" + window.location.host + "/iblocks/course/cities?region_id=" + regionId;
-        $.ajax({
-          url: url,
-          async: false,
-          type: "GET",
-          success: function(data){
-            cities = data;
-          }
-        });
+      function loadCities(regionId, callback) {
+        load("/iblocks/course/cities?region_id=" + regionId, function (data) {
+          addOptions($("#personal-info_city_select"), data);
+        })
       }
 
       function loadEducationCompetencies(regionId) {
-        var url = "//" + window.location.host + "/iblocks/course/education-competence?region_id=" + regionId;
-        $.ajax({
-          url: url,
-          async: false,
-          type: "GET",
-          success: function(data){
-            educationCompetencies = data;
-          }
+        load("/iblocks/course/education-competence?region_id=" + regionId, function(data) {
+          educationCompetencies = data
+          addOptions($("#education-competence_select"), data);
         });
       }
 
       function loadEducationalOrganizations(regionId, educationCompetenceId, isDistanceLearning) {
-        var url = "//" + window.location.host + "/iblocks/course/educational-organizations"
+        var url = "/iblocks/course/educational-organizations"
             + "?regionId=" + regionId
             + "&education_competence_id=" + educationCompetenceId
             + "&is_distance_learning=" + isDistanceLearning;
+        load(url, function(data) {
+          addOptions($("#educational-organization_select"), data);
+        });
+      }
+
+      function load(url, callback) {
         $.ajax({
           url: url,
-          async: false,
+          async: true,
           type: "GET",
-          success: function(data){
-            educationalOrganizations = data;
-          }
-        });
+          success: callback});
       }
     </script>
 </div>
