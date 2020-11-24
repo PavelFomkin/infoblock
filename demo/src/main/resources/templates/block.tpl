@@ -18,7 +18,7 @@
   </div>
   <div class="row" id="request_main">
     <div class="main__aside-neighbour">
-      <form id="ws_request_form" action="iblocks/course/request" method="POST" class="form form_descripted" onchange="validate()">
+      <form id="ws_request_form" action="/iblocks/course/request" method="POST" class="form form_descripted" onchange="validate()" onsubmit="return submitForm()">
         <div class="main__content">
           <h2 class="content__subtitle">
             Программа обучения
@@ -48,16 +48,16 @@
             <fieldset class="form__fieldset">
                 <legend class="form__title">Категория</legend>
                 <label class="radio">
-                  <input value="dismissal_risk" type="radio" name="student.category">
-                  <span class="radio__label">Нахожусь под риском увольнения</span>
-                </label>
-                <label class="radio">
                   <input value="graduate" type="radio" name="student.category">
                   <span class="radio__label">Выпускник образовательной организации</span>
                 </label>
                 <label class="radio">
                   <input value="unemployed" type="radio" name="student.category">
                   <span class="radio__label">Ищу работу</span>
+                </label>
+                <label class="radio">
+                  <input value="dismissal_risk" type="radio" name="student.category">
+                  <span class="radio__label">Нахожусь под риском увольнения</span>
                 </label>
               </fieldset>
           </div>
@@ -149,6 +149,7 @@
                   <input id="personal-info_birthday"class="input__control" type="text" placeholder="08.08.2020"
                     name="student.birthday"/>
                   <span class="input__title">Дата рождения:</span>
+                  <span id="validation_birthday_error" style="display: none" class="input__error">Введите корректное значение</span>
                 </label>
               </div>
             </div>
@@ -180,6 +181,7 @@
                     placeholder="+7(__) ___-__-__" data-inputmask="'mask': '+\\7(99[9]) 999-99-99',
                     'numericInput': true" inputmode="text" th:value="${candidate.phoneNumber}" name="student.phoneNumber">
                   <span class="input__title">Телефон</span>
+                  <span id="validation_phone_error" style="display: none" class="input__error">Введите корректное значение</span>
                 </label>
               </div>
             </div>
@@ -188,11 +190,10 @@
             <div class="form__description">
               Укажите адрес вашей электронной почты для получения уведомлений об изменении статуса заявки на обучение
             </div>
-            <label class="input input_error">
+            <label class="input">
               <input id="personal-info_email" class="input__control" required type="email"  placeholder="Введите email"
                 th:value="${candidate.email}" name="student.email"/>
               <span class="input__title">Email</span>
-              <span class="input__error">Введите корректное значение</span>
             </label>
           </div>
           <div class="form__section">
@@ -203,6 +204,7 @@
               <input id="personal-info_email_duplicate" class="input__control" required type="email"  placeholder="Введите email"
                 th:value="${candidate.email}"/>
               <span class="input__title">Подтверждение email</span>
+              <span id="validation_email_error" style="display: none" class="input__error">Email не совпадает с указанным ранее</span>
             </label>
           </div>
         </div>
@@ -290,26 +292,49 @@
       </div>
     </div>
   </div>
+
+  <div id="error_notification" style="display: none; position: fixed; z-index: 10003; top: 120px; right: 20px;"
+    class="notifications__card notifications__card_warning">
+    <div class="notifications__card-icon">
+      <svg class="icon icon_in-text">
+        <use xlink:href="/assets/redesign-theme/uikit/icon/icons.svg#question"></use>
+      </svg>
+    </div>
+    <div class="notifications__card-title">
+      <span>Не удалось отправить заявку. Пожалуйста, повторите попытку позже. </span>
+    </div>
+    <button class="button button_plain notifications__card-close">
+      <svg class="icon icon_s">
+        <use xlink:href="/uikit/icon/icons.svg#close"></use>
+      </svg>
+    </button>
+  </div>
   <script>
 
-    $(function() {
-      $('#ws_request_form').submit(function(e) {
-        var $form = $(this);
-        $.ajax({
-          type: $form.attr('method'),
-          url: $form.attr('action'),
-          contentType: 'application/json',
-          data: JSON.stringify(getFormData($form)),
-          success: function() {
-            $("#request_main").hide();
-            $("#request_submitted").show();
-            document.body.scrollTop = 0; // For Safari
-            document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-          }
-        });
-        e.preventDefault();
+    function submitForm() {
+      if (!validatePhoneNumber() || !validateEmails() || !validateBirthday()) {
+        return false;
+      }
+      var $form = $("form");
+      $.ajax({
+        type: $form.attr('method'),
+        url: $form.attr('action'),
+        contentType: 'application/json',
+        data: JSON.stringify(getFormData($form)),
+        success: function() {
+          $("#request_main").hide();
+          $("#request_submitted").show();
+          document.body.scrollTop = 0; // for Safari
+          document.documentElement.scrollTop = 0; // for Chrome, Firefox, IE and Opera
+        },
+        error: function() {
+          $("#error_notification").show();
+          setTimeout(function() { $("#error_notification").hide(); }, 5000);
+        }
       });
-    });
+
+      this.event.preventDefault();
+    }
 
     function getFormData($form){
       // Make sure the checked checkboxes value is true
@@ -442,7 +467,7 @@
 
     function setLocalities() {
       if (!!localities) {
-        $("#locality_select").prop("selectedIndex", -1);
+        $("#locality_select").prop("selectedIndex", -1).selectpicker('refresh');
         return;
       }
       loadLocalities();
@@ -473,6 +498,7 @@
         addOptionEl(targetEl, el.name, el.id);
       });
       targetEl.prop("selectedIndex", -1);
+      targetEl.selectpicker('refresh');
     }
 
     function addOptionEl(targetEl, name, value) {
@@ -494,6 +520,37 @@
       $("#education-competence_note").show();
     }
 
+    function validatePhoneNumber() {
+      if ($("#personal-info_phone_number").val().length !== 10) {
+        $("#validation_phone_error").show();
+        $("#personal-info_phone_number").parent().addClass("input_error");
+        return false;
+      }
+      return true;
+    }
+
+    function validateEmails() {
+      if ($("#personal-info_email").val() &&
+        $("#personal-info_email_duplicate").val() &&
+        $("#personal-info_email").val() !== $("#personal-info_email_duplicate").val()) {
+        $("#validation_email_error").show();
+        $("#personal-info_email").parent().addClass("input_error");
+        $("#personal-info_email_duplicate").parent().addClass("input_error");
+        return false;
+      }
+      return true;
+    }
+
+    function validateBirthday() {
+      if (!$("#personal-info_birthday").val() ||
+        /^\d{2}.\d{2}.\d{4}$/.test($("#personal-info_birthday").val())) {
+        return true;
+      }
+      $("#validation_birthday_error").show();
+      $("#personal-info_birthday").parent().addClass("input_error");
+      return false;
+    }
+
     function validate() {
       if ($("#personal-info_step").hasClass(ACTIVE_STEP) &&
           $("#personal-info_locality_select").val() &&
@@ -510,25 +567,32 @@
           !$("#personal-info_email_duplicate").val()) {
         moveToPersonalInfoStep();
       }
+      $("#validation_phone_error").hide();
+      $("#personal-info_phone_number").parent().removeClass("input_error");
+      $("#validation_email_error").hide();
+      $("#personal-info_email").parent().removeClass("input_error");
+      $("#personal-info_email_duplicate").parent().removeClass("input_error");
+      $("#validation_birthday_error").hide();
+      $("#personal-info_birthday").parent().removeClass("input_error");
     }
 
     function loadLocalities() {
       load("/iblocks/course/localities", function(data) {
-        localities = data;
+        localities = data.data;
         addOptions($("#locality_select"), localities);
       })
     }
 
     function loadCities(regionId, callback) {
       load("/iblocks/course/cities?regionId=" + regionId, function (data) {
-        addOptions($("#personal-info_city_select"), data);
+        addOptions($("#personal-info_city_select"), data.data);
       })
     }
 
     function loadEducationCompetencies(regionId) {
       load("/iblocks/course/education-competence?regionId=" + regionId, function(data) {
-        educationCompetencies = data
-        addOptions($("#education-competence_select"), data);
+        educationCompetencies = data.data
+        addOptions($("#education-competence_select"), educationCompetencies);
       });
     }
 
@@ -538,7 +602,7 @@
           + "&educationCompetenceId=" + educationCompetenceId
           + "&isDistanceLearning=" + isDistanceLearning;
       load(url, function(data) {
-        addOptions($("#educational-organization_select"), data);
+        addOptions($("#educational-organization_select"), data.data);
       });
     }
 
