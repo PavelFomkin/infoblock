@@ -12,13 +12,11 @@ import lombok.NoArgsConstructor;
 public class EducationalOrganizationDTO {
 
     private String id;
+    private String providerId;
     private String name;
+    private String address;
     private String email;
-    private String city;
-    private String region;
-    private List<String> programs; // TODO: check it, not sure what should be here
+    private String phoneNumber;
     @JsonProperty("distance_learning")
     private Boolean distanceLearning;
-    @JsonProperty("is_full")
-    private Boolean isFull;
 }

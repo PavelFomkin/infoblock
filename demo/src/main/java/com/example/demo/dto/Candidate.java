@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import java.util.List;
+
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -9,8 +11,10 @@ public class Candidate {
 
     String firstName;
     String lastName;
-    String middleName;
-    String phoneNumber;
-    String snils;
+    String phone;
     String email;
+    String middleName;
+    String snils;
+    String birthday;
+    String genderType;
 }

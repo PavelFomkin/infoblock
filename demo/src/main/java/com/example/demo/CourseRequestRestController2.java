@@ -4,8 +4,10 @@ import java.util.List;
 
 import javax.validation.Valid;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.client.HttpClientErrorException;
 
 import com.example.demo.dto.Response;
 import com.example.demo.dto.city.CityDTO;
@@ -18,9 +20,8 @@ import com.example.demo.dto.request.StudentEnrollmentRequestDTO;
 import lombok.RequiredArgsConstructor;
 
 @RestController
-@RequestMapping("iblocks/course")
 @RequiredArgsConstructor
-public class CourseRequestRestController {
+public class CourseRequestRestController2 {
 
     private final CourseRequestService courseRequestService;
 
@@ -59,14 +60,6 @@ public class CourseRequestRestController {
             @RequestParam(value = "regionId", required = false) String regionId) {
         return Response.ok(courseRequestService.getRegOperator(regionId));
     }
-
-//    @ExceptionHandler(HttpClientErrorException.class)
-//    public ResponseEntity<Response<Object>> rethrowTheResponseCode(HttpClientErrorException e) {
-//        return Response.error(com.example.demo.dto.ResponseStatus.TEMPORARILY_UNAVAILABLE,
-//                e.getStatusCode(),
-//                "[" + e.getStatusCode().value() + "] WorldSkills error");
-//    }
-
 
 //    @ExceptionHandler(HttpClientErrorException.class)
     //    public ResponseEntity<Response<Void>> internal(HttpClientErrorException e) {

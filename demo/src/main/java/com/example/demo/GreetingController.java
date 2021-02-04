@@ -16,9 +16,11 @@ public class GreetingController {
         candidate.setFirstName("Pavel");
         candidate.setLastName("Fomkin");
         candidate.setMiddleName("Sergeevich");
-        candidate.setPhoneNumber("89523530451");
         candidate.setSnils("112389523530451");
         candidate.setEmail("pavel_foma@mail.ru");
+        candidate.setPhone("89523530451");
+        candidate.setBirthday("16.07.1990");
+        candidate.setGenderType("MALE");
         model.addAttribute("candidate", candidate);
         return "greeting";
     }

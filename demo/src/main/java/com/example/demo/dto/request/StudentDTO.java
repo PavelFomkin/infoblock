@@ -6,6 +6,7 @@ import javax.validation.constraints.Pattern;
 
 import org.springframework.format.annotation.DateTimeFormat;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonSetter;
 
 import lombok.Data;
@@ -17,30 +18,32 @@ public class StudentDTO {
 
     @NotNull
     @Email
-    String email;
-    String password;
+    private String email;
+    private String password;
     @NotNull
-    String firstName;
+    @JsonProperty("first_name")
+    private String firstName;
     @NotNull
-    String lastName;
+    @JsonProperty("last_name")
+    private String lastName;
     @NotNull
-    String middleName;
-    @NotNull
-    @Pattern(regexp="\\d{10,11}")
-    String phoneNumber;
+    @JsonProperty("middle_name")
+    private String middleName;
+    @Pattern(regexp="^\\d{10,11}$")
+    @JsonProperty("phone_number")
+    private String phoneNumber;
     @DateTimeFormat(pattern = "dd.MM.yyyy")
-    String birthday;
+    private String birthday;
+    private String sex;
     @NotNull
-    String sex;
+    private String snils;
     @NotNull
-    String snils;
+    private String city;
     @NotNull
-    String city;
+    private String category;
     @NotNull
-    String category;
-    @NotNull
-    String region;
-    Boolean emailVerified = false;
+    private String region;
+    private Boolean emailVerified = false;
 
     @JsonSetter("emailVerified")
     public void setEmailVerified(Boolean val) {
